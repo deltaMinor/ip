@@ -50,7 +50,7 @@ public class HERM35 {
                     exit();
                     return;
                 case "todo":
-                    taskList[taskListCount] = new Task(command[1]);
+                    taskList[taskListCount] = new ToDoTask(command[1]);
                     printMessage("added: " + taskList[taskListCount].getName());
                     taskListCount++;
                     break;

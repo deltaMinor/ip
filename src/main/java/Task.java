@@ -1,10 +1,17 @@
 public class Task {
     private Boolean done;
     private String name;
+    private char typeIcon = ' ';
 
     public Task(String name) {
         done = false;
         this.name = name;
+    }
+
+    public Task(String name, char typeIcon) {
+        done = false;
+        this.name = name;
+        this.typeIcon = typeIcon;
     }
 
     public void mark(Boolean done) {
@@ -21,6 +28,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[" + getDoneIcon() + "] " + getName();
+        return "[" + typeIcon + "][" + getDoneIcon() + "] " + getName();
     }
 }
