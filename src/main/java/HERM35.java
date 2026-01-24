@@ -54,6 +54,19 @@ public class HERM35 {
                     printMessage("added: " + taskList[taskListCount].getDescription());
                     taskListCount++;
                     break;
+                case "deadline":
+                    String[] deadlineTask = command[1].split(" /by ", 2);
+                    taskList[taskListCount] = new DeadlineTask(deadlineTask[0], deadlineTask[1]);
+                    printMessage("added: " + taskList[taskListCount].getDescription());
+                    taskListCount++;
+                    break;
+                case "event":
+                    String[] eventTask = command[1].split(" /from ", 2);
+                    String[] eventPeriod = eventTask[1].split(" /to ", 2);
+                    taskList[taskListCount] = new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]);
+                    printMessage("added: " + taskList[taskListCount].getDescription());
+                    taskListCount++;
+                    break;
                 default:
                     printMessage("Unknown command, please try again.");
             }
