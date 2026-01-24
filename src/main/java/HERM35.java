@@ -51,7 +51,7 @@ public class HERM35 {
                     return;
                 case "todo":
                     taskList[taskListCount] = new ToDoTask(command[1]);
-                    printMessage("added: " + taskList[taskListCount].getName());
+                    printMessage("added: " + taskList[taskListCount].getDescription());
                     taskListCount++;
                     break;
                 default:

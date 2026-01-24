@@ -1,16 +1,16 @@
 public class Task {
     private Boolean done;
-    private String name;
+    private String description;
     private char typeIcon = ' ';
 
-    public Task(String name) {
+    public Task(String description) {
         done = false;
-        this.name = name;
+        this.description = description;
     }
 
-    public Task(String name, char typeIcon) {
+    public Task(String description, char typeIcon) {
         done = false;
-        this.name = name;
+        this.description = description;
         this.typeIcon = typeIcon;
     }
 
@@ -22,12 +22,12 @@ public class Task {
         return done ? "X" : " ";
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
     @Override
     public String toString() {
-        return "[" + typeIcon + "][" + getDoneIcon() + "] " + getName();
+        return "[" + typeIcon + "][" + getDoneIcon() + "] " + getDescription();
     }
 }
