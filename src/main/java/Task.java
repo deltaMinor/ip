@@ -11,12 +11,16 @@ public class Task {
         this.done = done;
     }
 
+    public String getDoneIcon() {
+        return done ? "X" : " ";
+    }
+
     public String getName() {
         return name;
     }
 
     @Override
     public String toString() {
-        return "[" + (done ? "X" : " ") + "] " + name;
+        return "[" + getDoneIcon() + "] " + getName();
     }
 }
