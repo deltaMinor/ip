@@ -5,6 +5,9 @@ public class HERM35 {
     private static String command;
     private static final String LINE_SEPARATOR = "-----------------------";
 
+    private static String[] taskList = new String[100];
+    private static int taskListCount = 0;
+
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         String name = "HERM35";
@@ -12,11 +15,22 @@ public class HERM35 {
         printMessage(introduction);
         while (input.hasNextLine()) {
             command = input.nextLine();
-            if (command.equals("bye")) {
-                exit();
-                break;
-            } else {
-                printMessage(command);
+            switch(command) {
+                case "list":
+                    String listOutput = "";
+                    for (int i = 0; i < taskListCount; i++) {
+                        listOutput += String.valueOf(i+1) + ". " + taskList[i] + "\n";
+                    }
+                    printMessage(listOutput);
+                    break;
+                case "bye":
+                    exit();
+                    return;
+                default:
+                    taskList[taskListCount] = command;
+                    printMessage("added: " + taskList[taskListCount]);
+                    taskListCount++;
+                    break;
             }
         }
     }
