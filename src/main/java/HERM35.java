@@ -2,7 +2,6 @@ import java.util.Scanner;
 
 public class HERM35 {
 
-    private static String command;
     private static final String LINE_SEPARATOR = "-----------------------";
 
     private static Task[] taskList = new Task[100];
@@ -14,25 +13,32 @@ public class HERM35 {
         String introduction = "Hey! I'm " + name + "!\nWhat can I do for you?";
         printMessage(introduction);
         while (input.hasNextLine()) {
-            command = input.nextLine();
-            String words[] = command.split(" ");
-            if (words.length == 2) {
-                if (isInteger(words[1])) {
-                    int taskIndex = Integer.parseInt(words[1]) - 1;
-                    if (taskIndex < taskListCount && taskIndex >= 0) {
-                        if (words[0].equals("mark")) {
+            String command[] = input.nextLine().split(" ", 2);
+            switch (command[0]) {
+                case "mark":
+                    if (isInteger(command[1])) {
+                        int taskIndex = Integer.parseInt(command[1]) - 1;
+                        if (taskIndex >= 0 && taskIndex < taskListCount) {
                             taskList[taskIndex].mark(true);
                             printMessage("Sure, I've marked this task as done:\n" + taskList[taskIndex]);
-                            continue;
-                        } else if (words[0].equals("unmark")) {
-                            taskList[taskIndex].mark(false);
-                            printMessage("OK, I've marked this task as not done:\n" + taskList[taskIndex]);
-                            continue;
+                            break;
                         }
                     }
-                }
-            }
-            switch(command) {
+                    printMessage(String.format(
+                            "Please enter a number between 1 and %d to mark that task.", taskListCount));
+                    break;
+                case "unmark":
+                    if (isInteger(command[1])) {
+                        int taskIndex = Integer.parseInt(command[1]) - 1;
+                        if (taskIndex >= 0 && taskIndex < taskListCount) {
+                            taskList[taskIndex].mark(false);
+                            printMessage("OK, I've marked this task as not done:\n" + taskList[taskIndex]);
+                            break;
+                        }
+                    }
+                    printMessage(String.format(
+                            "Please enter a number between 1 and %d to mark that task.", taskListCount));
+                    break;
                 case "list":
                     String listOutput = "";
                     for (int i = 0; i < taskListCount; i++) {
@@ -43,11 +49,13 @@ public class HERM35 {
                 case "bye":
                     exit();
                     return;
-                default:
-                    taskList[taskListCount] = new Task(command);
+                case "todo":
+                    taskList[taskListCount] = new Task(command[1]);
                     printMessage("added: " + taskList[taskListCount].getName());
                     taskListCount++;
                     break;
+                default:
+                    printMessage("Unknown command, please try again.");
             }
         }
     }
