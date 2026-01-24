@@ -17,6 +17,10 @@ public class HERM35 {
             String command[] = input.nextLine().split(" ", 2);
             switch (command[0]) {
                 case "mark":
+                    if (command.length < 2) {
+                        printMessage("Task index not given.");
+                        break;
+                    }
                     if (isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskListCount) {
@@ -29,6 +33,10 @@ public class HERM35 {
                             "Please enter a number between 1 and %d to mark that task.", taskListCount));
                     break;
                 case "unmark":
+                    if (command.length < 2) {
+                        printMessage("Task index not given.");
+                        break;
+                    }
                     if (isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskListCount) {
@@ -55,6 +63,10 @@ public class HERM35 {
                     exit();
                     return;
                 case "delete":
+                    if (command.length < 2) {
+                        printMessage("Task name not given.");
+                        break;
+                    }
                     if (isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskListCount) {
