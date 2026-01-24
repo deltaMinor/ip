@@ -5,7 +5,7 @@ public class HERM35 {
     private static String command;
     private static final String LINE_SEPARATOR = "-----------------------";
 
-    private static String[] taskList = new String[100];
+    private static Task[] taskList = new Task[100];
     private static int taskListCount = 0;
 
     public static void main(String[] args) {
@@ -19,7 +19,7 @@ public class HERM35 {
                 case "list":
                     String listOutput = "";
                     for (int i = 0; i < taskListCount; i++) {
-                        listOutput += String.valueOf(i+1) + ". " + taskList[i] + "\n";
+                        listOutput += String.valueOf(i+1) + "." + taskList[i] + "\n";
                     }
                     printMessage(listOutput);
                     break;
@@ -27,8 +27,8 @@ public class HERM35 {
                     exit();
                     return;
                 default:
-                    taskList[taskListCount] = command;
-                    printMessage("added: " + taskList[taskListCount]);
+                    taskList[taskListCount] = new Task(command);
+                    printMessage("added: " + taskList[taskListCount].getName());
                     taskListCount++;
                     break;
             }

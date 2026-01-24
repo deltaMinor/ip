@@ -11,7 +11,12 @@ public class Task {
         this.done = done;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    @Override
     public String toString() {
-        return "[" + (done ? "X" : " ") + "]" + name;
+        return "[" + (done ? "X" : " ") + "] " + name;
     }
 }
