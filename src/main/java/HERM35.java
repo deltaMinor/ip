@@ -41,29 +41,57 @@ public class HERM35 {
                             "Please enter a number between 1 and %d to mark that task.", taskListCount));
                     break;
                 case "list":
-                    String listOutput = "";
-                    for (int i = 0; i < taskListCount; i++) {
-                        listOutput += String.valueOf(i+1) + "." + taskList[i] + "\n";
+                    if (command.length > 1) {
+                        printMessage("Unknown command, please try again. (Did you mean \"list\"?");
+                    } else {
+                        String listOutput = "";
+                        for (int i = 0; i < taskListCount; i++) {
+                            listOutput += String.valueOf(i+1) + "." + taskList[i] + "\n";
+                        }
+                        printMessage(listOutput);
                     }
-                    printMessage(listOutput);
                     break;
                 case "bye":
                     exit();
                     return;
                 case "todo":
-                    taskList[taskListCount] = new ToDoTask(command[1]);
-                    taskListCount++;
-                    printAddedTaskMessage(taskListCount - 1);
+                    if (command.length < 2) {
+                        printMessage("Task name not given.");
+                    } else {
+                        taskList[taskListCount] = new ToDoTask(command[1]);
+                        taskListCount++;
+                        printAddedTaskMessage(taskListCount - 1);
+                    }
                     break;
                 case "deadline":
+                    if (command.length < 2) {
+                        printMessage("Task name not given.");
+                        break;
+                    }
                     String[] deadlineTask = command[1].split(" /by ", 2);
+                    if (deadlineTask.length < 2) {
+                        printMessage("Please state the deadline, denoted with \" /by \"");
+                        break;
+                    }
                     taskList[taskListCount] = new DeadlineTask(deadlineTask[0], deadlineTask[1]);
                     taskListCount++;
                     printAddedTaskMessage(taskListCount - 1);
                     break;
                 case "event":
+                    if (command.length < 2) {
+                        printMessage("Task name not given.");
+                        break;
+                    }
                     String[] eventTask = command[1].split(" /from ", 2);
+                    if (eventTask.length < 2) {
+                        printMessage("Please state when the event begins, denoted with \" /from \"");
+                        break;
+                    }
                     String[] eventPeriod = eventTask[1].split(" /to ", 2);
+                    if (eventPeriod.length < 2) {
+                        printMessage("Please state when the event ends, denoted with \" /to \"");
+                        break;
+                    }
                     taskList[taskListCount] = new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]);
                     taskListCount++;
                     printAddedTaskMessage(taskListCount - 1);
