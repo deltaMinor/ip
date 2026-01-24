@@ -1,12 +1,12 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class HERM35 {
 
     private static final String LINE_SEPARATOR = "-----------------------";
 
     public static final int TASK_LIMIT = 100;
-    private static Task[] taskList = new Task[TASK_LIMIT];
-    private static int taskListCount = 0;
+    private static final ArrayList<Task> taskList = new ArrayList<Task>();
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -14,7 +14,7 @@ public class HERM35 {
         String introduction = "Hey! I'm " + name + "!\nWhat can I do for you?";
         printMessage(introduction);
         while (input.hasNextLine()) {
-            String command[] = input.nextLine().split(" ", 2);
+            String[] command = input.nextLine().split(" ", 2);
             switch (command[0]) {
                 case "mark":
                     if (command.length < 2) {
@@ -23,14 +23,14 @@ public class HERM35 {
                     }
                     if (isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
-                        if (taskIndex >= 0 && taskIndex < taskListCount) {
-                            taskList[taskIndex].mark(true);
-                            printMessage("Sure, I've marked this task as done:\n" + taskList[taskIndex]);
+                        if (taskIndex >= 0 && taskIndex < taskList.size()) {
+                            taskList.get(taskIndex).mark(true);
+                            printMessage("Sure, I've marked this task as done:\n" + taskList.get(taskIndex));
                             break;
                         }
                     }
                     printMessage(String.format(
-                            "Please enter a number between 1 and %d to mark that task.", taskListCount));
+                            "Please enter a number between 1 and %d to mark that task.", taskList.size()));
                     break;
                 case "unmark":
                     if (command.length < 2) {
@@ -39,22 +39,23 @@ public class HERM35 {
                     }
                     if (isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
-                        if (taskIndex >= 0 && taskIndex < taskListCount) {
-                            taskList[taskIndex].mark(false);
-                            printMessage("OK, I've marked this task as not done:\n" + taskList[taskIndex]);
+                        if (taskIndex >= 0 && taskIndex < taskList.size()) {
+                            taskList.get(taskIndex).mark(false);
+                            printMessage("OK, I've marked this task as not done:\n"
+                                    + taskList.get(taskIndex));
                             break;
                         }
                     }
                     printMessage(String.format(
-                            "Please enter a number between 1 and %d to mark that task.", taskListCount));
+                            "Please enter a number between 1 and %d to mark that task.", taskList.size()));
                     break;
                 case "list":
                     if (command.length > 1) {
                         printMessage("Unknown command, please try again. (Did you mean \"list\"?");
                     } else {
                         String listOutput = "";
-                        for (int i = 0; i < taskListCount; i++) {
-                            listOutput += String.valueOf(i+1) + "." + taskList[i] + "\n";
+                        for (int i = 0; i < taskList.size(); i++) {
+                            listOutput += i + 1 + "." + taskList.get(i) + "\n";
                         }
                         printMessage(listOutput);
                     }
@@ -69,30 +70,23 @@ public class HERM35 {
                     }
                     if (isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
-                        if (taskIndex >= 0 && taskIndex < taskListCount) {
+                        if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             String taskDeletedMessage = "Got it, I'm deleting this task:\n"
-                                    + taskList[taskIndex] + "\n";
-                            taskList[taskIndex] = null;
-                            for (int i = taskIndex; i < taskListCount - 1; i++) {
-                                taskList[i] = taskList[i + 1];
-                            }
-                            taskList[taskListCount - 1] = null;
-                            taskListCount--;
+                                    + taskList.remove(taskIndex) + "\n";
                             taskDeletedMessage += getCurrentTaskCountMessage();
                             printMessage(taskDeletedMessage);
                             break;
                         }
                     }
                     printMessage(String.format(
-                            "Please enter a number between 1 and %d to delete that task.", taskListCount));
+                            "Please enter a number between 1 and %d to delete that task.", taskList.size()));
                     break;
                 case "todo":
                     if (command.length < 2) {
                         printMessage("Task name not given.");
                     } else {
-                        taskList[taskListCount] = new ToDoTask(command[1]);
-                        taskListCount++;
-                        printAddedTaskMessage(taskListCount - 1);
+                        taskList.add(new ToDoTask(command[1]));
+                        printAddedTaskMessage(taskList.size() - 1);
                     }
                     break;
                 case "deadline":
@@ -105,9 +99,8 @@ public class HERM35 {
                         printMessage("Please state the deadline, denoted with \" /by \"");
                         break;
                     }
-                    taskList[taskListCount] = new DeadlineTask(deadlineTask[0], deadlineTask[1]);
-                    taskListCount++;
-                    printAddedTaskMessage(taskListCount - 1);
+                    taskList.add(new DeadlineTask(deadlineTask[0], deadlineTask[1]));
+                    printAddedTaskMessage(taskList.size() - 1);
                     break;
                 case "event":
                     if (command.length < 2) {
@@ -124,9 +117,8 @@ public class HERM35 {
                         printMessage("Please state when the event ends, denoted with \" /to \"");
                         break;
                     }
-                    taskList[taskListCount] = new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]);
-                    taskListCount++;
-                    printAddedTaskMessage(taskListCount - 1);
+                    taskList.add(new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]));
+                    printAddedTaskMessage(taskList.size() - 1);
                     break;
                 default:
                     printMessage("Unknown command, please try again.");
@@ -136,13 +128,13 @@ public class HERM35 {
 
     public static void printAddedTaskMessage(int taskIndex) {
         String message = "The following task has been added:\n\t"
-                + taskList[taskIndex] + "\n"
+                + taskList.get(taskIndex) + "\n"
                 + getCurrentTaskCountMessage();
         printMessage(message);
     }
 
     public static String getCurrentTaskCountMessage() {
-        return "You now have " + taskListCount + "/" + TASK_LIMIT + " tasks.";
+        return "You now have " + taskList.size() + "/" + TASK_LIMIT + " tasks.";
     }
 
     public static void printMessage(String message) {
