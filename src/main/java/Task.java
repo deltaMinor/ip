@@ -10,4 +10,8 @@ public class Task {
     public void mark(Boolean done) {
         this.done = done;
     }
+
+    public String toString() {
+        return "[" + (done ? "X" : " ") + "]" + name;
+    }
 }
