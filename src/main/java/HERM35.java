@@ -4,7 +4,8 @@ public class HERM35 {
 
     private static final String LINE_SEPARATOR = "-----------------------";
 
-    private static Task[] taskList = new Task[100];
+    public static final int TASK_LIMIT = 100;
+    private static Task[] taskList = new Task[TASK_LIMIT];
     private static int taskListCount = 0;
 
     public static void main(String[] args) {
@@ -51,26 +52,33 @@ public class HERM35 {
                     return;
                 case "todo":
                     taskList[taskListCount] = new ToDoTask(command[1]);
-                    printMessage("added: " + taskList[taskListCount].getDescription());
                     taskListCount++;
+                    printAddedTaskMessage(taskListCount - 1);
                     break;
                 case "deadline":
                     String[] deadlineTask = command[1].split(" /by ", 2);
                     taskList[taskListCount] = new DeadlineTask(deadlineTask[0], deadlineTask[1]);
-                    printMessage("added: " + taskList[taskListCount].getDescription());
                     taskListCount++;
+                    printAddedTaskMessage(taskListCount - 1);
                     break;
                 case "event":
                     String[] eventTask = command[1].split(" /from ", 2);
                     String[] eventPeriod = eventTask[1].split(" /to ", 2);
                     taskList[taskListCount] = new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]);
-                    printMessage("added: " + taskList[taskListCount].getDescription());
                     taskListCount++;
+                    printAddedTaskMessage(taskListCount - 1);
                     break;
                 default:
                     printMessage("Unknown command, please try again.");
             }
         }
+    }
+
+    public static void printAddedTaskMessage(int taskIndex) {
+        String message = "The following task has been added:\n\t"
+                + taskList[taskIndex] + "\n"
+                + "You now have " + taskListCount + "/" + TASK_LIMIT + " tasks.";
+        printMessage(message);
     }
 
     public static void printMessage(String message) {
