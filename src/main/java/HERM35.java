@@ -54,6 +54,26 @@ public class HERM35 {
                 case "bye":
                     exit();
                     return;
+                case "delete":
+                    if (isInteger(command[1])) {
+                        int taskIndex = Integer.parseInt(command[1]) - 1;
+                        if (taskIndex >= 0 && taskIndex < taskListCount) {
+                            String taskDeletedMessage = "Got it, I'm deleting this task:\n"
+                                    + taskList[taskIndex] + "\n";
+                            taskList[taskIndex] = null;
+                            for (int i = taskIndex; i < taskListCount - 1; i++) {
+                                taskList[i] = taskList[i + 1];
+                            }
+                            taskList[taskListCount - 1] = null;
+                            taskListCount--;
+                            taskDeletedMessage += getCurrentTaskCountMessage();
+                            printMessage(taskDeletedMessage);
+                            break;
+                        }
+                    }
+                    printMessage(String.format(
+                            "Please enter a number between 1 and %d to delete that task.", taskListCount));
+                    break;
                 case "todo":
                     if (command.length < 2) {
                         printMessage("Task name not given.");
@@ -105,8 +125,12 @@ public class HERM35 {
     public static void printAddedTaskMessage(int taskIndex) {
         String message = "The following task has been added:\n\t"
                 + taskList[taskIndex] + "\n"
-                + "You now have " + taskListCount + "/" + TASK_LIMIT + " tasks.";
+                + getCurrentTaskCountMessage();
         printMessage(message);
+    }
+
+    public static String getCurrentTaskCountMessage() {
+        return "You now have " + taskListCount + "/" + TASK_LIMIT + " tasks.";
     }
 
     public static void printMessage(String message) {
