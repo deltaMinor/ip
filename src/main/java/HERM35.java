@@ -6,7 +6,7 @@ import java.io.IOException;
 public class HERM35 {
 
     private static final String LINE_SEPARATOR = "-----------------------";
-    private static final String TASKLIST_FILE_DESTINATION = "./data/tasklist.txt";
+    private static final String TASKLIST_FILE_DESTINATION = "./data/tasklist.csv";
 
     public static final int TASK_LIMIT = 100;
     private static final ArrayList<Task> taskList = new ArrayList<Task>();
