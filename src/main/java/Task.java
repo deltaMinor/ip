@@ -1,17 +1,18 @@
-public class Task {
-    private Boolean done;
-    private String description;
-    private char typeIcon = ' ';
-
-    public Task(String description) {
-        done = false;
-        this.description = description;
+abstract public class Task {
+    public enum Type {
+        TODO,
+        DEADLINE,
+        EVENT
     }
 
-    public Task(String description, char typeIcon) {
+    private Boolean done;
+    private final String description;
+    private final Type type;
+
+    public Task(String description, Type type) {
         done = false;
         this.description = description;
-        this.typeIcon = typeIcon;
+        this.type = type;
     }
 
     public void mark(Boolean done) {
@@ -26,8 +27,22 @@ public class Task {
         return description;
     }
 
+    public String getType() {
+        switch (type) {
+            case TODO:
+                return "T";
+            case DEADLINE:
+                return "D";
+            case EVENT:
+                return "E";
+        }
+        return "";
+    }
+
+    abstract public String[] getData();
+
     @Override
     public String toString() {
-        return "[" + typeIcon + "][" + getDoneIcon() + "] " + getDescription();
+        return "[" + getType() + "][" + getDoneIcon() + "] " + getDescription();
     }
 }
