@@ -1,9 +1,12 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 
 public class HERM35 {
 
     private static final String LINE_SEPARATOR = "-----------------------";
+    private static final String TASKLIST_FILE_DESTINATION = "./data/tasklist.txt";
 
     public static final int TASK_LIMIT = 100;
     private static final ArrayList<Task> taskList = new ArrayList<Task>();
@@ -12,6 +15,14 @@ public class HERM35 {
         Scanner input = new Scanner(System.in);
         String name = "HERM35";
         String introduction = "Hey! I'm " + name + "!\nWhat can I do for you?";
+        File tasklistFile = new File(TASKLIST_FILE_DESTINATION);
+        try {
+            tasklistFile.createNewFile();
+        } catch (IOException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+
         printMessage(introduction);
         while (input.hasNextLine()) {
             String[] command = input.nextLine().split(" ", 2);
