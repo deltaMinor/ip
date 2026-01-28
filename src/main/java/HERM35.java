@@ -6,16 +6,29 @@ public class HERM35 {
 
     private static final String LINE_SEPARATOR = "-----------------------";
     private static final String TASKLIST_FILE_NAME = "tasklist";
-    private static final Storage TASKLIST_STORAGE = new Storage(TASKLIST_FILE_NAME);;
+    private static final Storage TASKLIST_STORAGE = new Storage(TASKLIST_FILE_NAME);
+    private static final Storage COMMANDLIST = new Storage("help", ".txt");
 
     public static final int TASK_LIMIT = 100;
     private static final ArrayList<Task> taskList = new ArrayList<Task>();
 
+    private static final String NAME = "HERM35";
+
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        String name = "HERM35";
-        String introduction = "Hey! I'm " + name + "!\nWhat can I do for you?";
+        String introduction = "Hey! I'm " + NAME + "!\nWhat can I do for you?";
         readTaskData();
+        String helpOutput = "";
+        String[] commandListLines = {};
+        try {
+            commandListLines = COMMANDLIST.read();
+        } catch (IOException e) {
+            System.out.println("Error: unable to read command list.\n");
+            e.printStackTrace();
+        }
+        for (int i = 0; i < commandListLines.length; i++) {
+            helpOutput += commandListLines[i] + "\n";
+        }
         printMessage(introduction);
         while (input.hasNextLine()) {
             String[] command = input.nextLine().split(" ", 2);
@@ -138,6 +151,9 @@ public class HERM35 {
                     }
                     insertTaskData(new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]));
                     printAddedTaskMessage(taskList.size() - 1);
+                    break;
+                case "help":
+                    printMessage(helpOutput);
                     break;
                 default:
                     printMessage("Unknown command, please try again.");

@@ -1,0 +1,11 @@
+Here are the commands you can use:
+list: Check your current tasklist
+todo [task name]: Save a new task with name [task name]
+deadline [task name] /by [date]: Save a new task with a deadline of [date]
+event [task name] /from [start date] /to [end date]: Save an event with the provided dates
+mark [index]: Mark the task with index [index] as done
+unmark [index]: Unmark the task with index [index] as undone
+delete [index]: Delete the task at index [index]
+clear: Empty your tasklist
+bye: Exit this program
+help: See this list of commands again

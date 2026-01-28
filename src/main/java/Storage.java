@@ -13,16 +13,13 @@ public class Storage {
     private static final String CSV_FORMAT = ".csv";
 
     private final String fileName;
-    private final File file;
 
     public Storage(String fileName) {
         this.fileName = DATA_DIRECTORY + fileName + CSV_FORMAT;
-        file = new File(fileName);
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+    }
+
+    public Storage(String fileName, String fileFormat) {
+        this.fileName = DATA_DIRECTORY + fileName + fileFormat;
     }
 
     //Insert a new row
