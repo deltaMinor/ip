@@ -6,7 +6,12 @@ public class ToDoTask extends Task {
         this.name = name;
     }
 
+    public ToDoTask(String name, Boolean done) {
+        super(name, Type.TODO, done);
+        this.name = name;
+    }
+
     public String[] getData() {
-        return new String[] {getType(), name};
+        return new String[] {getType(), getDoneIcon(), name};
     }
 }

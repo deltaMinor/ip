@@ -1,12 +1,12 @@
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.io.File;
-import java.io.IOException;
 
 public class HERM35 {
 
     private static final String LINE_SEPARATOR = "-----------------------";
-    private static final String TASKLIST_FILE_DESTINATION = "./data/tasklist.csv";
+    private static final String TASKLIST_FILE_NAME = "tasklist";
+    private static final Storage TASKLIST_STORAGE = new Storage(TASKLIST_FILE_NAME);;
 
     public static final int TASK_LIMIT = 100;
     private static final ArrayList<Task> taskList = new ArrayList<Task>();
@@ -15,14 +15,7 @@ public class HERM35 {
         Scanner input = new Scanner(System.in);
         String name = "HERM35";
         String introduction = "Hey! I'm " + name + "!\nWhat can I do for you?";
-        File tasklistFile = new File(TASKLIST_FILE_DESTINATION);
-        try {
-            tasklistFile.createNewFile();
-        } catch (IOException e) {
-            System.out.println(e);
-            e.printStackTrace();
-        }
-
+        readTaskData();
         printMessage(introduction);
         while (input.hasNextLine()) {
             String[] command = input.nextLine().split(" ", 2);
@@ -36,6 +29,7 @@ public class HERM35 {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             taskList.get(taskIndex).mark(true);
+                            editTaskData(taskIndex, taskList.get(taskIndex));
                             printMessage("Sure, I've marked this task as done:\n" + taskList.get(taskIndex));
                             break;
                         }
@@ -52,6 +46,7 @@ public class HERM35 {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             taskList.get(taskIndex).mark(false);
+                            editTaskData(taskIndex, taskList.get(taskIndex));
                             printMessage("OK, I've marked this task as not done:\n"
                                     + taskList.get(taskIndex));
                             break;
@@ -61,6 +56,7 @@ public class HERM35 {
                             "Please enter a number between 1 and %d to mark that task.", taskList.size()));
                     break;
                 case "list":
+                    readTaskData(); //delete later
                     if (command.length > 1) {
                         printMessage("Unknown command, please try again. (Did you mean \"list\"?");
                     } else {
@@ -86,6 +82,7 @@ public class HERM35 {
                                     + taskList.remove(taskIndex) + "\n";
                             taskDeletedMessage += getCurrentTaskCountMessage();
                             printMessage(taskDeletedMessage);
+                            deleteTaskData(taskIndex);
                             break;
                         }
                     }
@@ -96,7 +93,7 @@ public class HERM35 {
                     if (command.length < 2) {
                         printMessage("Task name not given.");
                     } else {
-                        taskList.add(new ToDoTask(command[1]));
+                        insertTaskData(new ToDoTask(command[1]));
                         printAddedTaskMessage(taskList.size() - 1);
                     }
                     break;
@@ -110,7 +107,7 @@ public class HERM35 {
                         printMessage("Please state the deadline, denoted with \" /by \"");
                         break;
                     }
-                    taskList.add(new DeadlineTask(deadlineTask[0], deadlineTask[1]));
+                    insertTaskData(new DeadlineTask(deadlineTask[0], deadlineTask[1]));
                     printAddedTaskMessage(taskList.size() - 1);
                     break;
                 case "event":
@@ -128,7 +125,7 @@ public class HERM35 {
                         printMessage("Please state when the event ends, denoted with \" /to \"");
                         break;
                     }
-                    taskList.add(new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]));
+                    insertTaskData(new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]));
                     printAddedTaskMessage(taskList.size() - 1);
                     break;
                 default:
@@ -159,6 +156,49 @@ public class HERM35 {
 
     public static void printLine(String line) {
         System.out.println("\t" + line);
+    }
+
+    public static void insertTaskData(Task task) {
+        taskList.add(task);
+        try {
+            TASKLIST_STORAGE.insert(task.getData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteTaskData(int taskIndex) {
+        try {
+            TASKLIST_STORAGE.delete(taskIndex);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void editTaskData(int taskIndex, Task task) {
+        try {
+            TASKLIST_STORAGE.edit(taskIndex, task.getData());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void readTaskData() {
+        String[] lines = {};
+        try {
+            lines = TASKLIST_STORAGE.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (lines.length > 0) {
+            taskList.clear();
+            for (int i = 0; i < lines.length; i++) {
+                Task newTask = Task.dataToTask(lines[i].split(","));
+                if (newTask != null) {
+                    taskList.add(newTask);
+                }
+            }
+        }
     }
 
     public static void exit() {

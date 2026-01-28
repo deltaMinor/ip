@@ -8,7 +8,13 @@ public class DeadlineTask extends Task{
         this.date = date;
     }
 
+    public DeadlineTask(String name, String date, Boolean done){
+        super(name + " (by: " + date + ")", Type.DEADLINE, done);
+        this.name = name;
+        this.date = date;
+    }
+
     public String[] getData() {
-        return new String[] {getType(), name, date};
+        return new String[] {getType(), getDoneIcon(), name, date};
     }
 }
