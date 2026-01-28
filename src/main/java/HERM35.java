@@ -56,13 +56,16 @@ public class HERM35 {
                             "Please enter a number between 1 and %d to mark that task.", taskList.size()));
                     break;
                 case "list":
-                    readTaskData(); //delete later
                     if (command.length > 1) {
                         printMessage("Unknown command, please try again. (Did you mean \"list\"?");
                     } else {
                         String listOutput = "";
-                        for (int i = 0; i < taskList.size(); i++) {
-                            listOutput += i + 1 + "." + taskList.get(i) + "\n";
+                        if (taskList.size() > 0) {
+                            for (int i = 0; i < taskList.size(); i++) {
+                                listOutput += i + 1 + "." + taskList.get(i) + "\n";
+                            }
+                        } else {
+                            listOutput = "Your task list is empty!";
                         }
                         printMessage(listOutput);
                     }
@@ -88,6 +91,14 @@ public class HERM35 {
                     }
                     printMessage(String.format(
                             "Please enter a number between 1 and %d to delete that task.", taskList.size()));
+                    break;
+                case "clear":
+                    if (command.length > 1) {
+                        printMessage("Unknown command, please try again. (Did you mean \"clear\"?");
+                    } else {
+                        clearTaskData();
+                        printMessage("Alright, I have emptied the task list.\n" + getCurrentTaskCountMessage());
+                    }
                     break;
                 case "todo":
                     if (command.length < 2) {
@@ -170,6 +181,15 @@ public class HERM35 {
     public static void deleteTaskData(int taskIndex) {
         try {
             TASKLIST_STORAGE.delete(taskIndex);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void clearTaskData() {
+        taskList.clear();
+        try {
+            TASKLIST_STORAGE.clear();
         } catch (IOException e) {
             e.printStackTrace();
         }

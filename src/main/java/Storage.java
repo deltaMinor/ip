@@ -2,6 +2,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -40,6 +41,10 @@ public class Storage {
         }
         lines.remove(index);
         Files.write(Paths.get(fileName), lines);
+    }
+
+    public void clear() throws IOException {
+        Files.write(Paths.get(fileName), new ArrayList<>());
     }
 
     //Edit row at index
