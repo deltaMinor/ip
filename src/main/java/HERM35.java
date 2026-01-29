@@ -1,19 +1,39 @@
 import java.io.IOException;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 
+/**
+ * Entry point and controller class for the HERM35 chatbot.
+ */
 public class HERM35 {
 
+    /** Separator string used when printing messages. */
     private static final String LINE_SEPARATOR = "-----------------------";
+
+    /** Filename of task data storage. */
     private static final String TASKLIST_FILE_NAME = "tasklist";
+
+    /** Storage object used to store task list. */
     private static final Storage TASKLIST_STORAGE = new Storage(TASKLIST_FILE_NAME);
+
+    /** Storage object used to load the help text. */
     private static final Storage COMMANDLIST = new Storage("help", ".txt");
 
+    /** Maximum number of tasks allowed. */
     public static final int TASK_LIMIT = 100;
+
+    /** List of tasks currently managed by the chatbot. */
     private static final ArrayList<Task> taskList = new ArrayList<Task>();
 
+    /** Name of the chatbot. */
     private static final String NAME = "HERM35";
 
+    /**
+     * Program entry point.
+     *
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         String introduction = "Hey! I'm " + NAME + "!\nWhat can I do for you?";
@@ -41,8 +61,7 @@ public class HERM35 {
                     if (isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
-                            taskList.get(taskIndex).mark(true);
-                            editTaskData(taskIndex, taskList.get(taskIndex));
+                            markTask(taskIndex, true);
                             printMessage("Sure, I've marked this task as done:\n" + taskList.get(taskIndex));
                             break;
                         }
@@ -58,8 +77,7 @@ public class HERM35 {
                     if (isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
-                            taskList.get(taskIndex).mark(false);
-                            editTaskData(taskIndex, taskList.get(taskIndex));
+                            markTask(taskIndex, false);
                             printMessage("OK, I've marked this task as not done:\n"
                                     + taskList.get(taskIndex));
                             break;
@@ -70,7 +88,7 @@ public class HERM35 {
                     break;
                 case "list":
                     if (command.length > 1) {
-                        printMessage("Unknown command, please try again. (Did you mean \"list\"?");
+                        printMessage("Unknown command, please try again. (Did you mean \"list\"?)");
                     } else {
                         String listOutput = "";
                         if (taskList.size() > 0) {
@@ -84,8 +102,13 @@ public class HERM35 {
                     }
                     break;
                 case "bye":
-                    exit();
-                    return;
+                    if (command.length > 1) {
+                        printMessage("Unknown command, please try again. (Did you mean \"list\"?)");
+                        break;
+                    } else {
+                        exit();
+                        return;
+                    }
                 case "delete":
                     if (command.length < 2) {
                         printMessage("Task name not given.");
@@ -95,10 +118,10 @@ public class HERM35 {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             String taskDeletedMessage = "Got it, I'm deleting this task:\n"
-                                    + taskList.remove(taskIndex) + "\n";
+                                    + taskList.get(taskIndex) + "\n";
+                            deleteTaskData(taskIndex);
                             taskDeletedMessage += getCurrentTaskCountMessage();
                             printMessage(taskDeletedMessage);
-                            deleteTaskData(taskIndex);
                             break;
                         }
                     }
@@ -161,6 +184,11 @@ public class HERM35 {
         }
     }
 
+    /**
+     * Prints a formatted confirmation message for a newly added task.
+     *
+     * @param taskIndex Index of the newly added task.
+     */
     public static void printAddedTaskMessage(int taskIndex) {
         String message = "The following task has been added:\n\t"
                 + taskList.get(taskIndex) + "\n"
@@ -168,10 +196,20 @@ public class HERM35 {
         printMessage(message);
     }
 
+    /**
+     * Returns a message indicating the current number of tasks stored.
+     *
+     * @return Formatted task count message string.
+     */
     public static String getCurrentTaskCountMessage() {
         return "You now have " + taskList.size() + "/" + TASK_LIMIT + " tasks.";
     }
 
+    /**
+     * Prints the message given in formatting.
+     *
+     * @param message Message to be printed.
+     */
     public static void printMessage(String message) {
         printLine(LINE_SEPARATOR);
         Scanner reader = new Scanner(message);
@@ -181,10 +219,20 @@ public class HERM35 {
         printLine(LINE_SEPARATOR);
     }
 
+    /**
+     * Prints a single line with indentation.
+     *
+     * @param line Line to be printed.
+     */
     public static void printLine(String line) {
         System.out.println("\t" + line);
     }
 
+    /**
+     * Adds a task to the in-memory task list and saves it to hard disk.
+     *
+     * @param task Task to be added.
+     */
     public static void insertTaskData(Task task) {
         taskList.add(task);
         try {
@@ -194,7 +242,13 @@ public class HERM35 {
         }
     }
 
+    /**
+     * Deletes a task from the in-memory task list and hard disk by index.
+     *
+     * @param taskIndex index of the task to delete.
+     */
     public static void deleteTaskData(int taskIndex) {
+        taskList.remove(taskIndex);
         try {
             TASKLIST_STORAGE.delete(taskIndex);
         } catch (IOException e) {
@@ -202,6 +256,9 @@ public class HERM35 {
         }
     }
 
+    /**
+     * Clears all tasks from memory and hard disk.
+     */
     public static void clearTaskData() {
         taskList.clear();
         try {
@@ -211,6 +268,12 @@ public class HERM35 {
         }
     }
 
+    /**
+     * Edits an existing task in hard disk.
+     *
+     * @param taskIndex Index of the task to edit.
+     * @param task      Updated task object.
+     */
     public static void editTaskData(int taskIndex, Task task) {
         try {
             TASKLIST_STORAGE.edit(taskIndex, task.getData());
@@ -219,6 +282,21 @@ public class HERM35 {
         }
     }
 
+    /**
+     * Updates an existing task's isDone variable.
+     *
+     * @param taskIndex Index of the task to update.
+     * @param isDone New isDone value of task.
+     */
+
+    public static void markTask(int taskIndex, boolean isDone) {
+        taskList.get(taskIndex).mark(isDone);
+        editTaskData(taskIndex, taskList.get(taskIndex));
+    }
+
+    /**
+     * Loads task data from hard disk into memory.
+     */
     public static void readTaskData() {
         String[] lines = {};
         try {
@@ -237,16 +315,25 @@ public class HERM35 {
         }
     }
 
+    /**
+     * Exit procedure of the chatbot.
+     */
     public static void exit() {
         printMessage("Bye, see you later!");
     }
 
+    /**
+     * Checks whether a given string can be parsed as an integer.
+     *
+     * @param str String to be checked.
+     * @return true if the string represents an integer, false otherwise.
+     */
     public static boolean isInteger(String str) {
         if (str == null) {
             return false;
         }
         try {
-            double i = Integer.parseInt(str);
+            int i = Integer.parseInt(str);
         } catch (NumberFormatException nfe) {
             return false;
         }
