@@ -1,4 +1,8 @@
-package herm35;
+package herm35.command;
+
+import herm35.Storage;
+import herm35.TaskList;
+import herm35.Ui;
 
 /**
  * Command that bids the user farewell and indicates for the program to exit.

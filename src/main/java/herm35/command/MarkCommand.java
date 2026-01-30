@@ -1,4 +1,9 @@
-package herm35;
+package herm35.command;
+
+import herm35.Parser;
+import herm35.Storage;
+import herm35.TaskList;
+import herm35.Ui;
 
 import java.io.IOException;
 

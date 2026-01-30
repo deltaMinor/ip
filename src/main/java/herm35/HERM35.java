@@ -1,5 +1,8 @@
 package herm35;
 
+import herm35.command.MessageCommand;
+import herm35.command.Command;
+
 import java.io.IOException;
 
 /**

@@ -1,4 +1,8 @@
-package herm35;
+package herm35.command;
+
+import herm35.Storage;
+import herm35.TaskList;
+import herm35.Ui;
 
 /**
  * Command that lists every task that is stored and their status.

@@ -1,4 +1,8 @@
-package herm35;
+package herm35.command;
+
+import herm35.TaskList;
+import herm35.Storage;
+import herm35.Ui;
 
 /**
  * Represents an executable command in the chatbot.
@@ -19,7 +23,7 @@ public abstract class Command {
      * @param storage Storage used for saving data.
      * @param ui User interface for input and output.
      */
-    abstract void execute(TaskList taskList, Storage storage, Ui ui);
+    public abstract void execute(TaskList taskList, Storage storage, Ui ui);
 
     /**
      * Indicates whether this command should cause the application to exit.

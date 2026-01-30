@@ -1,4 +1,8 @@
-package herm35;
+package herm35.command;
+
+import herm35.Storage;
+import herm35.TaskList;
+import herm35.Ui;
 
 /** Command to display all tasks that fit a search prompt. */
 public class FindCommand extends Command {
