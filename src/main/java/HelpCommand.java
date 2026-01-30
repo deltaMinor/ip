@@ -1,11 +1,17 @@
 import java.io.IOException;
 
+/** Command to display all valid commands to the user. */
 public class HelpCommand extends Command {
     /** Storage object used to load the help text. */
     private static final Storage COMMANDLIST = new Storage("help", ".txt");
 
+    /** Paragraph to be shown to the user. */
     private static String helpOutput = "";
 
+    /**
+     * Loads the command list to initialize the help output paragraph.
+     * Should be run once before HERM35 starts.
+     */
     public static void setup() {
         helpOutput = "";
         String[] commandListLines = {};
@@ -20,6 +26,7 @@ public class HelpCommand extends Command {
         }
     }
 
+    /** Constructs a HelpCommand object. */
     public HelpCommand() {
 
     }

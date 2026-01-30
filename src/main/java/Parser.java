@@ -22,10 +22,19 @@ public class Parser {
         TIME
     }
 
+    /**
+     * Set up procedure such ensure every Command class has its required information.
+     */
     public static void setup() {
         HelpCommand.setup();
     }
 
+    /**
+     * Parses user input and outputs the corresponding Command.
+     *
+     * @param input User input to be parsed
+     * @return Command which corresponds to the given user input.
+     */
     public static Command parse(String input) {
         String[] tokens = input.split(" ", 2);
         switch (tokens[0]) {

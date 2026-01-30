@@ -1,6 +1,8 @@
 import java.io.IOException;
 
+/** Command that clears the task list. */
 public class ClearCommand extends Command {
+    /** Constructs a ClearCommand object. */
     public ClearCommand() {
 
     }
