@@ -57,7 +57,12 @@ abstract public class Task {
      * @param isDone The completion status of the task.
      */
     public void mark(Boolean isDone) {
+
         this.isDone = isDone;
+    }
+
+    public boolean getIsDone() {
+        return isDone;
     }
 
     /**
@@ -66,6 +71,7 @@ abstract public class Task {
      * @return "X" if isDone is true, " " otherwise.
      */
     public String getDoneIcon() {
+
         return isDone ? "X" : " ";
     }
 

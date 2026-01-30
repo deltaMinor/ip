@@ -180,6 +180,30 @@ public class HERM35 {
                         printMessage("Search prompt not given.");
                     }
                     ArrayList<Task> filteredTaskList = new ArrayList<Task>();
+                    if (command[1] == "/done") {
+                        for (int i = 0; i < taskList.size(); i++) {
+                            if (taskList.get(i).getIsDone()) {
+                                filteredTaskList.add(taskList.get(i));
+                            }
+                        }
+                        printMessage(
+                                listToMessage(
+                                        filteredTaskList,
+                                        "There are no completed tasks."));
+                        break;
+                    }
+                    if (command[1] == "/todo") {
+                        for (int i = 0; i < taskList.size(); i++) {
+                            if (!taskList.get(i).getIsDone()) {
+                                filteredTaskList.add(taskList.get(i));
+                            }
+                        }
+                        printMessage(
+                                listToMessage(
+                                        filteredTaskList,
+                                        "There are no completed tasks."));
+                        break;
+                    }
                     if (command[1].contains("/on")) {
                         TimePoint onTimePoint = Parser.toDate(command[1].replace("/on ", ""));
                         String noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
