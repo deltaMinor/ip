@@ -98,7 +98,7 @@ public class HERM35 {
                     break;
                 case "bye":
                     if (command.length > 1) {
-                        printMessage("Unknown command, please try again. (Did you mean \"list\"?)");
+                        printMessage("Unknown command, please try again. (Did you mean \"bye\"?)");
                         break;
                     } else {
                         exit();
@@ -125,7 +125,7 @@ public class HERM35 {
                     break;
                 case "clear":
                     if (command.length > 1) {
-                        printMessage("Unknown command, please try again. (Did you mean \"clear\"?");
+                        printMessage("Unknown command, please try again. (Did you mean \"clear\"?)");
                     } else {
                         clearTaskData();
                         printMessage("Alright, I have emptied the task list.\n" + getCurrentTaskCountMessage());
@@ -317,7 +317,7 @@ public class HERM35 {
                         break;
                     }
                     for (int i = 0; i < taskList.size(); i++) {
-                        if (taskList.get(i).toString().contains(command[1])) {
+                        if (taskList.get(i).toString().toLowerCase().contains(command[1].toLowerCase())) {
                             filteredTaskList.add(taskList.get(i));
                         }
                     }
