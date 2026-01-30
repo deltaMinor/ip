@@ -78,12 +78,16 @@ abstract public class Task {
         return description;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     /**
      * Returns a single-character code representing the task type.
      *
      * @return "T" for TODO, "D" for DEADLINE, "E" for EVENT
      */
-    public String getType() {
+    public String getTypeIcon() {
         switch (type) {
             case TODO:
                 return "T";
@@ -123,6 +127,6 @@ abstract public class Task {
 
     @Override
     public String toString() {
-        return "[" + getType() + "][" + getDoneIcon() + "] " + getDescription();
+        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription();
     }
 }

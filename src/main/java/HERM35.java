@@ -1,5 +1,8 @@
 import java.io.IOException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -90,15 +93,7 @@ public class HERM35 {
                     if (command.length > 1) {
                         printMessage("Unknown command, please try again. (Did you mean \"list\"?)");
                     } else {
-                        String listOutput = "";
-                        if (taskList.size() > 0) {
-                            for (int i = 0; i < taskList.size(); i++) {
-                                listOutput += i + 1 + "." + taskList.get(i) + "\n";
-                            }
-                        } else {
-                            listOutput = "Your task list is empty!";
-                        }
-                        printMessage(listOutput);
+                        printMessage(listToMessage(taskList, "Your task list is empty!"));
                     }
                     break;
                 case "bye":
@@ -180,6 +175,133 @@ public class HERM35 {
                                     Parser.toDate(eventPeriod[1])));
                     printAddedTaskMessage(taskList.size() - 1);
                     break;
+                case "find":
+                    if (command.length < 2) {
+                        printMessage("Search prompt not given.");
+                    }
+                    ArrayList<Task> filteredTaskList = new ArrayList<Task>();
+                    if (command[1].contains("/on")) {
+                        TimePoint onTimePoint = Parser.toDate(command[1].replace("/on ", ""));
+                        String noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
+                        switch (onTimePoint.getFormat()) {
+                            case LOCAL_DATE:
+                                for (Task task : taskList) {
+                                    switch (task.getType()) {
+                                        case DEADLINE:
+                                            if (onTimePoint.isSameDayAs(((DeadlineTask) task).getByDate())) {
+                                                filteredTaskList.add(task);
+                                            }
+                                            break;
+                                        case EVENT:
+                                            TimePoint fromDate = ((EventTask) task).getFromDate();
+                                            TimePoint toDate = ((EventTask) task).getToDate();
+                                            if (onTimePoint.isAfter(fromDate)
+                                                    && onTimePoint.isBefore(toDate)) {
+                                                filteredTaskList.add(task);
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                break;
+                            case LOCAL_DATE_TIME:
+                                for (Task task : taskList) {
+                                    switch (task.getType()) {
+                                        case DEADLINE:
+                                            if (onTimePoint.equals(((DeadlineTask) task).getByDate())) {
+                                                filteredTaskList.add(task);
+                                            }
+                                            break;
+                                        case EVENT:
+                                            TimePoint fromDate = ((EventTask) task).getFromDate();
+                                            TimePoint toDate = ((EventTask) task).getToDate();
+                                            if (onTimePoint.isAfter(fromDate)
+                                                    && onTimePoint.isBefore(toDate)) {
+                                                filteredTaskList.add(task);
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                break;
+                            default:
+                                noTasksMessage = "Invalid on date. Recommended format: DD/MM/YYYY";
+                        }
+                        printMessage(listToMessage(filteredTaskList, noTasksMessage));
+                        break;
+                    }
+                    if (command[1].contains("/before")) {
+                        TimePoint beforeTimePoint = Parser.toDate(command[1].replace("/before ", ""));
+                        String noTasksMessage = String.format(
+                                "There are no tasks occurring before %s.", beforeTimePoint);
+                        switch (beforeTimePoint.getFormat()) {
+                            case STRING:
+                                noTasksMessage = "Invalid before date. Recommended format: DD/MM/YYYY";
+                                break;
+                            default:
+                                for (Task task : taskList) {
+                                    switch (task.getType()) {
+                                        case DEADLINE:
+                                            if (beforeTimePoint.isAfter(((DeadlineTask) task).getByDate())) {
+                                                filteredTaskList.add(task);
+                                            }
+                                            break;
+                                        case EVENT:
+                                            if (beforeTimePoint.isAfter(((EventTask) task).getToDate())) {
+                                                filteredTaskList.add(task);
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                break;
+                        }
+                        printMessage(listToMessage(filteredTaskList, noTasksMessage));
+                        break;
+                    }
+                    if (command[1].contains("/after")) {
+                        TimePoint afterTimePoint = Parser.toDate(command[1].replace("/after ", ""));
+                        String noTasksMessage = String.format(
+                                "There are no tasks occurring after %s.", afterTimePoint);
+                        switch (afterTimePoint.getFormat()) {
+                            case STRING:
+                                noTasksMessage = "Invalid after date. Recommended format: DD/MM/YYYY";
+                                break;
+                            default:
+                                for (Task task : taskList) {
+                                    switch (task.getType()) {
+                                        case DEADLINE:
+                                            if (afterTimePoint.isBefore(((DeadlineTask) task).getByDate())) {
+                                                filteredTaskList.add(task);
+                                            }
+                                            break;
+                                        case EVENT:
+                                            if (afterTimePoint.isBefore(((EventTask) task).getFromDate())) {
+                                                filteredTaskList.add(task);
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                                break;
+                        }
+                        printMessage(listToMessage(filteredTaskList, noTasksMessage));
+                        break;
+                    }
+                    for (int i = 0; i < taskList.size(); i++) {
+                        if (taskList.get(i).toString().contains(command[1])) {
+                            filteredTaskList.add(taskList.get(i));
+                        }
+                    }
+                    printMessage(
+                            listToMessage(
+                                    filteredTaskList,
+                                    String.format("There are no tasks containing %s.", command[1])));
+                    break;
                 case "help":
                     printMessage(helpOutput);
                     break;
@@ -231,6 +353,25 @@ public class HERM35 {
      */
     public static void printLine(String line) {
         System.out.println("\t" + line);
+    }
+
+    /**
+     * Convert a given list to a string sequence that can be printed as a message.
+     *
+     * @param list List to be converted into a message.
+     * @param noTasksOutput Output message if there are no tasks in the task list.
+     * @return String sequence that can be printed as a message.
+     */
+    public static String listToMessage(ArrayList<? extends Object> list, String noTasksOutput) {
+        String listOutput = "";
+        if (!list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                listOutput += i + 1 + "." + list.get(i).toString() + "\n";
+            }
+        } else {
+            return noTasksOutput;
+        }
+        return listOutput;
     }
 
     /**

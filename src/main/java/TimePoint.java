@@ -79,6 +79,147 @@ public class TimePoint {
         }
     }
 
+    public int getDayOfMonth() {
+        switch (this.format) {
+            case LOCAL_DATE:
+                return this.localDate.getDayOfMonth();
+            case LOCAL_DATE_TIME:
+                return this.localDateTime.toLocalDate().getDayOfMonth();
+            default:
+                return -1;
+        }
+    }
+
+    public int getMonth() {
+        switch (this.format) {
+            case LOCAL_DATE:
+                return this.localDate.getMonthValue();
+            case LOCAL_DATE_TIME:
+                return this.localDateTime.toLocalDate().getMonthValue();
+            default:
+                return -1;
+        }
+    }
+
+    public int getYear() {
+        switch (this.format) {
+            case LOCAL_DATE:
+                return this.localDate.getYear();
+            case LOCAL_DATE_TIME:
+                return this.localDateTime.toLocalDate().getYear();
+            default:
+                return -1;
+        }
+    }
+
+    /**
+     * Compares against another TimePoint if they are on the same day.
+     * Both TimePoints being compared cannot contain their date as a string.
+     *
+     * @param other Other TimePoint to compare against.
+     * @return True only if both TimePoints are on the same day, given they are not stored as a string.
+     */
+    public boolean isSameDayAs(TimePoint other) {
+        LocalDate thisLocalDate;
+        switch (this.format) {
+            case LOCAL_DATE:
+                thisLocalDate = this.localDate;
+                break;
+            case LOCAL_DATE_TIME:
+                thisLocalDate = this.localDateTime.toLocalDate();
+                break;
+            default:
+                return false;
+        }
+        LocalDate otherLocalDate;
+        switch (other.format) {
+            case LOCAL_DATE:
+                otherLocalDate = (LocalDate) other.getTime();
+                break;
+            case LOCAL_DATE_TIME:
+                otherLocalDate = ((LocalDateTime) other.getTime()).toLocalDate();
+                break;
+            default:
+                return false;
+        }
+        return thisLocalDate.isEqual(otherLocalDate);
+    }
+
+    /**
+     * Compares against another TimePoint to check if this TimePoint is after it.
+     * Both TimePoints being compared cannot contain their date as a string.
+     *
+     * @param other Other TimePoint to compare against
+     * @return True only if this TimePoint is after other, given they are not stored as a string.
+     */
+    public boolean isAfter(TimePoint other) {
+        if (this.format == Format.STRING && other.getFormat() == Format.STRING) {
+            return false;
+        }
+        if (this.format == Format.LOCAL_DATE) {
+            if (other.getFormat() == Format.LOCAL_DATE) {
+                return this.localDate.isAfter((LocalDate) other.getTime());
+            } else {
+                return this.localDate.isAfter(((LocalDateTime) other.getTime()).toLocalDate());
+            }
+        } else {
+            if (other.getFormat() == Format.LOCAL_DATE) {
+                return this.localDateTime.toLocalDate().isAfter((LocalDate) other.getTime());
+            } else {
+                return this.localDateTime.isAfter((LocalDateTime) other.getTime());
+            }
+        }
+    }
+
+    /**
+     * Compares against another TimePoint to check if this TimePoint is before it.
+     * Both TimePoints being compared cannot contain their date as a string.
+     *
+     * @param other Other TimePoint to compare against
+     * @return True only if this TimePoint is before other, given they are not stored as a string.
+     */
+    public boolean isBefore(TimePoint other) {
+        if (this.format == Format.STRING && other.getFormat() == Format.STRING) {
+            return false;
+        }
+        if (this.format == Format.LOCAL_DATE) {
+            if (other.getFormat() == Format.LOCAL_DATE) {
+                return this.localDate.isBefore((LocalDate) other.getTime());
+            } else {
+                return this.localDate.isBefore(((LocalDateTime) other.getTime()).toLocalDate());
+            }
+        } else {
+            if (other.getFormat() == Format.LOCAL_DATE) {
+                return this.localDateTime.toLocalDate().isBefore((LocalDate) other.getTime());
+            } else {
+                return this.localDateTime.isBefore((LocalDateTime) other.getTime());
+            }
+        }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        TimePoint otherTimePoint = (TimePoint) other;
+        if (this.format != otherTimePoint.format) {
+            return false;
+        }
+        switch (this.format) {
+            case STRING:
+                return this.timeString.equals(otherTimePoint.timeString);
+            case LOCAL_DATE:
+                return this.localDate.equals(otherTimePoint.localDate);
+            case LOCAL_DATE_TIME:
+                return this.localDateTime.equals(otherTimePoint.localDateTime);
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         switch (format) {

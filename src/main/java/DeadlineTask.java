@@ -6,7 +6,7 @@ public class DeadlineTask extends Task{
 
     /** Name and deadline of the task. */
     private final String name;
-    private final TimePoint date;
+    private final TimePoint byDate;
 
     /**
      * Creates a new uncompleted deadline task.
@@ -17,7 +17,7 @@ public class DeadlineTask extends Task{
     public DeadlineTask(String name, TimePoint date){
         super(name + " (by: " + date + ")", Type.DEADLINE);
         this.name = name;
-        this.date = date;
+        this.byDate = date;
     }
 
     /**
@@ -30,11 +30,15 @@ public class DeadlineTask extends Task{
     public DeadlineTask(String name, TimePoint date, Boolean isDone){
         super(name + " (by: " + date + ")", Type.DEADLINE, isDone);
         this.name = name;
-        this.date = date;
+        this.byDate = date;
+    }
+
+    public TimePoint getByDate(){
+        return byDate;
     }
 
     @Override
     public String[] getData() {
-        return new String[] {getType(), getDoneIcon(), name, date.toString()};
+        return new String[] {getTypeIcon(), getDoneIcon(), name, byDate.toString()};
     }
 }
