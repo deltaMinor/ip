@@ -1,8 +1,10 @@
+package herm35;
+
 import java.io.IOException;
 
-/** Command to display all valid commands to the user. */
+/** herm35.Command to display all valid commands to the user. */
 public class HelpCommand extends Command {
-    /** Storage object used to load the help text. */
+    /** herm35.Storage object used to load the help text. */
     private static final Storage COMMANDLIST = new Storage("./assets/help.txt");
 
     /** Paragraph to be shown to the user. */
@@ -26,7 +28,7 @@ public class HelpCommand extends Command {
         }
     }
 
-    /** Constructs a HelpCommand object. */
+    /** Constructs a herm35.HelpCommand object. */
     public HelpCommand() {
 
     }

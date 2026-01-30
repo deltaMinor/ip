@@ -1,7 +1,9 @@
+package herm35;
+
 import java.io.IOException;
 
 /**
- * Command that adds a new task to the task list.
+ * herm35.Command that adds a new task to the task list.
  */
 public class AddTaskCommand extends Command {
 
@@ -9,9 +11,9 @@ public class AddTaskCommand extends Command {
     private Task task;
 
     /**
-     * Constructs an AddTaskCommand with the specified task.
+     * Constructs an herm35.AddTaskCommand with the specified task.
      *
-     * @param task Task to be added.
+     * @param task herm35.Task to be added.
      */
     public AddTaskCommand(Task task) {
         this.task = task;

@@ -1,17 +1,19 @@
+package herm35;
+
 import java.io.IOException;
 
 /**
- * Command that marks an existing task as done or undone, depending on input.
+ * herm35.Command that marks an existing task as done or undone, depending on input.
  */
 public class MarkCommand extends Command {
-    /** Task to be marked. */
+    /** herm35.Task to be marked. */
     private String indexString;
 
     /** New isDone value of the task. */
     private boolean newStatus;
 
     /**
-     * Constructs a MarkCommand with the specified task index and new isDone status.
+     * Constructs a herm35.MarkCommand with the specified task index and new isDone status.
      *
      * @param indexString Index of task to be changed.
      * @param newStatus New isDone status for the task.

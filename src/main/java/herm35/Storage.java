@@ -1,3 +1,5 @@
+package herm35;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +18,7 @@ import java.nio.file.Paths;
  */
 public class Storage {
 
-    /** Full path to the file being managed by this Storage instance. */
+    /** Full path to the file being managed by this herm35.Storage instance. */
     private final String fileName;
 
     /**

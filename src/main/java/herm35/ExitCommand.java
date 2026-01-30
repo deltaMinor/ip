@@ -1,8 +1,10 @@
+package herm35;
+
 /**
- * Command that bids the user farewell and indicates for the program to exit.
+ * herm35.Command that bids the user farewell and indicates for the program to exit.
  */
 public class ExitCommand extends Command {
-    /** Constructs an ExitCommand object. */
+    /** Constructs an herm35.ExitCommand object. */
     public ExitCommand() {
 
     }

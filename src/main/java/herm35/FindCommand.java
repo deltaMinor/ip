@@ -1,11 +1,13 @@
-/** Command to display all tasks that fit a search prompt. */
+package herm35;
+
+/** herm35.Command to display all tasks that fit a search prompt. */
 public class FindCommand extends Command {
 
     /** Prompt string used to filter the task list. */
     String findPrompt;
 
     /**
-     * Constructs a FindCommand with the specified prompt.
+     * Constructs a herm35.FindCommand with the specified prompt.
      *
      * @param findPrompt Prompt string used to filter the task list.
      */

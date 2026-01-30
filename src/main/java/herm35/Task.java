@@ -1,3 +1,5 @@
+package herm35;
+
 /**
  * Represents a task with a description, completion and type.
  */
@@ -113,10 +115,10 @@ abstract public class Task {
     abstract public String[] getData();
 
     /**
-     * Reconstructs a Task object from stored data.
+     * Reconstructs a herm35.Task object from stored data.
      *
      * @param data Array of stored task fields in string format.
-     * @return Corresponding Task instance, or null if the data is invalid.
+     * @return Corresponding herm35.Task instance, or null if the data is invalid.
      */
     public static Task dataToTask(String[] data) {
         switch (data[0]) {

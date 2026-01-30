@@ -18,15 +18,15 @@ Example: `keyword (optional arguments)`
 expected output
 ```
 
-## Feature Command-Based Task Management
+## Feature herm35.Command-Based herm35.Task Management
 
 // HERM35 allows users to manage tasks using simple, keyword-based commands. Each user input is parsed by 
-// the Parser and mapped to a corresponding Command object, such as adding tasks, listing tasks, marking 
+// the herm35.Parser and mapped to a corresponding herm35.Command object, such as adding tasks, listing tasks, marking 
 // tasks as complete, deleting tasks, or exiting the chatbot. This command abstraction makes the chatbot
 // extensible and easy to maintain.
 
 
-## Feature Task Storage to Hard Disk
+## Feature herm35.Task herm35.Storage to Hard Disk
 
 // The chatbot automatically loads previously saved tasks from storage when it starts and saves updates as
 // commands are executed. If stored data cannot be read, HERM35 falls back to an empty task list, ensuring
