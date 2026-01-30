@@ -70,6 +70,6 @@ public class HERM35 {
      * @param args command-line arguments
      */
     public static void main(String[] args) {
-        new HERM35("tasklist").run();
+        new HERM35("./data/tasklist.csv").run();
     }
 }

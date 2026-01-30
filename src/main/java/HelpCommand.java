@@ -3,7 +3,7 @@ import java.io.IOException;
 /** Command to display all valid commands to the user. */
 public class HelpCommand extends Command {
     /** Storage object used to load the help text. */
-    private static final Storage COMMANDLIST = new Storage("help", ".txt");
+    private static final Storage COMMANDLIST = new Storage("./assets/help.txt");
 
     /** Paragraph to be shown to the user. */
     private static String helpOutput = "";

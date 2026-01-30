@@ -16,12 +16,6 @@ import java.nio.file.Paths;
  */
 public class Storage {
 
-    /** Directory where all data files are stored. */
-    private static final String DATA_DIRECTORY = "./data/";
-
-    /** Default file format used for storage files. */
-    private static final String CSV_FORMAT = ".csv";
-
     /** Full path to the file being managed by this Storage instance. */
     private final String fileName;
 
@@ -31,19 +25,9 @@ public class Storage {
      * @param fileName Base name of the file (without extension).
      */
     public Storage(String fileName) {
-        this.fileName = DATA_DIRECTORY + fileName + CSV_FORMAT;
-    }
 
-    /**
-     * Creates a storage object using a custom file format.
-     *
-     * @param fileName   Base name of the file.
-     * @param fileFormat File extension.
-     */
-    public Storage(String fileName, String fileFormat) {
-        this.fileName = DATA_DIRECTORY + fileName + fileFormat;
+        this.fileName = fileName;
     }
-
     /**
      * Appends a new row to the end of the file.
      *
