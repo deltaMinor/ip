@@ -1,8 +1,5 @@
 import java.io.IOException;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -10,37 +7,37 @@ import java.util.ArrayList;
  * Entry point and controller class for the HERM35 chatbot.
  */
 public class HERM35 {
-
-    /** Separator string used when printing messages. */
-    private static final String LINE_SEPARATOR = "-----------------------";
-
-    /** Filename of task data storage. */
-    private static final String TASKLIST_FILE_NAME = "tasklist";
-
     /** Storage object used to store task list. */
-    private static final Storage TASKLIST_STORAGE = new Storage(TASKLIST_FILE_NAME);
+    private Storage storage;
 
     /** Storage object used to load the help text. */
     private static final Storage COMMANDLIST = new Storage("help", ".txt");
 
-    /** Maximum number of tasks allowed. */
-    public static final int TASK_LIMIT = 100;
-
     /** List of tasks currently managed by the chatbot. */
-    private static final ArrayList<Task> taskList = new ArrayList<Task>();
+    private TaskList taskList;
 
     /** Name of the chatbot. */
     private static final String NAME = "HERM35";
 
+    /** UI to deal with interactions with the user. */
+    private Ui ui;
+
+    public HERM35(String fileName) {
+        ui = new Ui();
+        storage = new Storage(fileName);
+        try {
+            taskList = new TaskList(storage.read());
+        } catch (IOException e) {
+            e.printStackTrace();
+            taskList = new TaskList();
+        }
+    }
     /**
-     * Program entry point.
-     *
-     * @param args Command-line arguments.
+     * Program running entry point.
      */
-    public static void main(String[] args) {
+    public void run() {
         Scanner input = new Scanner(System.in);
         String introduction = "Hey! I'm " + NAME + "!\nWhat can I do for you?";
-        readTaskData();
         String helpOutput = "";
         String[] commandListLines = {};
         try {
@@ -52,53 +49,53 @@ public class HERM35 {
         for (int i = 0; i < commandListLines.length; i++) {
             helpOutput += commandListLines[i] + "\n";
         }
-        printMessage(introduction);
+        ui.printMessage(introduction);
         while (input.hasNextLine()) {
             String[] command = input.nextLine().split(" ", 2);
             switch (command[0]) {
                 case "mark":
                     if (command.length < 2) {
-                        printMessage("Task index not given.");
+                        ui.printMessage("Task index not given.");
                         break;
                     }
                     if (Parser.isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             markTask(taskIndex, true);
-                            printMessage("Sure, I've marked this task as done:\n" + taskList.get(taskIndex));
+                            ui.printMessage("Sure, I've marked this task as done:\n" + taskList.get(taskIndex));
                             break;
                         }
                     }
-                    printMessage(String.format(
+                    ui.printMessage(String.format(
                             "Please enter a number between 1 and %d to mark that task.", taskList.size()));
                     break;
                 case "unmark":
                     if (command.length < 2) {
-                        printMessage("Task index not given.");
+                        ui.printMessage("Task index not given.");
                         break;
                     }
                     if (Parser.isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             markTask(taskIndex, false);
-                            printMessage("OK, I've marked this task as not done:\n"
+                            ui.printMessage("OK, I've marked this task as not done:\n"
                                     + taskList.get(taskIndex));
                             break;
                         }
                     }
-                    printMessage(String.format(
+                    ui.printMessage(String.format(
                             "Please enter a number between 1 and %d to mark that task.", taskList.size()));
                     break;
                 case "list":
                     if (command.length > 1) {
-                        printMessage("Unknown command, please try again. (Did you mean \"list\"?)");
+                        ui.printMessage("Unknown command, please try again. (Did you mean \"list\"?)");
                     } else {
-                        printMessage(listToMessage(taskList, "Your task list is empty!"));
+                        ui.printMessage(taskList.toString());
                     }
                     break;
                 case "bye":
                     if (command.length > 1) {
-                        printMessage("Unknown command, please try again. (Did you mean \"bye\"?)");
+                        ui.printMessage("Unknown command, please try again. (Did you mean \"bye\"?)");
                         break;
                     } else {
                         exit();
@@ -106,7 +103,7 @@ public class HERM35 {
                     }
                 case "delete":
                     if (command.length < 2) {
-                        printMessage("Task name not given.");
+                        ui.printMessage("Task name not given.");
                         break;
                     }
                     if (Parser.isInteger(command[1])) {
@@ -115,25 +112,25 @@ public class HERM35 {
                             String taskDeletedMessage = "Got it, I'm deleting this task:\n"
                                     + taskList.get(taskIndex) + "\n";
                             deleteTaskData(taskIndex);
-                            taskDeletedMessage += getCurrentTaskCountMessage();
-                            printMessage(taskDeletedMessage);
+                            taskDeletedMessage += taskList.getCurrentTaskCountMessage();
+                            ui.printMessage(taskDeletedMessage);
                             break;
                         }
                     }
-                    printMessage(String.format(
+                    ui.printMessage(String.format(
                             "Please enter a number between 1 and %d to delete that task.", taskList.size()));
                     break;
                 case "clear":
                     if (command.length > 1) {
-                        printMessage("Unknown command, please try again. (Did you mean \"clear\"?)");
+                        ui.printMessage("Unknown command, please try again. (Did you mean \"clear\"?)");
                     } else {
                         clearTaskData();
-                        printMessage("Alright, I have emptied the task list.\n" + getCurrentTaskCountMessage());
+                        ui.printMessage("Alright, I have emptied the task list.\n" + taskList.getCurrentTaskCountMessage());
                     }
                     break;
                 case "todo":
                     if (command.length < 2) {
-                        printMessage("Task name not given.");
+                        ui.printMessage("Task name not given.");
                     } else {
                         insertTaskData(new ToDoTask(command[1]));
                         printAddedTaskMessage(taskList.size() - 1);
@@ -141,12 +138,12 @@ public class HERM35 {
                     break;
                 case "deadline":
                     if (command.length < 2) {
-                        printMessage("Task name not given.");
+                        ui.printMessage("Task name not given.");
                         break;
                     }
                     String[] deadlineTask = command[1].split(" /by ", 2);
                     if (deadlineTask.length < 2) {
-                        printMessage("Please state the deadline, denoted with \" /by \"");
+                        ui.printMessage("Please state the deadline, denoted with \" /by \"");
                         break;
                     }
                     insertTaskData(
@@ -155,17 +152,17 @@ public class HERM35 {
                     break;
                 case "event":
                     if (command.length < 2) {
-                        printMessage("Task name not given.");
+                        ui.printMessage("Task name not given.");
                         break;
                     }
                     String[] eventTask = command[1].split(" /from ", 2);
                     if (eventTask.length < 2) {
-                        printMessage("Please state when the event begins, denoted with \" /from \"");
+                        ui.printMessage("Please state when the event begins, denoted with \" /from \"");
                         break;
                     }
                     String[] eventPeriod = eventTask[1].split(" /to ", 2);
                     if (eventPeriod.length < 2) {
-                        printMessage("Please state when the event ends, denoted with \" /to \"");
+                        ui.printMessage("Please state when the event ends, denoted with \" /to \"");
                         break;
                     }
                     insertTaskData(
@@ -177,162 +174,50 @@ public class HERM35 {
                     break;
                 case "find":
                     if (command.length < 2) {
-                        printMessage("Search prompt not given.");
+                        ui.printMessage("Search prompt not given.");
                     }
                     ArrayList<Task> filteredTaskList = new ArrayList<Task>();
                     if (command[1] == "/done") {
-                        for (int i = 0; i < taskList.size(); i++) {
-                            if (taskList.get(i).getIsDone()) {
-                                filteredTaskList.add(taskList.get(i));
-                            }
-                        }
-                        printMessage(
-                                filteredTaskListToMessage(
-                                        filteredTaskList,
-                                        "There are no completed tasks."));
+                        ui.printMessage(taskList.outputFilteredList(TaskList.FilterCondition.IS_MARKED));
                         break;
                     }
                     if (command[1] == "/todo") {
-                        for (int i = 0; i < taskList.size(); i++) {
-                            if (!taskList.get(i).getIsDone()) {
-                                filteredTaskList.add(taskList.get(i));
-                            }
-                        }
-                        printMessage(
-                                filteredTaskListToMessage(
-                                        filteredTaskList,
-                                        "There are no completed tasks."));
-                        break;
+                        ui.printMessage(taskList.outputFilteredList(TaskList.FilterCondition.IS_UNMARKED));
                     }
                     if (command[1].contains("/on")) {
-                        TimePoint onTimePoint = Parser.toDate(command[1].replace("/on ", ""));
-                        String noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
-                        switch (onTimePoint.getFormat()) {
-                            case LOCAL_DATE:
-                                for (Task task : taskList) {
-                                    switch (task.getType()) {
-                                        case DEADLINE:
-                                            if (onTimePoint.isSameDayAs(((DeadlineTask) task).getByDate())) {
-                                                filteredTaskList.add(task);
-                                            }
-                                            break;
-                                        case EVENT:
-                                            TimePoint fromDate = ((EventTask) task).getFromDate();
-                                            TimePoint toDate = ((EventTask) task).getToDate();
-                                            if (onTimePoint.isAfter(fromDate)
-                                                    && onTimePoint.isBefore(toDate)) {
-                                                filteredTaskList.add(task);
-                                            }
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                break;
-                            case LOCAL_DATE_TIME:
-                                for (Task task : taskList) {
-                                    switch (task.getType()) {
-                                        case DEADLINE:
-                                            if (onTimePoint.equals(((DeadlineTask) task).getByDate())) {
-                                                filteredTaskList.add(task);
-                                            }
-                                            break;
-                                        case EVENT:
-                                            TimePoint fromDate = ((EventTask) task).getFromDate();
-                                            TimePoint toDate = ((EventTask) task).getToDate();
-                                            if (onTimePoint.isAfter(fromDate)
-                                                    && onTimePoint.isBefore(toDate)) {
-                                                filteredTaskList.add(task);
-                                            }
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                break;
-                            default:
-                                noTasksMessage = "Invalid on date. Recommended format: DD/MM/YYYY";
-                        }
-                        printMessage(filteredTaskListToMessage(filteredTaskList, noTasksMessage));
+                        ui.printMessage(
+                                taskList.outputFilteredList(
+                                        TaskList.FilterCondition.ON_DATE,
+                                        command[1].replace("/on ", "")));
                         break;
                     }
                     if (command[1].contains("/before")) {
-                        TimePoint beforeTimePoint = Parser.toDate(command[1].replace("/before ", ""));
-                        String noTasksMessage = String.format(
-                                "There are no tasks occurring before %s.", beforeTimePoint);
-                        switch (beforeTimePoint.getFormat()) {
-                            case STRING:
-                                noTasksMessage = "Invalid before date. Recommended format: DD/MM/YYYY";
-                                break;
-                            default:
-                                for (Task task : taskList) {
-                                    switch (task.getType()) {
-                                        case DEADLINE:
-                                            if (beforeTimePoint.isAfter(((DeadlineTask) task).getByDate())) {
-                                                filteredTaskList.add(task);
-                                            }
-                                            break;
-                                        case EVENT:
-                                            if (beforeTimePoint.isAfter(((EventTask) task).getToDate())) {
-                                                filteredTaskList.add(task);
-                                            }
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                break;
-                        }
-                        printMessage(filteredTaskListToMessage(filteredTaskList, noTasksMessage));
+                        ui.printMessage(
+                                taskList.outputFilteredList(
+                                            TaskList.FilterCondition.BEFORE,
+                                        command[1].replace("/before ", "")));
                         break;
                     }
                     if (command[1].contains("/after")) {
-                        TimePoint afterTimePoint = Parser.toDate(command[1].replace("/after ", ""));
-                        String noTasksMessage = String.format(
-                                "There are no tasks occurring after %s.", afterTimePoint);
-                        switch (afterTimePoint.getFormat()) {
-                            case STRING:
-                                noTasksMessage = "Invalid after date. Recommended format: DD/MM/YYYY";
-                                break;
-                            default:
-                                for (Task task : taskList) {
-                                    switch (task.getType()) {
-                                        case DEADLINE:
-                                            if (afterTimePoint.isBefore(((DeadlineTask) task).getByDate())) {
-                                                filteredTaskList.add(task);
-                                            }
-                                            break;
-                                        case EVENT:
-                                            if (afterTimePoint.isBefore(((EventTask) task).getFromDate())) {
-                                                filteredTaskList.add(task);
-                                            }
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                                break;
-                        }
-                        printMessage(filteredTaskListToMessage(filteredTaskList, noTasksMessage));
+                        ui.printMessage(
+                                taskList.outputFilteredList(
+                                        TaskList.FilterCondition.AFTER, command[1].replace("/after ", "")));
                         break;
                     }
-                    for (int i = 0; i < taskList.size(); i++) {
-                        if (taskList.get(i).toString().toLowerCase().contains(command[1].toLowerCase())) {
-                            filteredTaskList.add(taskList.get(i));
-                        }
-                    }
-                    printMessage(
-                            filteredTaskListToMessage(
-                                    filteredTaskList,
-                                    String.format("There are no tasks containing %s.", command[1])));
+                    ui.printMessage(
+                            taskList.outputFilteredList(TaskList.FilterCondition.KEYWORD, command[1]));
                     break;
                 case "help":
-                    printMessage(helpOutput);
+                    ui.printMessage(helpOutput);
                     break;
                 default:
-                    printMessage("Unknown command, please try again.");
+                    ui.printMessage("Unknown command, please try again.");
             }
         }
+    }
+
+    public static void main(String[] args) {
+        new HERM35("tasklist").run();
     }
 
     /**
@@ -340,86 +225,11 @@ public class HERM35 {
      *
      * @param taskIndex Index of the newly added task.
      */
-    public static void printAddedTaskMessage(int taskIndex) {
+    public void printAddedTaskMessage(int taskIndex) {
         String message = "The following task has been added:\n\t"
                 + taskList.get(taskIndex) + "\n"
-                + getCurrentTaskCountMessage();
-        printMessage(message);
-    }
-
-    /**
-     * Returns a message indicating the current number of tasks stored.
-     *
-     * @return Formatted task count message string.
-     */
-    public static String getCurrentTaskCountMessage() {
-        return "You now have " + taskList.size() + "/" + TASK_LIMIT + " tasks.";
-    }
-
-    /**
-     * Prints the message given in formatting.
-     *
-     * @param message Message to be printed.
-     */
-    public static void printMessage(String message) {
-        printLine(LINE_SEPARATOR);
-        Scanner reader = new Scanner(message);
-        while (reader.hasNextLine()) {
-            printLine(reader.nextLine());
-        }
-        printLine(LINE_SEPARATOR);
-    }
-
-    /**
-     * Prints a single line with indentation.
-     *
-     * @param line Line to be printed.
-     */
-    public static void printLine(String line) {
-        System.out.println("\t" + line);
-    }
-
-    /**
-     * Convert a given list to a string sequence that can be printed as a message.
-     *
-     * @param list List to be converted into a message.
-     * @param emptyListMessage Output message if there are no items in the task list.
-     * @return String sequence that can be printed as a message.
-     */
-    public static String listToMessage(ArrayList<? extends Object> list, String emptyListMessage) {
-        String listOutput = "";
-        if (!list.isEmpty()) {
-            for (int i = 0; i < list.size(); i++) {
-                listOutput += i + 1 + "." + list.get(i).toString() + "\n";
-            }
-        } else {
-            return emptyListMessage;
-        }
-        return listOutput;
-    }
-
-    /**
-     * Convert a given filtered task list to a string sequence that can be printed as a message.
-     * The tasks will be indexed with their position in the memory task list.
-     *
-     * @param filteredTaskList Task list to be converted into a message.
-     * @param noTasksMessage Output message if there are no tasks in the task list.
-     * @return String sequence that can be printed as a message.
-     */
-    public static String filteredTaskListToMessage(ArrayList<Task> filteredTaskList, String noTasksMessage) {
-        String listOutput = "";
-        if (!filteredTaskList.isEmpty()) {
-            int filteredTaskListIndex = 0;
-            for (int i = 0; i < taskList.size(); i++) {
-                if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
-                    listOutput += i + 1 + "." + taskList.get(i).toString() + "\n";
-                    filteredTaskListIndex++;
-                }
-            }
-        } else {
-            return noTasksMessage;
-        }
-        return listOutput;
+                + taskList.getCurrentTaskCountMessage();
+        ui.printMessage(message);
     }
 
     /**
@@ -427,10 +237,10 @@ public class HERM35 {
      *
      * @param task Task to be added.
      */
-    public static void insertTaskData(Task task) {
+    public void insertTaskData(Task task) {
         taskList.add(task);
         try {
-            TASKLIST_STORAGE.insert(task.getData());
+            storage.insert(task.getData());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -441,10 +251,10 @@ public class HERM35 {
      *
      * @param taskIndex index of the task to delete.
      */
-    public static void deleteTaskData(int taskIndex) {
-        taskList.remove(taskIndex);
+    public void deleteTaskData(int taskIndex) {
+        taskList.delete(taskIndex);
         try {
-            TASKLIST_STORAGE.delete(taskIndex);
+            storage.delete(taskIndex);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -453,10 +263,10 @@ public class HERM35 {
     /**
      * Clears all tasks from memory and hard disk.
      */
-    public static void clearTaskData() {
+    public void clearTaskData() {
         taskList.clear();
         try {
-            TASKLIST_STORAGE.clear();
+            storage.clear();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -468,9 +278,9 @@ public class HERM35 {
      * @param taskIndex Index of the task to edit.
      * @param task      Updated task object.
      */
-    public static void editTaskData(int taskIndex, Task task) {
+    public void editTaskData(int taskIndex, Task task) {
         try {
-            TASKLIST_STORAGE.edit(taskIndex, task.getData());
+            storage.edit(taskIndex, task.getData());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -483,36 +293,15 @@ public class HERM35 {
      * @param isDone New isDone value of task.
      */
 
-    public static void markTask(int taskIndex, boolean isDone) {
-        taskList.get(taskIndex).mark(isDone);
+    public void markTask(int taskIndex, boolean isDone) {
+        taskList.markTask(taskIndex, isDone);
         editTaskData(taskIndex, taskList.get(taskIndex));
-    }
-
-    /**
-     * Loads task data from hard disk into memory.
-     */
-    public static void readTaskData() {
-        String[] lines = {};
-        try {
-            lines = TASKLIST_STORAGE.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (lines.length > 0) {
-            taskList.clear();
-            for (int i = 0; i < lines.length; i++) {
-                Task newTask = Task.dataToTask(lines[i].split(","));
-                if (newTask != null) {
-                    taskList.add(newTask);
-                }
-            }
-        }
     }
 
     /**
      * Exit procedure of the chatbot.
      */
-    public static void exit() {
-        printMessage("Bye, see you later!");
+    public void exit() {
+        ui.printMessage("Bye, see you later!");
     }
 }
