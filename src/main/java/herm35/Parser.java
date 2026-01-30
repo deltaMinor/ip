@@ -156,6 +156,9 @@ public class Parser {
             case 3:
                 if (tokens[0].contains(":") || tokens[0].contains("AM") || tokens[0].contains("PM")) {
                     time = toHourMinuteTime(tokens[0]);
+                    if (time == -1) {
+                        break;
+                    }
                     year = LocalDate.now().getYear();
                     if (isValidDate(toDay(tokens[1]), toMonth(tokens[2]), year)) {
                         month = toMonth(tokens[2]);
@@ -170,6 +173,9 @@ public class Parser {
                 }
                 if (tokens[2].contains(":") || tokens[2].contains("AM") || tokens[2].contains("PM")) {
                     time = toHourMinuteTime(tokens[2]);
+                    if (time == -1) {
+                        break;
+                    }
                     year = LocalDate.now().getYear();
                     if (isValidDate(toDay(tokens[0]), toMonth(tokens[1]), year)) {
                         month = toMonth(tokens[1]);
@@ -195,6 +201,9 @@ public class Parser {
                 if (tokens[0].contains(":") || tokens[0].contains("AM") || tokens[0].contains("PM")
                         || (tokens[0].length() == 4 && tokens[1].length() == 4)) {
                     time = toHourMinuteTime(tokens[0]);
+                    if (time == -1) {
+                        break;
+                    }
                     tempLocalDate = threeStringstoLocalDate(new String[] {tokens[1], tokens[2], tokens[3]});
                     if (tempLocalDate != null) {
                         day = tempLocalDate.getDayOfMonth();
@@ -206,6 +215,9 @@ public class Parser {
                 if (tokens[3].contains(":") || tokens[3].contains("AM") || tokens[3].contains("PM")
                         || (tokens[2].length() == 4 && tokens[3].length() == 4)) {
                     time = toHourMinuteTime(tokens[3]);
+                    if (time == -1) {
+                        break;
+                    }
                     tempLocalDate = threeStringstoLocalDate(new String[] {tokens[0], tokens[1], tokens[2]});
                     if (tempLocalDate != null) {
                         day = tempLocalDate.getDayOfMonth();
@@ -216,6 +228,9 @@ public class Parser {
                 }
                 if (tokens[0].length() == 4 && tokens[3].length() == 4) {
                     time = toHourMinuteTime(tokens[0]);
+                    if (time == -1) {
+                        break;
+                    }
                     tempLocalDate = threeStringstoLocalDate(new String[] {tokens[1], tokens[2], tokens[3]});
                     if (tempLocalDate != null) {
                         day = tempLocalDate.getDayOfMonth();
@@ -328,45 +343,51 @@ public class Parser {
             }
             switch (monthIndex) {
                 case 0:
-                    if (isValidDate(
-                            Integer.parseInt(strings[1]),
-                            toMonth(strings[0]),
-                            Integer.parseInt(strings[2]))) {
-                        return LocalDate.of(
-                                Integer.parseInt(strings[2]),
+                    if (isInteger(strings[1]) && isInteger(strings[2])) {
+                        if (isValidDate(
+                                Integer.parseInt(strings[1]),
                                 toMonth(strings[0]),
-                                Integer.parseInt(strings[1]));
+                                Integer.parseInt(strings[2]))) {
+                            return LocalDate.of(
+                                    Integer.parseInt(strings[2]),
+                                    toMonth(strings[0]),
+                                    Integer.parseInt(strings[1]));
+                        }
                     }
                     break;
                 case 1:
-                    if (isValidDate(
-                            Integer.parseInt(strings[0]),
-                            toMonth(strings[1]),
-                            Integer.parseInt(strings[2]))) {
-                        return LocalDate.of(
-                                Integer.parseInt(strings[2]),
-                                toMonth(strings[1]),
-                                Integer.parseInt(strings[0]));
-                    }
-                    if (isValidDate(
-                            Integer.parseInt(strings[2]),
-                            toMonth(strings[1]),
-                            Integer.parseInt(strings[0]))) {
-                        return LocalDate.of(
+                    if (isInteger(strings[0]) && isInteger(strings[2])) {
+                        if (isValidDate(
                                 Integer.parseInt(strings[0]),
                                 toMonth(strings[1]),
-                                Integer.parseInt(strings[2]));
+                                Integer.parseInt(strings[2]))) {
+                            return LocalDate.of(
+                                    Integer.parseInt(strings[2]),
+                                    toMonth(strings[1]),
+                                    Integer.parseInt(strings[0]));
+                        }
+                        if (isValidDate(
+                                Integer.parseInt(strings[2]),
+                                toMonth(strings[1]),
+                                Integer.parseInt(strings[0]))) {
+                            return LocalDate.of(
+                                    Integer.parseInt(strings[0]),
+                                    toMonth(strings[1]),
+                                    Integer.parseInt(strings[2]));
+                        }
                     }
                     break;
                 case 2:
-                    if (isValidDate(
-                            Integer.parseInt(strings[1]),
-                            toMonth(strings[2]),
-                            Integer.parseInt(strings[0]))) {
-                        return LocalDate.of(
-                                Integer.parseInt(strings[0]),
+                    if (isInteger(strings[0]) && isInteger(strings[1])) {
+                        if (isValidDate(
+                                Integer.parseInt(strings[1]),
                                 toMonth(strings[2]),
-                                Integer.parseInt(strings[1]));
+                                Integer.parseInt(strings[0]))) {
+                            return LocalDate.of(
+                                    Integer.parseInt(strings[0]),
+                                    toMonth(strings[2]),
+                                    Integer.parseInt(strings[1]));
+                        }
                     }
                     break;
                 default:
@@ -509,7 +530,7 @@ public class Parser {
         }
         try {
             int i = Integer.parseInt(str);
-        } catch (NumberFormatException nfe) {
+        } catch (NumberFormatException e) {
             return false;
         }
         return true;
