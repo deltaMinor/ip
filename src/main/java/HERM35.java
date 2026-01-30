@@ -187,7 +187,7 @@ public class HERM35 {
                             }
                         }
                         printMessage(
-                                listToMessage(
+                                filteredTaskListToMessage(
                                         filteredTaskList,
                                         "There are no completed tasks."));
                         break;
@@ -199,7 +199,7 @@ public class HERM35 {
                             }
                         }
                         printMessage(
-                                listToMessage(
+                                filteredTaskListToMessage(
                                         filteredTaskList,
                                         "There are no completed tasks."));
                         break;
@@ -253,7 +253,7 @@ public class HERM35 {
                             default:
                                 noTasksMessage = "Invalid on date. Recommended format: DD/MM/YYYY";
                         }
-                        printMessage(listToMessage(filteredTaskList, noTasksMessage));
+                        printMessage(filteredTaskListToMessage(filteredTaskList, noTasksMessage));
                         break;
                     }
                     if (command[1].contains("/before")) {
@@ -283,7 +283,7 @@ public class HERM35 {
                                 }
                                 break;
                         }
-                        printMessage(listToMessage(filteredTaskList, noTasksMessage));
+                        printMessage(filteredTaskListToMessage(filteredTaskList, noTasksMessage));
                         break;
                     }
                     if (command[1].contains("/after")) {
@@ -313,7 +313,7 @@ public class HERM35 {
                                 }
                                 break;
                         }
-                        printMessage(listToMessage(filteredTaskList, noTasksMessage));
+                        printMessage(filteredTaskListToMessage(filteredTaskList, noTasksMessage));
                         break;
                     }
                     for (int i = 0; i < taskList.size(); i++) {
@@ -322,7 +322,7 @@ public class HERM35 {
                         }
                     }
                     printMessage(
-                            listToMessage(
+                            filteredTaskListToMessage(
                                     filteredTaskList,
                                     String.format("There are no tasks containing %s.", command[1])));
                     break;
@@ -383,17 +383,41 @@ public class HERM35 {
      * Convert a given list to a string sequence that can be printed as a message.
      *
      * @param list List to be converted into a message.
-     * @param noTasksOutput Output message if there are no tasks in the task list.
+     * @param emptyListMessage Output message if there are no items in the task list.
      * @return String sequence that can be printed as a message.
      */
-    public static String listToMessage(ArrayList<? extends Object> list, String noTasksOutput) {
+    public static String listToMessage(ArrayList<? extends Object> list, String emptyListMessage) {
         String listOutput = "";
         if (!list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 listOutput += i + 1 + "." + list.get(i).toString() + "\n";
             }
         } else {
-            return noTasksOutput;
+            return emptyListMessage;
+        }
+        return listOutput;
+    }
+
+    /**
+     * Convert a given filtered task list to a string sequence that can be printed as a message.
+     * The tasks will be indexed with their position in the memory task list.
+     *
+     * @param filteredTaskList Task list to be converted into a message.
+     * @param noTasksMessage Output message if there are no tasks in the task list.
+     * @return String sequence that can be printed as a message.
+     */
+    public static String filteredTaskListToMessage(ArrayList<Task> filteredTaskList, String noTasksMessage) {
+        String listOutput = "";
+        if (!filteredTaskList.isEmpty()) {
+            int filteredTaskListIndex = 0;
+            for (int i = 0; i < taskList.size(); i++) {
+                if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
+                    listOutput += i + 1 + "." + taskList.get(i).toString() + "\n";
+                    filteredTaskListIndex++;
+                }
+            }
+        } else {
+            return noTasksMessage;
         }
         return listOutput;
     }
