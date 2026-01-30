@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 
 public class Parser {
 
+    /**
+     * Enumeration of parameters needed for creation of a TimePoint object.
+     */
     private enum TimeParameters {
         YEAR,
         MONTH,
@@ -146,10 +149,10 @@ public class Parser {
     }
 
     /**
-     * Check if an order of time parameters is valid
+     * Check if an order of time parameters is valid.
      *
-     * @param timeParameters Order of time parameters in array format
-     * @return Validity of order of time parameters in timeParameters
+     * @param timeParameters Order of time parameters in array format.
+     * @return Validity of order of time parameters in timeParameters.
      */
     private static boolean isValidTimeParameterOrder(TimeParameters[] timeParameters) {
         if (timeParameters.length != 4) {
@@ -201,6 +204,12 @@ public class Parser {
         return null;
     }
 
+    /**
+     * Helper function to convert an array of 3 strings to a LocalDate.
+     *
+     * @param strings Array of 3 strings.
+     * @return A LocalDate corresponding to strings if they can form a valid date, else null.
+     */
     private static LocalDate threeStringstoLocalDate(String[] strings) {
         if (isIntegerArray(strings)) {
             int[] dateOrder = reorderForDate(
@@ -268,10 +277,10 @@ public class Parser {
     }
 
     /**
-     * Converts a string to a time value, in 24-hour format
+     * Converts a string to a time value, in 24-hour format.
      *
-     * @param time String to convert to a time value
-     * @return Converted integer value which represents the time, if valid, else -1
+     * @param time String to convert to a time value.
+     * @return Converted integer value which represents the time, if valid, else -1.
      */
     public static int toHourMinuteTime(String time) {
         if (time == null) {
@@ -326,6 +335,12 @@ public class Parser {
         return -1;
     }
 
+    /**
+     * Checks if a word represents a month.
+     *
+     * @param word Word that may represent a month.
+     * @return True if word represents a month, otherwise false.
+     */
     private static boolean isMonthWord(String word) {
         for (int i = 0; i < 12; i++) {
             if (TimePoint.MONTHS[i].equals(word) || TimePoint.MTHS[i].equals(word)) {
@@ -336,10 +351,10 @@ public class Parser {
     }
 
     /**
-     * Converts a string to its month value
+     * Converts a string to its month value.
      *
-     * @param month String which potentially represents a month
-     * @return The month represented in integer value if it is valid, else -1
+     * @param month String which potentially represents a month.
+     * @return The month represented in integer value if it is valid, else -1.
      */
     public static int toMonth(String month) {
         if (month == null) {
@@ -362,10 +377,10 @@ public class Parser {
     }
 
     /**
-     * Converts a string to a day of the month
+     * Converts a string to a day of the month.
      *
-     * @param day String which potentially represents a day of the month
-     * @return The day represented in integer value if it is valid, else -1
+     * @param day String which potentially represents a day of the month.
+     * @return The day represented in integer value if it is valid, else -1.
      */
     public static int toDay(String day) {
         if (day == null) {
@@ -416,12 +431,12 @@ public class Parser {
     }
 
     /**
-     * Checks if given day, month and year form a valid date
+     * Checks if given day, month and year form a valid date.
      *
-     * @param day Day
-     * @param month Month
-     * @param year Year
-     * @return Validity of date provided
+     * @param day Day.
+     * @param month Month.
+     * @param year Year.
+     * @return Validity of date provided.
      */
     private static boolean isValidDate(int day, int month, int year) {
         try {

@@ -41,6 +41,11 @@ public class TimePoint {
     /** The format in which the time is stored. */
     private final Format format;
 
+    /**
+     * Creates a new TimePoint with the time in string format.
+     *
+     * @param time String that represents a time.
+     */
     public TimePoint(String time) {
         this.timeString = time;
         this.localDate = null;
@@ -48,6 +53,11 @@ public class TimePoint {
         this.format = Format.STRING;
     }
 
+    /**
+     * Creates a new TimePoint with the time in LocalDate format.
+     *
+     * @param localDate LocalDate that represents a time.
+     */
     public TimePoint(LocalDate localDate) {
         this.timeString = null;
         this.localDate = localDate;
@@ -55,6 +65,11 @@ public class TimePoint {
         this.format = Format.LOCAL_DATE;
     }
 
+    /**
+     * Creates a new TimePoint with the time in LocalDateTime format.
+     *
+     * @param localDateTime LocalDateTime that represents a time.
+     */
     public TimePoint(LocalDateTime localDateTime) {
         this.timeString = null;
         this.localDate = null;
@@ -66,6 +81,11 @@ public class TimePoint {
         return this.format;
     }
 
+    /**
+     * Returns the time this TimePoint contains.
+     *
+     * @return The time this TimePoint contains that is not null.
+     */
     public Object getTime() {
         switch (this.format) {
             case STRING:
@@ -79,6 +99,11 @@ public class TimePoint {
         }
     }
 
+    /**
+     * Returns the day of the month this TimePoint contains, if it is available.
+     *
+     * @return Integer that represents the day of the month if it is available, else -1.
+     */
     public int getDayOfMonth() {
         switch (this.format) {
             case LOCAL_DATE:
@@ -90,6 +115,11 @@ public class TimePoint {
         }
     }
 
+    /**
+     * Returns the month this TimePoint contains, if it is available.
+     *
+     * @return Integer that represents the month if it is available, else -1.
+     */
     public int getMonth() {
         switch (this.format) {
             case LOCAL_DATE:
@@ -101,6 +131,11 @@ public class TimePoint {
         }
     }
 
+    /**
+     * Returns the year this TimePoint contains, if it is available.
+     *
+     * @return Integer that represents the year if it is available, else -1.
+     */
     public int getYear() {
         switch (this.format) {
             case LOCAL_DATE:

@@ -91,7 +91,7 @@ abstract public class Task {
     /**
      * Returns a single-character code representing the task type.
      *
-     * @return "T" for TODO, "D" for DEADLINE, "E" for EVENT
+     * @return "T" for TODO, "D" for DEADLINE, "E" for EVENT.
      */
     public String getTypeIcon() {
         switch (type) {
@@ -108,15 +108,15 @@ abstract public class Task {
     /**
      * Converts this task into an array of strings.
      *
-     * @return Array of strings representing the task's fields
+     * @return Array of strings representing the task's fields.
      */
     abstract public String[] getData();
 
     /**
      * Reconstructs a Task object from stored data.
      *
-     * @param data Array of stored task fields in string format
-     * @return Corresponding Task instance, or null if the data is invalid
+     * @param data Array of stored task fields in string format.
+     * @return Corresponding Task instance, or null if the data is invalid.
      */
     public static Task dataToTask(String[] data) {
         switch (data[0]) {
