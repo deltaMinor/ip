@@ -44,7 +44,7 @@ public class TimePoint {
     private final Format format;
 
     /**
-     * Creates a new herm35.TimePoint with the time in string format.
+     * Creates a new TimePoint with the time in string format.
      *
      * @param time String that represents a time.
      */
@@ -56,7 +56,7 @@ public class TimePoint {
     }
 
     /**
-     * Creates a new herm35.TimePoint with the time in LocalDate format.
+     * Creates a new TimePoint with the time in LocalDate format.
      *
      * @param localDate LocalDate that represents a time.
      */
@@ -68,7 +68,7 @@ public class TimePoint {
     }
 
     /**
-     * Creates a new herm35.TimePoint with the time in LocalDateTime format.
+     * Creates a new TimePoint with the time in LocalDateTime format.
      *
      * @param localDateTime LocalDateTime that represents a time.
      */
@@ -84,9 +84,9 @@ public class TimePoint {
     }
 
     /**
-     * Returns the time this herm35.TimePoint contains.
+     * Returns the time this TimePoint contains.
      *
-     * @return The time this herm35.TimePoint contains that is not null.
+     * @return The time this TimePoint contains that is not null.
      */
     public Object getTime() {
         switch (this.format) {
@@ -102,7 +102,7 @@ public class TimePoint {
     }
 
     /**
-     * Returns the day of the month this herm35.TimePoint contains, if it is available.
+     * Returns the day of the month this TimePoint contains, if it is available.
      *
      * @return Integer that represents the day of the month if it is available, else -1.
      */
@@ -118,7 +118,7 @@ public class TimePoint {
     }
 
     /**
-     * Returns the month this herm35.TimePoint contains, if it is available.
+     * Returns the month this TimePoint contains, if it is available.
      *
      * @return Integer that represents the month if it is available, else -1.
      */
@@ -134,7 +134,7 @@ public class TimePoint {
     }
 
     /**
-     * Returns the year this herm35.TimePoint contains, if it is available.
+     * Returns the year this TimePoint contains, if it is available.
      *
      * @return Integer that represents the year if it is available, else -1.
      */
@@ -150,10 +150,10 @@ public class TimePoint {
     }
 
     /**
-     * Compares against another herm35.TimePoint if they are on the same day.
+     * Compares against another TimePoint if they are on the same day.
      * Both TimePoints being compared cannot contain their date as a string.
      *
-     * @param other Other herm35.TimePoint to compare against.
+     * @param other Other TimePoint to compare against.
      * @return True only if both TimePoints are on the same day, given they are not stored as a string.
      */
     public boolean isSameDayAs(TimePoint other) {
@@ -183,11 +183,11 @@ public class TimePoint {
     }
 
     /**
-     * Compares against another herm35.TimePoint to check if this herm35.TimePoint is after it.
+     * Compares against another TimePoint to check if this TimePoint is after it.
      * Both TimePoints being compared cannot contain their date as a string.
      *
-     * @param other Other herm35.TimePoint to compare against
-     * @return True only if this herm35.TimePoint is after other, given they are not stored as a string.
+     * @param other Other TimePoint to compare against
+     * @return True only if this TimePoint is after other, given they are not stored as a string.
      */
     public boolean isAfter(TimePoint other) {
         if (this.format == Format.STRING && other.getFormat() == Format.STRING) {
@@ -209,11 +209,11 @@ public class TimePoint {
     }
 
     /**
-     * Compares against another herm35.TimePoint to check if this herm35.TimePoint is before it.
+     * Compares against another TimePoint to check if this TimePoint is before it.
      * Both TimePoints being compared cannot contain their date as a string.
      *
-     * @param other Other herm35.TimePoint to compare against
-     * @return True only if this herm35.TimePoint is before other, given they are not stored as a string.
+     * @param other Other TimePoint to compare against
+     * @return True only if this TimePoint is before other, given they are not stored as a string.
      */
     public boolean isBefore(TimePoint other) {
         if (this.format == Format.STRING && other.getFormat() == Format.STRING) {

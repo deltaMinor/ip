@@ -18,7 +18,7 @@ import java.nio.file.Paths;
  */
 public class Storage {
 
-    /** Full path to the file being managed by this herm35.Storage instance. */
+    /** Full path to the file being managed by this Storage instance. */
     private final String fileName;
 
     /**

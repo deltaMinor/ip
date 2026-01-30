@@ -1,10 +1,10 @@
 package herm35;
 
 /**
- * herm35.Command that lists every task that is stored and their status.
+ * Command that lists every task that is stored and their status.
  */
 public class ListCommand extends Command {
-    /** Constructs an herm35.ListCommand object. */
+    /** Constructs an ListCommand object. */
     public ListCommand() {
 
     }

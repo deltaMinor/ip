@@ -1,9 +1,9 @@
-package herm35;
+package herm35.task;
 
 /**
  * Represents a simple to-do task.
  *
- * A herm35.ToDoTask contains only a task name and a completion status.
+ * A task.ToDoTask contains only a task name and a completion status.
  */
 public class ToDoTask extends Task {
 

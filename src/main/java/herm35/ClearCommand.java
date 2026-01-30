@@ -2,9 +2,9 @@ package herm35;
 
 import java.io.IOException;
 
-/** herm35.Command that clears the task list. */
+/** Command that clears the task list. */
 public class ClearCommand extends Command {
-    /** Constructs a herm35.ClearCommand object. */
+    /** Constructs a ClearCommand object. */
     public ClearCommand() {
 
     }

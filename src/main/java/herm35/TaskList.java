@@ -1,5 +1,10 @@
 package herm35;
 
+import herm35.task.Task;
+import herm35.task.ToDoTask;
+import herm35.task.DeadlineTask;
+import herm35.task.EventTask;
+
 import java.util.ArrayList;
 
 public class TaskList {
@@ -48,7 +53,7 @@ public class TaskList {
      * Get the task at a given index.
      *
      * @param taskIndex Index of specified task to get.
-     * @return herm35.Task corresponding to given task, if available, else null/
+     * @return Task corresponding to given task, if available, else null/
      */
     public Task get(int taskIndex) {
         if (taskIndex < 0 || taskIndex >= taskList.size()) {
@@ -68,7 +73,7 @@ public class TaskList {
     /**
      * Adds a task.
      *
-     * @param task herm35.Task to be added.
+     * @param task Task to be added.
      */
     public void add(Task task) {
         taskList.add(task);
@@ -105,7 +110,7 @@ public class TaskList {
      * Convert a given filtered task list to a string sequence that can be printed as a message.
      * The tasks will be indexed with their position in the memory task list.
      *
-     * @param filteredTaskList herm35.Task list to be converted into a message.
+     * @param filteredTaskList Task list to be converted into a message.
      * @param noTasksMessage Output message if there are no tasks in the task list.
      * @return String sequence that can be printed as a message.
      */

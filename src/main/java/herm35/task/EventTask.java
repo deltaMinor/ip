@@ -1,4 +1,6 @@
-package herm35;
+package herm35.task;
+
+import herm35.TimePoint;
 
 /**
  * Represents a task that begins and ends at specific times.

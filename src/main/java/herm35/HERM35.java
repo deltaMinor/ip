@@ -6,7 +6,7 @@ import java.io.IOException;
  * Entry point and controller class for the HERM35 chatbot.
  */
 public class HERM35 {
-    /** herm35.Storage object used to store task list. */
+    /** Storage object used to store task list. */
     private Storage storage;
 
     /** List of tasks currently managed by the chatbot. */
@@ -42,7 +42,7 @@ public class HERM35 {
     /**
      * Runs the main interaction loop of the chatbot.
      *
-     * Displays an introduction message, then repeatedly reads user input, parses it into a herm35.Command,
+     * Displays an introduction message, then repeatedly reads user input, parses it into a Command,
      * and executes it. The loop terminates when an executed command signals that the program should exit.
      * Any exceptions thrown during command parsing or execution are caught and their messages
      * displayed to the user.

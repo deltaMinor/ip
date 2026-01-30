@@ -1,5 +1,9 @@
 package herm35;
 
+import herm35.task.DeadlineTask;
+import herm35.task.EventTask;
+import herm35.task.ToDoTask;
+
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,7 +17,7 @@ import java.time.LocalDateTime;
 public class Parser {
 
     /**
-     * Enumeration of parameters needed for creation of a herm35.TimePoint object.
+     * Enumeration of parameters needed for creation of a TimePoint object.
      */
     private enum TimeParameters {
         YEAR,
@@ -23,29 +27,29 @@ public class Parser {
     }
 
     /**
-     * Set up procedure such ensure every herm35.Command class has its required information.
+     * Set up procedure such ensure every Command class has its required information.
      */
     public static void setup() {
         HelpCommand.setup();
     }
 
     /**
-     * Parses user input and outputs the corresponding herm35.Command.
+     * Parses user input and outputs the corresponding Command.
      *
      * @param input User input to be parsed
-     * @return herm35.Command which corresponds to the given user input.
+     * @return Command which corresponds to the given user input.
      */
     public static Command parse(String input) {
         String[] tokens = input.split(" ", 2);
         switch (tokens[0]) {
             case "mark":
                 if (tokens.length < 2) {
-                    return new MessageCommand("herm35.Task index not given.");
+                    return new MessageCommand("Task index not given.");
                 }
                 return new MarkCommand(tokens[1], true);
             case "unmark":
                 if (tokens.length < 2) {
-                    return new MessageCommand("herm35.Task index not given.");
+                    return new MessageCommand("Task index not given.");
                 }
                 return new MarkCommand(tokens[1], false);
             case "list":
@@ -62,7 +66,7 @@ public class Parser {
                 }
             case "delete":
                 if (tokens.length < 2) {
-                    return new MessageCommand("herm35.Task name not given.");
+                    return new MessageCommand("Task name not given.");
                 }
                 return new DeleteCommand(tokens[1]);
             case "clear":
@@ -73,13 +77,13 @@ public class Parser {
                 }
             case "todo":
                 if (tokens.length < 2) {
-                    return new MessageCommand("herm35.Task name not given.");
+                    return new MessageCommand("Task name not given.");
                 } else {
                     return new AddTaskCommand(new ToDoTask(tokens[1]));
                 }
             case "deadline":
                 if (tokens.length < 2) {
-                    return new MessageCommand("herm35.Task name not given.");
+                    return new MessageCommand("Task name not given.");
                 }
                 String[] deadlineTask = tokens[1].split(" /by ", 2);
                 if (deadlineTask.length < 2) {
@@ -88,7 +92,7 @@ public class Parser {
                 return new AddTaskCommand(new DeadlineTask(deadlineTask[0], Parser.toDate(deadlineTask[1])));
             case "event":
                 if (tokens.length < 2) {
-                    return new MessageCommand("herm35.Task name not given.");
+                    return new MessageCommand("Task name not given.");
                 }
                 String[] eventTask = tokens[1].split(" /from ", 2);
                 if (eventTask.length < 2) {
@@ -117,10 +121,10 @@ public class Parser {
     }
 
     /**
-     * Converts a string into a herm35.TimePoint object.
+     * Converts a string into a TimePoint object.
      *
      * @param timeString String that represents time to be converted.
-     * @return Time as a herm35.TimePoint object.
+     * @return Time as a TimePoint object.
      */
     public static TimePoint toDate(String timeString) {
         if (timeString == null) {

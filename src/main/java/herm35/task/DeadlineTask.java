@@ -1,4 +1,6 @@
-package herm35;
+package herm35.task;
+
+import herm35.TimePoint;
 
 /**
  * Represents a task that must be completed by a specific time.
