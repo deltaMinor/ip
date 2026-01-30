@@ -33,8 +33,9 @@ application {
 }
 
 shadowJar {
-    archiveBaseName = "duke"
+    archiveBaseName = "herm35"
     archiveClassifier = null
+    archiveFileName = 'HERM35.jar'
 }
 
 run{
