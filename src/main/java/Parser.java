@@ -1,6 +1,8 @@
+import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  * Handles parsing of user input into information for the chatbot.
@@ -20,6 +22,90 @@ public class Parser {
         TIME
     }
 
+    public static void setup() {
+        HelpCommand.setup();
+    }
+
+    public static Command parse(String input) {
+        String[] tokens = input.split(" ", 2);
+        switch (tokens[0]) {
+            case "mark":
+                if (tokens.length < 2) {
+                    return new MessageCommand("Task index not given.");
+                }
+                return new MarkCommand(tokens[1], true);
+            case "unmark":
+                if (tokens.length < 2) {
+                    return new MessageCommand("Task index not given.");
+                }
+                return new MarkCommand(tokens[1], false);
+            case "list":
+                if (tokens.length > 1) {
+                    return new MessageCommand("Unknown command, please try again. (Did you mean \"list\"?)");
+                } else {
+                    return new ListCommand();
+                }
+            case "bye":
+                if (tokens.length > 1) {
+                    return new MessageCommand("Unknown command, please try again. (Did you mean \"bye\"?)");
+                } else {
+                    return new ExitCommand();
+                }
+            case "delete":
+                if (tokens.length < 2) {
+                    return new MessageCommand("Task name not given.");
+                }
+                return new DeleteCommand(tokens[1]);
+            case "clear":
+                if (tokens.length > 1) {
+                    return new MessageCommand("Unknown command, please try again. (Did you mean \"clear\"?)");
+                } else {
+                    return new ClearCommand();
+                }
+            case "todo":
+                if (tokens.length < 2) {
+                    return new MessageCommand("Task name not given.");
+                } else {
+                    return new AddTaskCommand(new ToDoTask(tokens[1]));
+                }
+            case "deadline":
+                if (tokens.length < 2) {
+                    return new MessageCommand("Task name not given.");
+                }
+                String[] deadlineTask = tokens[1].split(" /by ", 2);
+                if (deadlineTask.length < 2) {
+                    return new MessageCommand("Please state the deadline, denoted with \" /by \".");
+                }
+                return new AddTaskCommand(new DeadlineTask(deadlineTask[0], Parser.toDate(deadlineTask[1])));
+            case "event":
+                if (tokens.length < 2) {
+                    return new MessageCommand("Task name not given.");
+                }
+                String[] eventTask = tokens[1].split(" /from ", 2);
+                if (eventTask.length < 2) {
+                    return new MessageCommand(
+                            "Please state when the event begins, denoted with \" /from \".");
+                }
+                String[] eventPeriod = eventTask[1].split(" /to ", 2);
+                if (eventPeriod.length < 2) {
+                    return new MessageCommand("Please state when the event ends, denoted with \" /to \".");
+                }
+                return new AddTaskCommand(
+                        new EventTask(
+                                eventTask[0],
+                                Parser.toDate(eventPeriod[0]),
+                                Parser.toDate(eventPeriod[1])));
+            case "find":
+                if (tokens.length < 2) {
+                    return new MessageCommand("Search prompt not given.");
+                }
+                return new FindCommand(tokens[1]);
+            case "help":
+                return new HelpCommand();
+            default:
+                return new MessageCommand("Unknown command, please try again.");
+        }
+    }
 
     /**
      * Converts a string into a TimePoint object.

@@ -6,9 +6,20 @@ public class Ui {
     /** Separator string used when printing messages. */
     private static final String LINE_SEPARATOR = "-----------------------";
 
+    /** Scanner to receive user input. */
+    private Scanner input;
+
     public Ui() {
+        input = new Scanner(System.in);
     }
 
+    public boolean hasNextLine() {
+        return input.hasNextLine();
+    }
+
+    public String nextLine() {
+        return input.nextLine();
+    }
     /**
      * Prints a single line with indentation.
      *
