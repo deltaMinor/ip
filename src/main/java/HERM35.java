@@ -58,7 +58,7 @@ public class HERM35 {
                         printMessage("Task index not given.");
                         break;
                     }
-                    if (isInteger(command[1])) {
+                    if (Parser.isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             markTask(taskIndex, true);
@@ -74,7 +74,7 @@ public class HERM35 {
                         printMessage("Task index not given.");
                         break;
                     }
-                    if (isInteger(command[1])) {
+                    if (Parser.isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             markTask(taskIndex, false);
@@ -114,7 +114,7 @@ public class HERM35 {
                         printMessage("Task name not given.");
                         break;
                     }
-                    if (isInteger(command[1])) {
+                    if (Parser.isInteger(command[1])) {
                         int taskIndex = Integer.parseInt(command[1]) - 1;
                         if (taskIndex >= 0 && taskIndex < taskList.size()) {
                             String taskDeletedMessage = "Got it, I'm deleting this task:\n"
@@ -154,7 +154,8 @@ public class HERM35 {
                         printMessage("Please state the deadline, denoted with \" /by \"");
                         break;
                     }
-                    insertTaskData(new DeadlineTask(deadlineTask[0], deadlineTask[1]));
+                    insertTaskData(
+                            new DeadlineTask(deadlineTask[0], Parser.toDate(deadlineTask[1])));
                     printAddedTaskMessage(taskList.size() - 1);
                     break;
                 case "event":
@@ -172,7 +173,11 @@ public class HERM35 {
                         printMessage("Please state when the event ends, denoted with \" /to \"");
                         break;
                     }
-                    insertTaskData(new EventTask(eventTask[0], eventPeriod[0], eventPeriod[1]));
+                    insertTaskData(
+                            new EventTask(
+                                    eventTask[0],
+                                    Parser.toDate(eventPeriod[0]),
+                                    Parser.toDate(eventPeriod[1])));
                     printAddedTaskMessage(taskList.size() - 1);
                     break;
                 case "help":
@@ -320,23 +325,5 @@ public class HERM35 {
      */
     public static void exit() {
         printMessage("Bye, see you later!");
-    }
-
-    /**
-     * Checks whether a given string can be parsed as an integer.
-     *
-     * @param str String to be checked.
-     * @return true if the string represents an integer, false otherwise.
-     */
-    public static boolean isInteger(String str) {
-        if (str == null) {
-            return false;
-        }
-        try {
-            int i = Integer.parseInt(str);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
     }
 }

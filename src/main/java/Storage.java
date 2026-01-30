@@ -11,8 +11,7 @@ import java.nio.file.Paths;
 /**
  * Handles storage and retrieval of data from mainly csv files.
  *
- * This class provides basic CRUD operations (insert, delete, edit, read, clear)
- * on a file stored in the ./data/ directory.
+ * This class provides basic CRUD operations on a file stored in the ./data/ directory.
  * The default file format is .csv for storage files.
  */
 public class Storage {

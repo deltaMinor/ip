@@ -113,9 +113,9 @@ abstract public class Task {
             case "T":
                 return new ToDoTask(data[2], data[1].equals("X"));
             case "D":
-                return new DeadlineTask(data[2], data[3], data[1].equals("X"));
+                return new DeadlineTask(data[2], Parser.toDate(data[3]), data[1].equals("X"));
             case "E":
-                return new EventTask(data[2], data[3], data[4], data[1].equals("X"));
+                return new EventTask(data[2], Parser.toDate(data[3]), Parser.toDate(data[4]), data[1].equals("X"));
             default:
                 return null;
         }
