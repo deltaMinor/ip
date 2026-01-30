@@ -7,6 +7,9 @@ import herm35.TimePoint;
  */
 public class EventTask extends Task {
 
+    /** Viable names to refer to an event task. */
+    public static final String[] NAMES = {"EVENT"};
+
     /** Name, start time and end time of the event. */
     private final String name;
     private final TimePoint fromDate;

@@ -7,6 +7,9 @@ import herm35.TimePoint;
  */
 public class DeadlineTask extends Task{
 
+    /** Viable names to refer to a DEADLINE task. */
+    public static final String[] NAMES = {"DEADLINE", "DEAD LINE", "DEAD"};
+
     /** Name and deadline of the task. */
     private final String name;
     private final TimePoint byDate;

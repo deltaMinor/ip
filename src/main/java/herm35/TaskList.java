@@ -14,7 +14,8 @@ public class TaskList {
         KEYWORD,
         ON_DATE,
         BEFORE,
-        AFTER
+        AFTER,
+        OF_TYPE
     }
 
     /** Maximum number of tasks allowed. */
@@ -122,6 +123,9 @@ public class TaskList {
                 if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
                     listOutput += i + 1 + "." + taskList.get(i).toString() + "\n";
                     filteredTaskListIndex++;
+                    if (filteredTaskListIndex == filteredTaskList.size()) {
+                        return listOutput;
+                    }
                 }
             }
         } else {
@@ -272,6 +276,44 @@ public class TaskList {
                         break;
                 }
                 return filteredTaskListToMessage(filteredTaskList, noTasksMessage);
+            case OF_TYPE:
+                String normalisedKeyword = keyword.toUpperCase();
+                for (String toDoName : ToDoTask.NAMES) {
+                    normalisedKeyword = normalisedKeyword.replace(toDoName, "T");
+                }
+                for (String deadlineName : DeadlineTask.NAMES) {
+                    normalisedKeyword = normalisedKeyword.replace(deadlineName, "D");
+                }
+                for (String eventName : EventTask.NAMES) {
+                    normalisedKeyword = normalisedKeyword.replace(eventName, "E");
+                }
+                String noTasksOfTypeMessage = "There are no tasks of type " + normalisedKeyword;
+                switch (normalisedKeyword) {
+                    case "T":
+                        for (Task task : taskList) {
+                            if (task.getType() == Task.Type.TODO) {
+                                filteredTaskList.add(task);
+                            }
+                        }
+                        break;
+                    case "D":
+                        for (Task task : taskList) {
+                            if (task.getType() == Task.Type.DEADLINE) {
+                                filteredTaskList.add(task);
+                            }
+                        }
+                        break;
+                    case "E":
+                        for (Task task : taskList) {
+                            if (task.getType() == Task.Type.EVENT) {
+                                filteredTaskList.add(task);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                return filteredTaskListToMessage(filteredTaskList, noTasksOfTypeMessage);
             default:
                 return "Invalid filter command.";
         }

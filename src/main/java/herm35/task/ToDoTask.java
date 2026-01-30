@@ -7,6 +7,9 @@ package herm35.task;
  */
 public class ToDoTask extends Task {
 
+    /** Viable names to refer to a to do task. */
+    public static final String[] NAMES = {"TODO", "TO DO"};
+
     /** Name of the to-do task. */
     private final String name;
 

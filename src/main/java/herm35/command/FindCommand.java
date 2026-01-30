@@ -21,28 +21,39 @@ public class FindCommand extends Command {
 
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
-        if (findPrompt == "/done") {
+        if (findPrompt.equals("/done")) {
             ui.printMessage(taskList.outputFilteredList(TaskList.FilterCondition.IS_MARKED));
+            return;
         }
-        if (findPrompt == "/todo") {
+        if (findPrompt.equals("/todo")) {
             ui.printMessage(taskList.outputFilteredList(TaskList.FilterCondition.IS_UNMARKED));
+            return;
         }
         if (findPrompt.contains("/on")) {
             ui.printMessage(
                     taskList.outputFilteredList(
                             TaskList.FilterCondition.ON_DATE,
                             findPrompt.replace("/on ", "")));
+            return;
         }
         if (findPrompt.contains("/before")) {
             ui.printMessage(
                     taskList.outputFilteredList(
                             TaskList.FilterCondition.BEFORE,
                             findPrompt.replace("/before ", "")));
+            return;
         }
         if (findPrompt.contains("/after")) {
             ui.printMessage(
                     taskList.outputFilteredList(
                             TaskList.FilterCondition.AFTER, findPrompt.replace("/after ", "")));
+            return;
+        }
+        if (findPrompt.contains("/type")) {
+            ui.printMessage(
+                    taskList.outputFilteredList(
+                            TaskList.FilterCondition.OF_TYPE, findPrompt.replace("/type ", "")));
+            return;
         }
         ui.printMessage(
                 taskList.outputFilteredList(TaskList.FilterCondition.KEYWORD, findPrompt));

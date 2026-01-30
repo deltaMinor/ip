@@ -13,5 +13,6 @@ find /after [date]: Show all tasks with dates after [date]
 find /before [date]: Show all tasks with dates before [date]
 find /done: Show all tasks that have been marked as done
 find /todo: Show all tasks that are not marked as done
+find /type [type]: Show all tasks that are of [type] (todo/deadline/event)
 bye: Exit this program
 help: See this list of commands again
