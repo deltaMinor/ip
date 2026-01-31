@@ -141,8 +141,37 @@ public class Parser {
             return null;
         }
 
+        String timeStringCopy = timeString.trim().toLowerCase();
+        timeStringCopy = timeStringCopy.replace(
+                "today",
+                String.format(
+                        "%d-%s-%d",
+                        LocalDate.now().getDayOfMonth(),
+                        TimePoint.Mths[LocalDate.now().getMonthValue() - 1],
+                        LocalDateTime.now().getYear()));
+        timeStringCopy = timeStringCopy.replace(
+                "tdy",
+                String.format(
+                        "%d-%s-%d",
+                        LocalDate.now().getDayOfMonth(),
+                        TimePoint.Mths[LocalDate.now().getMonthValue() - 1],
+                        LocalDateTime.now().getYear()));
+        timeStringCopy = timeStringCopy.replace(
+                "tomorrow",
+                String.format(
+                        "%d-%s-%d",
+                        LocalDate.now().getDayOfMonth() + 1,
+                        TimePoint.Mths[LocalDate.now().getMonthValue() - 1],
+                        LocalDateTime.now().getYear()));
+        timeStringCopy = timeStringCopy.replace(
+                "tmrw",
+                String.format(
+                        "%d-%s-%d",
+                        LocalDate.now().getDayOfMonth() + 1,
+                        TimePoint.Mths[LocalDate.now().getMonthValue() - 1],
+                        LocalDateTime.now().getYear()));
         int day = -1, month = -1, year = -1, time = -1;
-        String[] tokens = timeString.split("[/ \\-]");
+        String[] tokens = timeStringCopy.split("[/ \\-]");
         for (int i = 0; i < tokens.length; i++) {
             tokens[i] = tokens[i].toUpperCase();
         }
