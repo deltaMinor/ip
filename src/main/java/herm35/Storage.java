@@ -28,6 +28,7 @@ public class Storage {
      * @param fileName Base name of the file (without extension).
      */
     public Storage(String fileName) throws IOException {
+        Files.createDirectories(Paths.get("data"));
         this.fileName = fileName;
         File file = new File(fileName);
         file.createNewFile();
