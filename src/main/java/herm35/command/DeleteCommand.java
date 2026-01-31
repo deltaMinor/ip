@@ -7,12 +7,26 @@ import herm35.Ui;
 
 import java.io.IOException;
 
+/**
+ * Deletes a task from the task list.
+ */
 public class DeleteCommand extends Command {
+    /** String representing the index of the task to be deleted from the task list. */
     private String indexString;
+
+    /** Constructs a DeleteCommand object. */
     public DeleteCommand(String indexString) {
         this.indexString = indexString;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * If indexString represents a valid task index, deletes the specified task from the provided TaskList,
+     * saves the change to Storage, and displays a confirmation message via the Ui.
+     * If indexString is invalid, displays an error message to the user informing them of the valid task
+     * indexes.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         if (Parser.isInteger(indexString)) {

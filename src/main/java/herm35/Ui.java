@@ -11,17 +11,21 @@ public class Ui {
     /** Scanner to receive user input. */
     private Scanner input;
 
+    /** Constructs a new Ui object. */
     public Ui() {
         input = new Scanner(System.in);
     }
 
+    /** Is true only if the Ui has a new line of input available. */
     public boolean hasNextLine() {
         return input.hasNextLine();
     }
 
+    /** Outputs the next line of the Ui. */
     public String nextLine() {
         return input.nextLine();
     }
+
     /**
      * Prints a single line with indentation.
      *

@@ -13,6 +13,11 @@ public class ClearCommand extends Command {
 
     }
 
+    /**
+     * @inheritDoc
+     *
+     * Deletes every task in the provided TaskList and Storage, and informs the viewer via the Ui.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         taskList.clear();

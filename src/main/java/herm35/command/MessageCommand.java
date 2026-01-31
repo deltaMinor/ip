@@ -20,6 +20,11 @@ public class MessageCommand extends Command {
         this.message = message;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * Displays message to the user through the Ui.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         ui.printMessage(message);

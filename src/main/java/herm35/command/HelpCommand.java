@@ -37,6 +37,11 @@ public class HelpCommand extends Command {
 
     }
 
+    /**
+     * @inheritDoc
+     *
+     * Displays the saved help message to the user through the Ui.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         ui.printMessage(helpOutput);

@@ -24,6 +24,12 @@ public class AddTaskCommand extends Command {
         this.task = task;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * Adds the specified task to the provided TaskList, saves the task to Storage, and displays a confirmation
+     * message via the Ui.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         taskList.add(task);

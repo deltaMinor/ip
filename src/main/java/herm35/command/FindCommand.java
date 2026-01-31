@@ -19,6 +19,13 @@ public class FindCommand extends Command {
         this.findPrompt = findPrompt;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * Parses findPrompt to determine the criterion used to filter the task list, then displays it if there
+     * are tasks corresponding to the prompt with the Ui. If there are no tasks corresponding to the given
+     * prompt, the user is informed via the Ui.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         if (findPrompt.equals("/done")) {

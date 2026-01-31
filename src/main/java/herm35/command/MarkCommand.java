@@ -28,6 +28,15 @@ public class MarkCommand extends Command {
         this.newStatus = newStatus;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * If indexString represents a valid task index, changes the isDone value of the specified task from the
+     * provided TaskList to newStatus, saves the change to Storage, and displays a confirmation message via
+     * the Ui.
+     * If indexString is invalid, displays an error message to the user informing them of the valid task
+     * indexes.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         if (Parser.isInteger(indexString)) {

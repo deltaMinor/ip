@@ -13,6 +13,11 @@ public class ExitCommand extends Command {
 
     }
 
+    /**
+     * @inheritDoc
+     *
+     * Bids the user farewell via the given Ui.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         ui.printMessage("Bye, see you later!");
