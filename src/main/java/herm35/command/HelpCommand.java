@@ -9,7 +9,7 @@ import java.io.IOException;
 /** Command to display all valid commands to the user. */
 public class HelpCommand extends Command {
     /** Storage object used to load the help text. */
-    private static final Storage COMMANDLIST = new Storage("./assets/help.txt");
+    private static Storage COMMANDLIST = null;
 
     /** Paragraph to be shown to the user. */
     private static String helpOutput = "";
@@ -18,18 +18,24 @@ public class HelpCommand extends Command {
      * Loads the command list to initialize the help output paragraph.
      * Should be run once before HERM35 starts.
      */
-    public static void setup() {
+    public static String setup() {
+        String errorMessages = "";
+        try {
+            COMMANDLIST = new Storage("assets/help.txt");
+        } catch (IOException e) {
+            errorMessages += "Error: " + e.getMessage() + "\n";
+        }
         helpOutput = "";
         String[] commandListLines = {};
         try {
             commandListLines = COMMANDLIST.read();
         } catch (IOException e) {
-            System.out.println("Error: unable to read command list.\n");
-            e.printStackTrace();
+            errorMessages += "Error: " + e.getMessage() + "\n";
         }
         for (int i = 0; i < commandListLines.length; i++) {
             helpOutput += commandListLines[i] + "\n";
         }
+        return errorMessages;
     }
 
     /** Constructs a HelpCommand object. */

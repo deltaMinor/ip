@@ -20,6 +20,8 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import javax.print.DocFlavor;
+
 /**
  * Handles parsing of user input into information for the chatbot.
  * Contains methods to convert strings into other variable types such as integer and date.
@@ -39,8 +41,10 @@ public class Parser {
     /**
      * Set up procedure such ensure every Command class has its required information.
      */
-    public static void setup() {
-        HelpCommand.setup();
+    public static String setup() {
+        String errorMessages = "";
+        errorMessages += HelpCommand.setup();
+        return errorMessages;
     }
 
     /**

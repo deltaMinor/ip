@@ -12,6 +12,9 @@ public class HERM35 {
     /** Storage object used to store task list. */
     private Storage storage;
 
+    /** Availability of storage for task list saving. */
+    private boolean isStorageAvailable;
+
     /** List of tasks currently managed by the chatbot. */
     private TaskList taskList;
 
@@ -20,6 +23,9 @@ public class HERM35 {
 
     /** UI to deal with interactions with the user. */
     private Ui ui;
+
+    /** Opening introduction to the user. */
+    private String openingLines = "Hey! I'm " + NAME + "!\nWhat can I do for you?";
 
     /**
      * Constructs a HERM35 chatbot instance.
@@ -32,14 +38,23 @@ public class HERM35 {
      */
     public HERM35(String fileName) {
         ui = new Ui();
-        storage = new Storage(fileName);
+        try {
+            storage = new Storage(fileName);
+            isStorageAvailable = true;
+        } catch (IOException e) {
+            isStorageAvailable = false;
+            openingLines += "\nError: " + e.getMessage() + "\n Unable to open file: " + fileName + "for storage.";
+        }
         try {
             taskList = new TaskList(storage.read());
         } catch (IOException e) {
-            e.printStackTrace();
+            openingLines += "\nError: " + e.getMessage() + "\n Unable to read task list, creating blank task list.";
             taskList = new TaskList();
         }
-        Parser.setup();
+        String parserErrorMessage = Parser.setup();
+        if (!parserErrorMessage.equals("")) {
+            openingLines += "\n" + Parser.setup();
+        }
     }
 
     /**
@@ -51,9 +66,7 @@ public class HERM35 {
      * displayed to the user.
      */
     public void run() {
-        String introduction = "Hey! I'm " + NAME + "!\nWhat can I do for you?";
-
-        new MessageCommand(introduction).execute(taskList, storage, ui);
+        new MessageCommand(openingLines).execute(taskList, storage, ui);
         boolean isExit = false;
         while (!isExit) {
             try {
@@ -75,6 +88,6 @@ public class HERM35 {
      * @param args command-line arguments
      */
     public static void main(String[] args) {
-        new HERM35("./data/tasklist.csv").run();
+        new HERM35("data/tasklist.csv").run();
     }
 }

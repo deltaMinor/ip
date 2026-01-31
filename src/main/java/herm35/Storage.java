@@ -1,6 +1,7 @@
 package herm35;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -26,9 +27,10 @@ public class Storage {
      *
      * @param fileName Base name of the file (without extension).
      */
-    public Storage(String fileName) {
-
+    public Storage(String fileName) throws IOException {
         this.fileName = fileName;
+        File file = new File(fileName);
+        file.createNewFile();
     }
     /**
      * Appends a new row to the end of the file.
