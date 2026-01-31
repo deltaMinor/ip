@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 public class TimePoint {
 
+    /** Enums to indicate the class in which the time is stored in this TimePoint. */
     public enum Format {
         STRING,
         LOCAL_DATE,
@@ -30,8 +31,12 @@ public class TimePoint {
             "NOVEMBER",
             "DECEMBER"
     };
+
+    /** Strings for abbreviations of months of the year in full-uppercase. */
     public static final String[] MTHS = {
             "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
+
+    /** Strings for abbreviations of months of the year for toString() output. */
     public static final String[] Mths = {
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
