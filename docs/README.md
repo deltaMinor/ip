@@ -8,7 +8,28 @@
 
 // Describe the action and its outcome.
 
-// Give examples of usage
+## List of valid commands
+- list: Show your current tasklist
+- todo [task name]: Save a new task with name [task name]
+- deadline [task name] /by [date]: Save a new task with a deadline of [date]
+- event [task name] /from [start date] /to [end date]: Save an event with the provided dates
+- mark [index]: Mark the task with index [index] as done
+- unmark [index]: Unmark the task with index [index] as undone
+- delete [index]: Delete the task at index [index]
+- clear: Empty your tasklist
+- find [keyword]: Show all tasks containing [keyword]
+- find /contains [keyword]: Show all tasks containing [keyword]
+- find /on [date]: Show all tasks with dates on [date]
+- find /after [date]: Show all tasks with dates after  [date]
+- find /before [date]: Show all tasks with dates before [date]
+- find /done: Show all tasks that have been marked as done
+- find /todo: Show all tasks that are not marked as done
+- find /type [type]: Show all tasks that are of [type] (todo/deadline/event)
+- Note: You can combine different find commands together:
+  - Example: find [keyword] /on [date]: Show all tasks containing [keyword] and on [date]
+  - Example: find /before [date1] /after [date2] /contains [keyword]: Show all tasks containing [keyword], before [date1] and after [date2]
+- bye: Exit this program
+- help: See this list of commands
 
 Example: `keyword (optional arguments)`
 
@@ -18,15 +39,15 @@ Example: `keyword (optional arguments)`
 expected output
 ```
 
-## Feature herm35.Command-Based herm35.Task Management
+## Feature Command-Based Task Management
 
 // HERM35 allows users to manage tasks using simple, keyword-based commands. Each user input is parsed by 
-// the herm35.Parser and mapped to a corresponding herm35.Command object, such as adding tasks, listing tasks, marking 
+// the Parser and mapped to a corresponding Command object, such as adding tasks, listing tasks, marking 
 // tasks as complete, deleting tasks, or exiting the chatbot. This command abstraction makes the chatbot
 // extensible and easy to maintain.
 
 
-## Feature herm35.Task herm35.Storage to Hard Disk
+## Feature Task Storage to Hard Disk
 
 // The chatbot automatically loads previously saved tasks from storage when it starts and saves updates as
 // commands are executed. If stored data cannot be read, HERM35 falls back to an empty task list, ensuring
