@@ -51,10 +51,6 @@ public class HERM35 {
             openingLines += "\nError: " + e.getMessage() + "\n Unable to read task list, creating blank task list.";
             taskList = new TaskList();
         }
-        String parserErrorMessage = Parser.setup();
-        if (!parserErrorMessage.equals("")) {
-            openingLines += "\n" + Parser.setup();
-        }
     }
 
     /**

@@ -39,15 +39,6 @@ public class Parser {
     }
 
     /**
-     * Set up procedure such ensure every Command class has its required information.
-     */
-    public static String setup() {
-        String errorMessages = "";
-        errorMessages += HelpCommand.setup();
-        return errorMessages;
-    }
-
-    /**
      * Parses user input and outputs the corresponding Command.
      *
      * @param input User input to be parsed
