@@ -1,6 +1,17 @@
 package herm35;
 
-import herm35.command.*;
+import herm35.command.AddTaskCommand;
+import herm35.command.ClearCommand;
+import herm35.command.Command;
+import herm35.command.DeleteCommand;
+import herm35.command.ExitCommand;
+import herm35.command.FindCommand;
+import herm35.command.HelpCommand;
+import herm35.command.ListCommand;
+import herm35.command.MarkCommand;
+import herm35.command.MessageCommand;
+
+
 import herm35.task.DeadlineTask;
 import herm35.task.EventTask;
 import herm35.task.ToDoTask;
@@ -11,10 +22,8 @@ import java.time.LocalDateTime;
 
 /**
  * Handles parsing of user input into information for the chatbot.
- *
  * Contains methods to convert strings into other variable types such as integer and date.
  */
-
 public class Parser {
 
     /**
