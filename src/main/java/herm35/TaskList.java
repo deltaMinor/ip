@@ -6,6 +6,7 @@ import herm35.task.DeadlineTask;
 import herm35.task.EventTask;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class TaskList {
     public enum FilterCondition {
@@ -134,189 +135,212 @@ public class TaskList {
         return listOutput;
     }
 
-    public String outputFilteredList(FilterCondition filterCondition) {
-        ArrayList<Task> filteredTaskList = new ArrayList<Task>();
-        switch (filterCondition) {
-            case IS_MARKED:
-                for (int i = 0; i < taskList.size(); i++) {
-                    if (taskList.get(i).getIsDone()) {
-                        filteredTaskList.add(taskList.get(i));
-                    }
-                }
-                return filteredTaskListToMessage(filteredTaskList,"There are no completed tasks.");
-            case IS_UNMARKED:
-                for (int i = 0; i < taskList.size(); i++) {
-                    if (!taskList.get(i).getIsDone()) {
-                        filteredTaskList.add(taskList.get(i));
-                    }
-                }
-                return filteredTaskListToMessage(filteredTaskList,"There are no uncompleted tasks.");
-            case KEYWORD:
-                return "Search prompt not given.";
-            default:
-                return "Date not given.";
+    public String outputFilteredList(FilterCondition[] filterConditions, String[] keywords) {
+        ArrayList<Task> filteredTaskList = new ArrayList<Task>(taskList);
+        if (filterConditions.length == 0) {
+            return "Your task list is empty!";
         }
-    }
-
-    public String outputFilteredList(FilterCondition filterCondition, String keyword) {
-        ArrayList<Task> filteredTaskList = new ArrayList<Task>();
         String noTasksMessage = "";
-        switch (filterCondition) {
-            case KEYWORD:
-                for (int i = 0; i < taskList.size(); i++) {
-                    if (taskList.get(i).toString().toLowerCase().contains(keyword.toLowerCase())) {
-                        filteredTaskList.add(taskList.get(i));
+        for (int i = 0; i < filterConditions.length; i++) {
+            Iterator<Task> taskListIterator = filteredTaskList.iterator();
+            switch (filterConditions[i]) {
+                case IS_MARKED:
+                    while (taskListIterator.hasNext()) {
+                        Task task = taskListIterator.next();
+                        if (!task.getIsDone()) {
+                            taskListIterator.remove();
+                        }
                     }
-                }
-                return filteredTaskListToMessage(
-                        filteredTaskList, String.format("There are no tasks containing \"%s\".", keyword));
-            case ON_DATE:
-                TimePoint onTimePoint = Parser.toDate(keyword);
-                noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
-                switch (onTimePoint.getFormat()) {
-                    case LOCAL_DATE:
-                        for (Task task : taskList) {
+                    if (filterConditions.length == 0) {
+                        return "There are no completed tasks.";
+                    }
+                    break;
+                case IS_UNMARKED:
+                    while (taskListIterator.hasNext()) {
+                        Task task = taskListIterator.next();
+                        if (task.getIsDone()) {
+                            taskListIterator.remove();
+                        }
+                    }
+                    if (filterConditions.length == 0) {
+                        return "There are no uncompleted tasks.";
+                    }
+                    break;
+                case KEYWORD:
+                    while (taskListIterator.hasNext()) {
+                        Task task = taskListIterator.next();
+                        if (!task.toString().toLowerCase().contains(keywords[i].toLowerCase())) {
+                            taskListIterator.remove();
+                        }
+                    }
+                    if (filterConditions.length == 0) {
+                        return String.format("There are no tasks containing \"%s\".", keywords[i]);
+                    }
+                    break;
+                case ON_DATE:
+                    TimePoint onTimePoint = Parser.toDate(keywords[i]);
+                    noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
+                    switch (onTimePoint.getFormat()) {
+                        case LOCAL_DATE:
+                            while (taskListIterator.hasNext()) {
+                                Task task = taskListIterator.next();
+                                switch (task.getType()) {
+                                    case DEADLINE:
+                                        if (!onTimePoint.isSameDayAs(((DeadlineTask) task).getByDate())) {
+                                            taskListIterator.remove();
+                                        }
+                                        break;
+                                    case EVENT:
+                                        TimePoint fromDate = ((EventTask) task).getFromDate();
+                                        TimePoint toDate = ((EventTask) task).getToDate();
+                                        if (!(onTimePoint.isAfter(fromDate)
+                                                && onTimePoint.isBefore(toDate))) {
+                                            taskListIterator.remove();
+                                        }
+                                        break;
+                                    default:
+                                        taskListIterator.remove();
+                                        break;
+                                }
+                            }
+                            break;
+                        case LOCAL_DATE_TIME:
+                            while (taskListIterator.hasNext()) {
+                                Task task = taskListIterator.next();
+                                switch (task.getType()) {
+                                    case DEADLINE:
+                                        if (!onTimePoint.equals(((DeadlineTask) task).getByDate())) {
+                                            taskListIterator.remove();
+                                        }
+                                        break;
+                                    case EVENT:
+                                        TimePoint fromDate = ((EventTask) task).getFromDate();
+                                        TimePoint toDate = ((EventTask) task).getToDate();
+                                        if (!(onTimePoint.isAfter(fromDate)
+                                                && onTimePoint.isBefore(toDate))) {
+                                            taskListIterator.remove();
+                                        }
+                                        break;
+                                    default:
+                                        taskListIterator.remove();
+                                        break;
+                                }
+                            }
+                            break;
+                        default:
+                            return "Invalid on date. Recommended format: DD/MM/YYYY";
+                    }
+                    if (filterConditions.length == 0) {
+                        return noTasksMessage;
+                    }
+                    break;
+                case BEFORE:
+                    TimePoint beforeTimePoint = Parser.toDate(keywords[i]);
+                    noTasksMessage = String.format("There are no tasks occurring before %s.", beforeTimePoint);
+                    if (beforeTimePoint.getFormat() == TimePoint.Format.STRING) {
+                        return "Invalid before date. Recommended format: DD/MM/YYYY";
+                    } else {
+                        while (taskListIterator.hasNext()) {
+                            Task task = taskListIterator.next();
                             switch (task.getType()) {
                                 case DEADLINE:
-                                    if (onTimePoint.isSameDayAs(((DeadlineTask) task).getByDate())) {
-                                        filteredTaskList.add(task);
+                                    if (!beforeTimePoint.isAfter(((DeadlineTask) task).getByDate())) {
+                                        taskListIterator.remove();
                                     }
                                     break;
                                 case EVENT:
-                                    TimePoint fromDate = ((EventTask) task).getFromDate();
-                                    TimePoint toDate = ((EventTask) task).getToDate();
-                                    if (onTimePoint.isAfter(fromDate)
-                                            && onTimePoint.isBefore(toDate)) {
-                                        filteredTaskList.add(task);
+                                    if (!beforeTimePoint.isAfter(((EventTask) task).getFromDate())) {
+                                        taskListIterator.remove();
                                     }
                                     break;
                                 default:
+                                    taskListIterator.remove();
                                     break;
                             }
                         }
-                        break;
-                    case LOCAL_DATE_TIME:
-                        for (Task task : taskList) {
+                    }
+                    if (filterConditions.length == 0) {
+                        return noTasksMessage;
+                    }
+                    break;
+                case AFTER:
+                    TimePoint afterTimePoint = Parser.toDate(keywords[i]);
+                    noTasksMessage = String.format("There are no tasks occurring after %s.", afterTimePoint);
+                    if (afterTimePoint.getFormat() == TimePoint.Format.STRING) {
+                        return "Invalid before date. Recommended format: DD/MM/YYYY";
+                    } else {
+                        while (taskListIterator.hasNext()) {
+                            Task task = taskListIterator.next();
                             switch (task.getType()) {
                                 case DEADLINE:
-                                    if (onTimePoint.equals(((DeadlineTask) task).getByDate())) {
-                                        filteredTaskList.add(task);
+                                    if (!afterTimePoint.isBefore(((DeadlineTask) task).getByDate())) {
+                                        taskListIterator.remove();
                                     }
                                     break;
                                 case EVENT:
-                                    TimePoint fromDate = ((EventTask) task).getFromDate();
-                                    TimePoint toDate = ((EventTask) task).getToDate();
-                                    if (onTimePoint.isAfter(fromDate)
-                                            && onTimePoint.isBefore(toDate)) {
-                                        filteredTaskList.add(task);
+                                    if (!afterTimePoint.isBefore(((EventTask) task).getFromDate())) {
+                                        taskListIterator.remove();
                                     }
                                     break;
                                 default:
+                                    taskListIterator.remove();
                                     break;
                             }
                         }
-                        break;
-                    default:
-                        noTasksMessage = "Invalid on date. Recommended format: DD/MM/YYYY";
-                }
-                return filteredTaskListToMessage(filteredTaskList, noTasksMessage);
-            case BEFORE:
-                TimePoint beforeTimePoint = Parser.toDate(keyword);
-                noTasksMessage = String.format(
-                        "There are no tasks occurring before %s.", beforeTimePoint);
-                switch (beforeTimePoint.getFormat()) {
-                    case STRING:
-                        noTasksMessage = "Invalid before date. Recommended format: DD/MM/YYYY";
-                        break;
-                    default:
-                        for (Task task : taskList) {
-                            switch (task.getType()) {
-                                case DEADLINE:
-                                    if (beforeTimePoint.isAfter(((DeadlineTask) task).getByDate())) {
-                                        filteredTaskList.add(task);
-                                    }
-                                    break;
-                                case EVENT:
-                                    if (beforeTimePoint.isAfter(((EventTask) task).getFromDate())) {
-                                        filteredTaskList.add(task);
-                                    }
-                                    break;
-                                default:
-                                    break;
+                    }
+                    if (filterConditions.length == 0) {
+                        return noTasksMessage;
+                    }
+                    break;
+                case OF_TYPE:
+                    String normalisedKeyword = keywords[i].toUpperCase();
+                    for (String toDoName : ToDoTask.NAMES) {
+                        normalisedKeyword = normalisedKeyword.replace(toDoName, "T");
+                    }
+                    for (String deadlineName : DeadlineTask.NAMES) {
+                        normalisedKeyword = normalisedKeyword.replace(deadlineName, "D");
+                    }
+                    for (String eventName : EventTask.NAMES) {
+                        normalisedKeyword = normalisedKeyword.replace(eventName, "E");
+                    }
+                    String noTasksOfTypeMessage = "There are no tasks of type " + keywords[i];
+                    switch (normalisedKeyword) {
+                        case "T":
+                            while (taskListIterator.hasNext()) {
+                                Task task = taskListIterator.next();
+                                if (task.getType() != Task.Type.TODO) {
+                                    taskListIterator.remove();
+                                }
                             }
-                        }
-                        break;
-                }
-                return filteredTaskListToMessage(filteredTaskList, noTasksMessage);
-            case AFTER:
-                TimePoint afterTimePoint = Parser.toDate(keyword);
-                noTasksMessage = String.format(
-                        "There are no tasks occurring after %s.", afterTimePoint);
-                switch (afterTimePoint.getFormat()) {
-                    case STRING:
-                        noTasksMessage = "Invalid after date. Recommended format: DD/MM/YYYY";
-                        break;
-                    default:
-                        for (Task task : taskList) {
-                            switch (task.getType()) {
-                                case DEADLINE:
-                                    if (afterTimePoint.isBefore(((DeadlineTask) task).getByDate())) {
-                                        filteredTaskList.add(task);
-                                    }
-                                    break;
-                                case EVENT:
-                                    if (afterTimePoint.isBefore(((EventTask) task).getFromDate())) {
-                                        filteredTaskList.add(task);
-                                    }
-                                    break;
-                                default:
-                                    break;
+                            break;
+                        case "D":
+                            while (taskListIterator.hasNext()) {
+                                Task task = taskListIterator.next();
+                                if (task.getType() != Task.Type.DEADLINE) {
+                                    taskListIterator.remove();
+                                }
                             }
-                        }
-                        break;
-                }
-                return filteredTaskListToMessage(filteredTaskList, noTasksMessage);
-            case OF_TYPE:
-                String normalisedKeyword = keyword.toUpperCase();
-                for (String toDoName : ToDoTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(toDoName, "T");
-                }
-                for (String deadlineName : DeadlineTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(deadlineName, "D");
-                }
-                for (String eventName : EventTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(eventName, "E");
-                }
-                String noTasksOfTypeMessage = "There are no tasks of type " + normalisedKeyword;
-                switch (normalisedKeyword) {
-                    case "T":
-                        for (Task task : taskList) {
-                            if (task.getType() == Task.Type.TODO) {
-                                filteredTaskList.add(task);
+                            break;
+                        case "E":
+                            while (taskListIterator.hasNext()) {
+                                Task task = taskListIterator.next();
+                                if (task.getType() != Task.Type.EVENT) {
+                                    taskListIterator.remove();
+                                }
                             }
-                        }
-                        break;
-                    case "D":
-                        for (Task task : taskList) {
-                            if (task.getType() == Task.Type.DEADLINE) {
-                                filteredTaskList.add(task);
-                            }
-                        }
-                        break;
-                    case "E":
-                        for (Task task : taskList) {
-                            if (task.getType() == Task.Type.EVENT) {
-                                filteredTaskList.add(task);
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return filteredTaskListToMessage(filteredTaskList, noTasksOfTypeMessage);
-            default:
-                return "Invalid filter command.";
+                            break;
+                        default:
+                            return noTasksOfTypeMessage;
+                    }
+                    if (filterConditions.length == 0) {
+                        return noTasksOfTypeMessage;
+                    }
+                    break;
+                default:
+                    return "Invalid filter command.";
+            }
         }
+        return filteredTaskListToMessage(filteredTaskList, "There are no tasks fitting your prompt.");
     }
 
     @Override
