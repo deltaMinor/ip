@@ -1,4 +1,4 @@
-package herm35;
+package her.m35;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,27 +18,27 @@ public class TimePoint {
 
     /** Strings for months of the year. */
     public static final String[] MONTHS = {
-            "JANUARY",
-            "FEBRUARY",
-            "MARCH",
-            "APRIL",
-            "MAY",
-            "JUNE",
-            "JULY",
-            "AUGUST",
-            "SEPTEMBER",
-            "OCTOBER",
-            "NOVEMBER",
-            "DECEMBER"
+        "JANUARY",
+        "FEBRUARY",
+        "MARCH",
+        "APRIL",
+        "MAY",
+        "JUNE",
+        "JULY",
+        "AUGUST",
+        "SEPTEMBER",
+        "OCTOBER",
+        "NOVEMBER",
+        "DECEMBER"
     };
 
     /** Strings for abbreviations of months of the year in full-uppercase. */
     public static final String[] MTHS = {
-            "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
 
     /** Strings for abbreviations of months of the year for toString() output. */
-    public static final String[] Mths = {
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private static final String[] Mths = {
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     /** Point in time being stored by the object, only one of these variables can have a non-null value. */
     private final String timeString;
@@ -95,14 +95,14 @@ public class TimePoint {
      */
     public Object getTime() {
         switch (this.format) {
-            case STRING:
-                return this.timeString;
-            case LOCAL_DATE:
-                return this.localDate;
-            case LOCAL_DATE_TIME:
-                return this.localDateTime;
-            default:
-                return null;
+        case STRING:
+            return this.timeString;
+        case LOCAL_DATE:
+            return this.localDate;
+        case LOCAL_DATE_TIME:
+            return this.localDateTime;
+        default:
+            return null;
         }
     }
 
@@ -113,12 +113,12 @@ public class TimePoint {
      */
     public int getDayOfMonth() {
         switch (this.format) {
-            case LOCAL_DATE:
-                return this.localDate.getDayOfMonth();
-            case LOCAL_DATE_TIME:
-                return this.localDateTime.toLocalDate().getDayOfMonth();
-            default:
-                return -1;
+        case LOCAL_DATE:
+            return this.localDate.getDayOfMonth();
+        case LOCAL_DATE_TIME:
+            return this.localDateTime.toLocalDate().getDayOfMonth();
+        default:
+            return -1;
         }
     }
 
@@ -129,12 +129,12 @@ public class TimePoint {
      */
     public int getMonth() {
         switch (this.format) {
-            case LOCAL_DATE:
-                return this.localDate.getMonthValue();
-            case LOCAL_DATE_TIME:
-                return this.localDateTime.toLocalDate().getMonthValue();
-            default:
-                return -1;
+        case LOCAL_DATE:
+            return this.localDate.getMonthValue();
+        case LOCAL_DATE_TIME:
+            return this.localDateTime.toLocalDate().getMonthValue();
+        default:
+            return -1;
         }
     }
 
@@ -145,12 +145,12 @@ public class TimePoint {
      */
     public int getYear() {
         switch (this.format) {
-            case LOCAL_DATE:
-                return this.localDate.getYear();
-            case LOCAL_DATE_TIME:
-                return this.localDateTime.toLocalDate().getYear();
-            default:
-                return -1;
+        case LOCAL_DATE:
+            return this.localDate.getYear();
+        case LOCAL_DATE_TIME:
+            return this.localDateTime.toLocalDate().getYear();
+        default:
+            return -1;
         }
     }
 
@@ -164,25 +164,25 @@ public class TimePoint {
     public boolean isSameDayAs(TimePoint other) {
         LocalDate thisLocalDate;
         switch (this.format) {
-            case LOCAL_DATE:
-                thisLocalDate = this.localDate;
-                break;
-            case LOCAL_DATE_TIME:
-                thisLocalDate = this.localDateTime.toLocalDate();
-                break;
-            default:
-                return false;
+        case LOCAL_DATE:
+            thisLocalDate = this.localDate;
+            break;
+        case LOCAL_DATE_TIME:
+            thisLocalDate = this.localDateTime.toLocalDate();
+            break;
+        default:
+            return false;
         }
         LocalDate otherLocalDate;
         switch (other.format) {
-            case LOCAL_DATE:
-                otherLocalDate = (LocalDate) other.getTime();
-                break;
-            case LOCAL_DATE_TIME:
-                otherLocalDate = ((LocalDateTime) other.getTime()).toLocalDate();
-                break;
-            default:
-                return false;
+        case LOCAL_DATE:
+            otherLocalDate = (LocalDate) other.getTime();
+            break;
+        case LOCAL_DATE_TIME:
+            otherLocalDate = ((LocalDateTime) other.getTime()).toLocalDate();
+            break;
+        default:
+            return false;
         }
         return thisLocalDate.isEqual(otherLocalDate);
     }
@@ -252,33 +252,34 @@ public class TimePoint {
             return false;
         }
         switch (this.format) {
-            case STRING:
-                return this.timeString.equals(otherTimePoint.timeString);
-            case LOCAL_DATE:
-                return this.localDate.equals(otherTimePoint.localDate);
-            case LOCAL_DATE_TIME:
-                return this.localDateTime.equals(otherTimePoint.localDateTime);
+        case STRING:
+            return this.timeString.equals(otherTimePoint.timeString);
+        case LOCAL_DATE:
+            return this.localDate.equals(otherTimePoint.localDate);
+        case LOCAL_DATE_TIME:
+            return this.localDateTime.equals(otherTimePoint.localDateTime);
+        default:
+            return false;
         }
-        return false;
     }
 
     @Override
     public String toString() {
         switch (format) {
-            case STRING:
-                return timeString;
-            case LOCAL_DATE:
-                return Mths[localDate.getMonthValue() - 1]
-                        + " " + localDate.getDayOfMonth()
-                        + " " + localDate.getYear();
-            case LOCAL_DATE_TIME:
-                return localDateTime.getHour()
-                        + ":" + (localDateTime.getMinute() < 10 ? "0" : "") + localDateTime.getMinute()
-                        + " " + Mths[localDateTime.getMonthValue() - 1]
-                        + " " + localDateTime.getDayOfMonth()
-                        + " " + localDateTime.getYear();
-            default:
-                return null;
+        case STRING:
+            return timeString;
+        case LOCAL_DATE:
+            return Mths[localDate.getMonthValue() - 1]
+                    + " " + localDate.getDayOfMonth()
+                    + " " + localDate.getYear();
+        case LOCAL_DATE_TIME:
+            return localDateTime.getHour()
+                    + ":" + (localDateTime.getMinute() < 10 ? "0" : "") + localDateTime.getMinute()
+                    + " " + Mths[localDateTime.getMonthValue() - 1]
+                    + " " + localDateTime.getDayOfMonth()
+                    + " " + localDateTime.getYear();
+        default:
+            return null;
         }
     }
 }

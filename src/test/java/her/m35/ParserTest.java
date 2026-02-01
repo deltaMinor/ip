@@ -1,22 +1,22 @@
-package herm35;
+package her.m35;
 
-import herm35.command.AddTaskCommand;
-import herm35.command.ClearCommand;
-import herm35.command.DeleteCommand;
-import herm35.command.ExitCommand;
-import herm35.command.FindCommand;
-import herm35.command.HelpCommand;
-import herm35.command.ListCommand;
-import herm35.command.MarkCommand;
-import herm35.command.MessageCommand;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
+import her.m35.command.AddTaskCommand;
+import her.m35.command.ClearCommand;
+import her.m35.command.DeleteCommand;
+import her.m35.command.ExitCommand;
+import her.m35.command.FindCommand;
+import her.m35.command.HelpCommand;
+import her.m35.command.ListCommand;
+import her.m35.command.MarkCommand;
+import her.m35.command.MessageCommand;
 
 public class ParserTest {
 

@@ -1,8 +1,9 @@
-package herm35;
+package her.m35;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/** This class provides UI to deal with interactions with the user. */
 public class Ui {
 
     /** Separator string used when printing messages. */

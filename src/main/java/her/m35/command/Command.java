@@ -1,8 +1,8 @@
-package herm35.command;
+package her.m35.command;
 
-import herm35.TaskList;
-import herm35.Storage;
-import herm35.Ui;
+import her.m35.Storage;
+import her.m35.TaskList;
+import her.m35.Ui;
 
 /**
  * Represents an executable command in the chatbot.

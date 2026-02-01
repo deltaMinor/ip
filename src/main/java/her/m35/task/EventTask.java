@@ -1,6 +1,6 @@
-package herm35.task;
+package her.m35.task;
 
-import herm35.TimePoint;
+import her.m35.TimePoint;
 
 /**
  * Represents a task that begins and ends at specific times.
@@ -22,7 +22,7 @@ public class EventTask extends Task {
      * @param from Start time of the event.
      * @param to   End time of the event.
      */
-    public EventTask(String name, TimePoint from, TimePoint to){
+    public EventTask(String name, TimePoint from, TimePoint to) {
         super(name + " (from: " + from + " to: " + to + ")", Type.EVENT);
         this.name = name;
         this.fromDate = from;
@@ -37,7 +37,7 @@ public class EventTask extends Task {
      * @param to   End time of the event.
      * @param isDone Completion status of the task.
      */
-    public EventTask(String name, TimePoint from, TimePoint to, Boolean isDone){
+    public EventTask(String name, TimePoint from, TimePoint to, Boolean isDone) {
         super(name + " (from: " + from + " to: " + to + ")", Type.EVENT, isDone);
         this.name = name;
         this.fromDate = from;

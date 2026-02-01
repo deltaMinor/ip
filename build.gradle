@@ -33,7 +33,7 @@ test {
 }
 
 application {
-    mainClass.set("herm35.HERM35")
+    mainClass.set("her.m35.Herm35")
 }
 
 shadowJar {

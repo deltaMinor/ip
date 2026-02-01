@@ -1,8 +1,8 @@
-package herm35.command;
+package her.m35.command;
 
-import herm35.Storage;
-import herm35.TaskList;
-import herm35.Ui;
+import her.m35.Storage;
+import her.m35.TaskList;
+import her.m35.Ui;
 
 /**
  * Command that displays a string to the user as a formatted message.
@@ -21,7 +21,7 @@ public class MessageCommand extends Command {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * Displays message to the user through the Ui.
      */

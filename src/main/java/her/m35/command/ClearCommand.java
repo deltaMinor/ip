@@ -1,10 +1,10 @@
-package herm35.command;
-
-import herm35.Storage;
-import herm35.TaskList;
-import herm35.Ui;
+package her.m35.command;
 
 import java.io.IOException;
+
+import her.m35.Storage;
+import her.m35.TaskList;
+import her.m35.Ui;
 
 /** Command that clears the task list. */
 public class ClearCommand extends Command {
@@ -14,7 +14,7 @@ public class ClearCommand extends Command {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * Deletes every task in the provided TaskList and Storage, and informs the viewer via the Ui.
      */

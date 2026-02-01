@@ -1,26 +1,22 @@
-package herm35;
-
-import herm35.command.AddTaskCommand;
-import herm35.command.ClearCommand;
-import herm35.command.Command;
-import herm35.command.DeleteCommand;
-import herm35.command.ExitCommand;
-import herm35.command.FindCommand;
-import herm35.command.HelpCommand;
-import herm35.command.ListCommand;
-import herm35.command.MarkCommand;
-import herm35.command.MessageCommand;
-
-
-import herm35.task.DeadlineTask;
-import herm35.task.EventTask;
-import herm35.task.ToDoTask;
+package her.m35;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import javax.print.DocFlavor;
+import her.m35.command.AddTaskCommand;
+import her.m35.command.ClearCommand;
+import her.m35.command.Command;
+import her.m35.command.DeleteCommand;
+import her.m35.command.ExitCommand;
+import her.m35.command.FindCommand;
+import her.m35.command.HelpCommand;
+import her.m35.command.ListCommand;
+import her.m35.command.MarkCommand;
+import her.m35.command.MessageCommand;
+import her.m35.task.DeadlineTask;
+import her.m35.task.EventTask;
+import her.m35.task.ToDoTask;
 
 /**
  * Handles parsing of user input into information for the chatbot.
@@ -47,81 +43,81 @@ public class Parser {
     public static Command parse(String input) {
         String[] tokens = input.split(" ", 2);
         switch (tokens[0]) {
-            case "mark":
-                if (tokens.length < 2) {
-                    return new MessageCommand("Task index not given.");
-                }
-                return new MarkCommand(tokens[1], true);
-            case "unmark":
-                if (tokens.length < 2) {
-                    return new MessageCommand("Task index not given.");
-                }
-                return new MarkCommand(tokens[1], false);
-            case "list":
-                if (tokens.length > 1) {
-                    return new MessageCommand("Unknown command, please try again. (Did you mean \"list\"?)");
-                } else {
-                    return new ListCommand();
-                }
-            case "bye":
-                if (tokens.length > 1) {
-                    return new MessageCommand("Unknown command, please try again. (Did you mean \"bye\"?)");
-                } else {
-                    return new ExitCommand();
-                }
-            case "delete":
-                if (tokens.length < 2) {
-                    return new MessageCommand("Task name not given.");
-                }
-                return new DeleteCommand(tokens[1]);
-            case "clear":
-                if (tokens.length > 1) {
-                    return new MessageCommand("Unknown command, please try again. (Did you mean \"clear\"?)");
-                } else {
-                    return new ClearCommand();
-                }
-            case "todo":
-                if (tokens.length < 2) {
-                    return new MessageCommand("Task name not given.");
-                } else {
-                    return new AddTaskCommand(new ToDoTask(tokens[1]));
-                }
-            case "deadline":
-                if (tokens.length < 2) {
-                    return new MessageCommand("Task name not given.");
-                }
-                String[] deadlineTask = tokens[1].split(" /by ", 2);
-                if (deadlineTask.length < 2) {
-                    return new MessageCommand("Please state the deadline, denoted with \" /by \".");
-                }
-                return new AddTaskCommand(new DeadlineTask(deadlineTask[0], Parser.toDate(deadlineTask[1])));
-            case "event":
-                if (tokens.length < 2) {
-                    return new MessageCommand("Task name not given.");
-                }
-                String[] eventTask = tokens[1].split(" /from ", 2);
-                if (eventTask.length < 2) {
-                    return new MessageCommand(
-                            "Please state when the event begins, denoted with \" /from \".");
-                }
-                String[] eventPeriod = eventTask[1].split(" /to ", 2);
-                if (eventPeriod.length < 2) {
-                    return new MessageCommand("Please state when the event ends, denoted with \" /to \".");
-                }
-                return new AddTaskCommand(
-                        new EventTask(
-                                eventTask[0],
-                                Parser.toDate(eventPeriod[0]),
-                                Parser.toDate(eventPeriod[1])));
-            case "find":
-                if (tokens.length < 2) {
-                    return new MessageCommand("Search prompt not given.");
-                }
-                return new FindCommand(tokens[1]);
-            case "help":
-                return new HelpCommand();
-            default:
-                return new MessageCommand("Unknown command, please try again.");
+        case "mark":
+            if (tokens.length < 2) {
+                return new MessageCommand("Task index not given.");
+            }
+            return new MarkCommand(tokens[1], true);
+        case "unmark":
+            if (tokens.length < 2) {
+                return new MessageCommand("Task index not given.");
+            }
+            return new MarkCommand(tokens[1], false);
+        case "list":
+            if (tokens.length > 1) {
+                return new MessageCommand("Unknown command, please try again. (Did you mean \"list\"?)");
+            } else {
+                return new ListCommand();
+            }
+        case "bye":
+            if (tokens.length > 1) {
+                return new MessageCommand("Unknown command, please try again. (Did you mean \"bye\"?)");
+            } else {
+                return new ExitCommand();
+            }
+        case "delete":
+            if (tokens.length < 2) {
+                return new MessageCommand("Task name not given.");
+            }
+            return new DeleteCommand(tokens[1]);
+        case "clear":
+            if (tokens.length > 1) {
+                return new MessageCommand("Unknown command, please try again. (Did you mean \"clear\"?)");
+            } else {
+                return new ClearCommand();
+            }
+        case "todo":
+            if (tokens.length < 2) {
+                return new MessageCommand("Task name not given.");
+            } else {
+                return new AddTaskCommand(new ToDoTask(tokens[1]));
+            }
+        case "deadline":
+            if (tokens.length < 2) {
+                return new MessageCommand("Task name not given.");
+            }
+            String[] deadlineTask = tokens[1].split(" /by ", 2);
+            if (deadlineTask.length < 2) {
+                return new MessageCommand("Please state the deadline, denoted with \" /by \".");
+            }
+            return new AddTaskCommand(new DeadlineTask(deadlineTask[0], Parser.toDate(deadlineTask[1])));
+        case "event":
+            if (tokens.length < 2) {
+                return new MessageCommand("Task name not given.");
+            }
+            String[] eventTask = tokens[1].split(" /from ", 2);
+            if (eventTask.length < 2) {
+                return new MessageCommand(
+                        "Please state when the event begins, denoted with \" /from \".");
+            }
+            String[] eventPeriod = eventTask[1].split(" /to ", 2);
+            if (eventPeriod.length < 2) {
+                return new MessageCommand("Please state when the event ends, denoted with \" /to \".");
+            }
+            return new AddTaskCommand(
+                    new EventTask(
+                            eventTask[0],
+                            Parser.toDate(eventPeriod[0]),
+                            Parser.toDate(eventPeriod[1])));
+        case "find":
+            if (tokens.length < 2) {
+                return new MessageCommand("Search prompt not given.");
+            }
+            return new FindCommand(tokens[1]);
+        case "help":
+            return new HelpCommand();
+        default:
+            return new MessageCommand("Unknown command, please try again.");
         }
     }
 
@@ -142,37 +138,76 @@ public class Parser {
                 String.format(
                         "%d-%s-%d",
                         LocalDate.now().getDayOfMonth(),
-                        TimePoint.Mths[LocalDate.now().getMonthValue() - 1],
+                        TimePoint.MTHS[LocalDate.now().getMonthValue() - 1],
                         LocalDateTime.now().getYear()));
         timeStringCopy = timeStringCopy.replace(
                 "tdy",
                 String.format(
                         "%d-%s-%d",
                         LocalDate.now().getDayOfMonth(),
-                        TimePoint.Mths[LocalDate.now().getMonthValue() - 1],
+                        TimePoint.MTHS[LocalDate.now().getMonthValue() - 1],
                         LocalDateTime.now().getYear()));
         timeStringCopy = timeStringCopy.replace(
                 "tomorrow",
                 String.format(
                         "%d-%s-%d",
                         LocalDate.now().getDayOfMonth() + 1,
-                        TimePoint.Mths[LocalDate.now().getMonthValue() - 1],
+                        TimePoint.MTHS[LocalDate.now().getMonthValue() - 1],
                         LocalDateTime.now().getYear()));
         timeStringCopy = timeStringCopy.replace(
                 "tmrw",
                 String.format(
                         "%d-%s-%d",
                         LocalDate.now().getDayOfMonth() + 1,
-                        TimePoint.Mths[LocalDate.now().getMonthValue() - 1],
+                        TimePoint.MTHS[LocalDate.now().getMonthValue() - 1],
                         LocalDateTime.now().getYear()));
-        int day = -1, month = -1, year = -1, time = -1;
+        int day = -1;
+        int month = -1;
+        int year = -1;
+        int time = -1;
         String[] tokens = timeStringCopy.split("[/ \\-]");
         for (int i = 0; i < tokens.length; i++) {
             tokens[i] = tokens[i].toUpperCase();
         }
         LocalDate tempLocalDate = null;
         switch (tokens.length) {
-            case 2:
+        case 2:
+            year = LocalDate.now().getYear();
+            if (isValidDate(toDay(tokens[0]), toMonth(tokens[1]), year)) {
+                month = toMonth(tokens[1]);
+                day = toDay(tokens[0]);
+                year = LocalDate.now().getYear();
+                break;
+            }
+            if (isValidDate(toDay(tokens[1]), toMonth(tokens[0]), year)) {
+                month = toMonth(tokens[0]);
+                day = toDay(tokens[1]);
+                year = LocalDate.now().getYear();
+            }
+            break;
+        case 3:
+            if (tokens[0].contains(":") || tokens[0].contains("AM") || tokens[0].contains("PM")) {
+                time = toHourMinuteTime(tokens[0]);
+                if (time == -1) {
+                    break;
+                }
+                year = LocalDate.now().getYear();
+                if (isValidDate(toDay(tokens[1]), toMonth(tokens[2]), year)) {
+                    month = toMonth(tokens[2]);
+                    day = toDay(tokens[1]);
+                    break;
+                }
+                if (isValidDate(toDay(tokens[2]), toMonth(tokens[1]), year)) {
+                    month = toMonth(tokens[1]);
+                    day = toDay(tokens[2]);
+                }
+                break;
+            }
+            if (tokens[2].contains(":") || tokens[2].contains("AM") || tokens[2].contains("PM")) {
+                time = toHourMinuteTime(tokens[2]);
+                if (time == -1) {
+                    break;
+                }
                 year = LocalDate.now().getYear();
                 if (isValidDate(toDay(tokens[0]), toMonth(tokens[1]), year)) {
                     month = toMonth(tokens[1]);
@@ -186,102 +221,67 @@ public class Parser {
                     year = LocalDate.now().getYear();
                 }
                 break;
-            case 3:
-                if (tokens[0].contains(":") || tokens[0].contains("AM") || tokens[0].contains("PM")) {
-                    time = toHourMinuteTime(tokens[0]);
-                    if (time == -1) {
-                        break;
-                    }
-                    year = LocalDate.now().getYear();
-                    if (isValidDate(toDay(tokens[1]), toMonth(tokens[2]), year)) {
-                        month = toMonth(tokens[2]);
-                        day = toDay(tokens[1]);
-                        break;
-                    }
-                    if (isValidDate(toDay(tokens[2]), toMonth(tokens[1]), year)) {
-                        month = toMonth(tokens[1]);
-                        day = toDay(tokens[2]);
-                    }
+            }
+            tempLocalDate = threeStringstoLocalDate(new String[]{tokens[0], tokens[1], tokens[2]});
+            if (tempLocalDate != null) {
+                day = tempLocalDate.getDayOfMonth();
+                month = tempLocalDate.getMonthValue();
+                year = tempLocalDate.getYear();
+            }
+            break;
+        case 4:
+            if (tokens[0].contains(":") || tokens[0].contains("AM") || tokens[0].contains("PM")
+                    || (tokens[0].length() == 4 && tokens[1].length() == 4)) {
+                time = toHourMinuteTime(tokens[0]);
+                if (time == -1) {
                     break;
                 }
-                if (tokens[2].contains(":") || tokens[2].contains("AM") || tokens[2].contains("PM")) {
-                    time = toHourMinuteTime(tokens[2]);
-                    if (time == -1) {
-                        break;
-                    }
-                    year = LocalDate.now().getYear();
-                    if (isValidDate(toDay(tokens[0]), toMonth(tokens[1]), year)) {
-                        month = toMonth(tokens[1]);
-                        day = toDay(tokens[0]);
-                        year = LocalDate.now().getYear();
-                        break;
-                    }
-                    if (isValidDate(toDay(tokens[1]), toMonth(tokens[0]), year)) {
-                        month = toMonth(tokens[0]);
-                        day = toDay(tokens[1]);
-                        year = LocalDate.now().getYear();
-                    }
-                    break;
-                }
-                tempLocalDate = threeStringstoLocalDate(new String[] {tokens[0], tokens[1], tokens[2]});
+                tempLocalDate = threeStringstoLocalDate(new String[]{tokens[1], tokens[2], tokens[3]});
                 if (tempLocalDate != null) {
                     day = tempLocalDate.getDayOfMonth();
                     month = tempLocalDate.getMonthValue();
                     year = tempLocalDate.getYear();
                 }
                 break;
-            case 4:
-                if (tokens[0].contains(":") || tokens[0].contains("AM") || tokens[0].contains("PM")
-                        || (tokens[0].length() == 4 && tokens[1].length() == 4)) {
-                    time = toHourMinuteTime(tokens[0]);
-                    if (time == -1) {
-                        break;
-                    }
-                    tempLocalDate = threeStringstoLocalDate(new String[] {tokens[1], tokens[2], tokens[3]});
-                    if (tempLocalDate != null) {
-                        day = tempLocalDate.getDayOfMonth();
-                        month = tempLocalDate.getMonthValue();
-                        year = tempLocalDate.getYear();
-                    }
+            }
+            if (tokens[3].contains(":") || tokens[3].contains("AM") || tokens[3].contains("PM")
+                    || (tokens[2].length() == 4 && tokens[3].length() == 4)) {
+                time = toHourMinuteTime(tokens[3]);
+                if (time == -1) {
                     break;
                 }
-                if (tokens[3].contains(":") || tokens[3].contains("AM") || tokens[3].contains("PM")
-                        || (tokens[2].length() == 4 && tokens[3].length() == 4)) {
-                    time = toHourMinuteTime(tokens[3]);
-                    if (time == -1) {
-                        break;
-                    }
-                    tempLocalDate = threeStringstoLocalDate(new String[] {tokens[0], tokens[1], tokens[2]});
-                    if (tempLocalDate != null) {
-                        day = tempLocalDate.getDayOfMonth();
-                        month = tempLocalDate.getMonthValue();
-                        year = tempLocalDate.getYear();
-                    }
+                tempLocalDate = threeStringstoLocalDate(new String[]{tokens[0], tokens[1], tokens[2]});
+                if (tempLocalDate != null) {
+                    day = tempLocalDate.getDayOfMonth();
+                    month = tempLocalDate.getMonthValue();
+                    year = tempLocalDate.getYear();
+                }
+                break;
+            }
+            if (tokens[0].length() == 4 && tokens[3].length() == 4) {
+                time = toHourMinuteTime(tokens[0]);
+                if (time == -1) {
                     break;
                 }
-                if (tokens[0].length() == 4 && tokens[3].length() == 4) {
-                    time = toHourMinuteTime(tokens[0]);
-                    if (time == -1) {
-                        break;
-                    }
-                    tempLocalDate = threeStringstoLocalDate(new String[] {tokens[1], tokens[2], tokens[3]});
-                    if (tempLocalDate != null) {
-                        day = tempLocalDate.getDayOfMonth();
-                        month = tempLocalDate.getMonthValue();
-                        year = tempLocalDate.getYear();
-                    }
-                    break;
+                tempLocalDate = threeStringstoLocalDate(new String[]{tokens[1], tokens[2], tokens[3]});
+                if (tempLocalDate != null) {
+                    day = tempLocalDate.getDayOfMonth();
+                    month = tempLocalDate.getMonthValue();
+                    year = tempLocalDate.getYear();
                 }
-            default:
-                return new TimePoint(timeString);
-        }
-
-        if(month == -1 || day == -1 || year == -1) {
+                break;
+            }
+            break;
+        default:
             return new TimePoint(timeString);
         }
 
-        if(time == -1) {
-            if(isValidDate(day, month, year)) {
+        if (month == -1 || day == -1 || year == -1) {
+            return new TimePoint(timeString);
+        }
+
+        if (time == -1) {
+            if (isValidDate(day, month, year)) {
                 return new TimePoint(LocalDate.of(year, month, day));
             }
             return new TimePoint(timeString);
@@ -309,7 +309,7 @@ public class Parser {
 
         int monthPosition = -1;
         int dayPosition = -1;
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             if (timeParameters[i] == TimeParameters.MONTH) {
                 monthPosition = i;
             }
@@ -333,8 +333,7 @@ public class Parser {
      * @param a 1st number.
      * @param b 2nd number.
      * @param c 3rd number.
-     * @return The three numbers reordered dd/mm/yyyy format, if they were given in a valid order,
-     * otherwise null.
+     * @return The three numbers reordered dd/mm/yyyy format, if they were given in a valid order, otherwise null.
      */
     private static int[] reorderForDate(int a, int b, int c) {
         if (isValidDate(a, b, c)) {
@@ -375,56 +374,56 @@ public class Parser {
                 }
             }
             switch (monthIndex) {
-                case 0:
-                    if (isInteger(strings[1]) && isInteger(strings[2])) {
-                        if (isValidDate(
-                                Integer.parseInt(strings[1]),
+            case 0:
+                if (isInteger(strings[1]) && isInteger(strings[2])) {
+                    if (isValidDate(
+                            Integer.parseInt(strings[1]),
+                            toMonth(strings[0]),
+                            Integer.parseInt(strings[2]))) {
+                        return LocalDate.of(
+                                Integer.parseInt(strings[2]),
                                 toMonth(strings[0]),
-                                Integer.parseInt(strings[2]))) {
-                            return LocalDate.of(
-                                    Integer.parseInt(strings[2]),
-                                    toMonth(strings[0]),
-                                    Integer.parseInt(strings[1]));
-                        }
+                                Integer.parseInt(strings[1]));
                     }
-                    break;
-                case 1:
-                    if (isInteger(strings[0]) && isInteger(strings[2])) {
-                        if (isValidDate(
-                                Integer.parseInt(strings[0]),
-                                toMonth(strings[1]),
-                                Integer.parseInt(strings[2]))) {
-                            return LocalDate.of(
-                                    Integer.parseInt(strings[2]),
-                                    toMonth(strings[1]),
-                                    Integer.parseInt(strings[0]));
-                        }
-                        if (isValidDate(
+                }
+                break;
+            case 1:
+                if (isInteger(strings[0]) && isInteger(strings[2])) {
+                    if (isValidDate(
+                            Integer.parseInt(strings[0]),
+                            toMonth(strings[1]),
+                            Integer.parseInt(strings[2]))) {
+                        return LocalDate.of(
                                 Integer.parseInt(strings[2]),
                                 toMonth(strings[1]),
-                                Integer.parseInt(strings[0]))) {
-                            return LocalDate.of(
-                                    Integer.parseInt(strings[0]),
-                                    toMonth(strings[1]),
-                                    Integer.parseInt(strings[2]));
-                        }
+                                Integer.parseInt(strings[0]));
                     }
-                    break;
-                case 2:
-                    if (isInteger(strings[0]) && isInteger(strings[1])) {
-                        if (isValidDate(
-                                Integer.parseInt(strings[1]),
+                    if (isValidDate(
+                            Integer.parseInt(strings[2]),
+                            toMonth(strings[1]),
+                            Integer.parseInt(strings[0]))) {
+                        return LocalDate.of(
+                                Integer.parseInt(strings[0]),
+                                toMonth(strings[1]),
+                                Integer.parseInt(strings[2]));
+                    }
+                }
+                break;
+            case 2:
+                if (isInteger(strings[0]) && isInteger(strings[1])) {
+                    if (isValidDate(
+                            Integer.parseInt(strings[1]),
+                            toMonth(strings[2]),
+                            Integer.parseInt(strings[0]))) {
+                        return LocalDate.of(
+                                Integer.parseInt(strings[0]),
                                 toMonth(strings[2]),
-                                Integer.parseInt(strings[0]))) {
-                            return LocalDate.of(
-                                    Integer.parseInt(strings[0]),
-                                    toMonth(strings[2]),
-                                    Integer.parseInt(strings[1]));
-                        }
+                                Integer.parseInt(strings[1]));
                     }
-                    break;
-                default:
-                    return null;
+                }
+                break;
+            default:
+                return null;
             }
         }
         return null;

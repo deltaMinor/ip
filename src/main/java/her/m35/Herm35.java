@@ -1,14 +1,18 @@
-package herm35;
-
-import herm35.command.MessageCommand;
-import herm35.command.Command;
+package her.m35;
 
 import java.io.IOException;
+
+import her.m35.command.Command;
+import her.m35.command.MessageCommand;
+
 
 /**
  * Entry point and controller class for the HERM35 chatbot.
  */
-public class HERM35 {
+public class Herm35 {
+    /** Name of the chatbot. */
+    private static final String NAME = "HERM35";
+
     /** Storage object used to store task list. */
     private Storage storage;
 
@@ -17,9 +21,6 @@ public class HERM35 {
 
     /** List of tasks currently managed by the chatbot. */
     private TaskList taskList;
-
-    /** Name of the chatbot. */
-    private static final String NAME = "HERM35";
 
     /** UI to deal with interactions with the user. */
     private Ui ui;
@@ -36,7 +37,7 @@ public class HERM35 {
      *
      * @param fileName The name of the file which stores the task list.
      */
-    public HERM35(String fileName) {
+    public Herm35(String fileName) {
         ui = new Ui();
         try {
             storage = new Storage(fileName);
@@ -84,6 +85,6 @@ public class HERM35 {
      * @param args command-line arguments
      */
     public static void main(String[] args) {
-        new HERM35("data/tasklist.csv").run();
+        new Herm35("data/tasklist.csv").run();
     }
 }

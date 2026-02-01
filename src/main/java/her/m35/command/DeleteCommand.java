@@ -1,11 +1,11 @@
-package herm35.command;
-
-import herm35.Parser;
-import herm35.Storage;
-import herm35.TaskList;
-import herm35.Ui;
+package her.m35.command;
 
 import java.io.IOException;
+
+import her.m35.Parser;
+import her.m35.Storage;
+import her.m35.TaskList;
+import her.m35.Ui;
 
 /**
  * Deletes a task from the task list.
@@ -20,7 +20,7 @@ public class DeleteCommand extends Command {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * If indexString represents a valid task index, deletes the specified task from the provided TaskList,
      * saves the change to Storage, and displays a confirmation message via the Ui.

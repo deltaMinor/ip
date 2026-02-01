@@ -1,11 +1,11 @@
-package herm35.command;
-
-import herm35.Parser;
-import herm35.Storage;
-import herm35.TaskList;
-import herm35.Ui;
+package her.m35.command;
 
 import java.io.IOException;
+
+import her.m35.Parser;
+import her.m35.Storage;
+import her.m35.TaskList;
+import her.m35.Ui;
 
 /**
  * Command that marks an existing task as done or undone, depending on input.
@@ -29,7 +29,7 @@ public class MarkCommand extends Command {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * If indexString represents a valid task index, changes the isDone value of the specified task from the
      * provided TaskList to newStatus, saves the change to Storage, and displays a confirmation message via

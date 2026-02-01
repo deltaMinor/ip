@@ -1,11 +1,11 @@
-package herm35.task;
+package her.m35.task;
 
-import herm35.TimePoint;
+import her.m35.TimePoint;
 
 /**
  * Represents a task that must be completed by a specific time.
  */
-public class DeadlineTask extends Task{
+public class DeadlineTask extends Task {
 
     /** Viable names to refer to a DEADLINE task. */
     public static final String[] NAMES = {"DEADLINE", "DEAD LINE", "DEAD"};
@@ -20,7 +20,7 @@ public class DeadlineTask extends Task{
      * @param name Description of the task.
      * @param date Deadline of the task.
      */
-    public DeadlineTask(String name, TimePoint date){
+    public DeadlineTask(String name, TimePoint date) {
         super(name + " (by: " + date + ")", Type.DEADLINE);
         this.name = name;
         this.byDate = date;
@@ -33,13 +33,13 @@ public class DeadlineTask extends Task{
      * @param date Deadline of the task.
      * @param isDone Completion status of the task.
      */
-    public DeadlineTask(String name, TimePoint date, Boolean isDone){
+    public DeadlineTask(String name, TimePoint date, Boolean isDone) {
         super(name + " (by: " + date + ")", Type.DEADLINE, isDone);
         this.name = name;
         this.byDate = date;
     }
 
-    public TimePoint getByDate(){
+    public TimePoint getByDate() {
         return byDate;
     }
 

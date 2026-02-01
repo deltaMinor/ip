@@ -1,11 +1,11 @@
-package herm35.task;
+package her.m35.task;
 
-import herm35.Parser;
+import her.m35.Parser;
 
 /**
  * Represents a task with a description, completion and type.
  */
-abstract public class Task {
+public abstract class Task {
 
     /**
      * Enumeration of supported task types.
@@ -99,14 +99,15 @@ abstract public class Task {
      */
     public String getTypeIcon() {
         switch (type) {
-            case TODO:
-                return "T";
-            case DEADLINE:
-                return "D";
-            case EVENT:
-                return "E";
+        case TODO:
+            return "T";
+        case DEADLINE:
+            return "D";
+        case EVENT:
+            return "E";
+        default:
+            return "";
         }
-        return "";
     }
 
     /**
@@ -114,7 +115,7 @@ abstract public class Task {
      *
      * @return Array of strings representing the task's fields.
      */
-    abstract public String[] getData();
+    public abstract String[] getData();
 
     /**
      * Reconstructs a Task object from stored data.
@@ -124,14 +125,14 @@ abstract public class Task {
      */
     public static Task dataToTask(String[] data) {
         switch (data[0]) {
-            case "T":
-                return new ToDoTask(data[2], data[1].equals("X"));
-            case "D":
-                return new DeadlineTask(data[2], Parser.toDate(data[3]), data[1].equals("X"));
-            case "E":
-                return new EventTask(data[2], Parser.toDate(data[3]), Parser.toDate(data[4]), data[1].equals("X"));
-            default:
-                return null;
+        case "T":
+            return new ToDoTask(data[2], data[1].equals("X"));
+        case "D":
+            return new DeadlineTask(data[2], Parser.toDate(data[3]), data[1].equals("X"));
+        case "E":
+            return new EventTask(data[2], Parser.toDate(data[3]), Parser.toDate(data[4]), data[1].equals("X"));
+        default:
+            return null;
         }
     }
 

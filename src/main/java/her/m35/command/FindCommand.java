@@ -1,10 +1,10 @@
-package herm35.command;
-
-import herm35.Storage;
-import herm35.TaskList;
-import herm35.Ui;
+package her.m35.command;
 
 import java.util.ArrayList;
+
+import her.m35.Storage;
+import her.m35.TaskList;
+import her.m35.Ui;
 
 /** Command to display all tasks that fit a search prompt. */
 public class FindCommand extends Command {
@@ -22,7 +22,7 @@ public class FindCommand extends Command {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * Parses findPrompt to determine the criterion used to filter the task list, then displays it if there
      * are tasks corresponding to the prompt with the Ui. If there are no tasks corresponding to the given

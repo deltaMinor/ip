@@ -1,11 +1,11 @@
-package herm35.command;
-
-import herm35.Storage;
-import herm35.TaskList;
-import herm35.Ui;
-import herm35.task.Task;
+package her.m35.command;
 
 import java.io.IOException;
+
+import her.m35.Storage;
+import her.m35.TaskList;
+import her.m35.Ui;
+import her.m35.task.Task;
 
 /**
  * Command that adds a new task to the task list.
@@ -25,7 +25,7 @@ public class AddTaskCommand extends Command {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * Adds the specified task to the provided TaskList, saves the task to Storage, and displays a confirmation
      * message via the Ui.

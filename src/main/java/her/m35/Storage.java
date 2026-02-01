@@ -1,15 +1,13 @@
-package herm35;
+package her.m35;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles storage and retrieval of data from mainly csv files.

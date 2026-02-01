@@ -1,4 +1,4 @@
-package herm35.task;
+package her.m35.task;
 
 /**
  * Represents a simple to-do task.

@@ -1,8 +1,8 @@
-package herm35.command;
+package her.m35.command;
 
-import herm35.Storage;
-import herm35.TaskList;
-import herm35.Ui;
+import her.m35.Storage;
+import her.m35.TaskList;
+import her.m35.Ui;
 
 /**
  * Command that bids the user farewell and indicates for the program to exit.
@@ -14,7 +14,7 @@ public class ExitCommand extends Command {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * Bids the user farewell via the given Ui.
      */
