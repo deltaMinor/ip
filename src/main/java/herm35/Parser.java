@@ -450,18 +450,21 @@ public class Parser {
                 return -1;
             }
         }
-        if (time.contains(":")) {
-            String[] tokens = time.split(":");
-            if (isIntegerArray(tokens) && tokens.length == 2) {
-                int hour = Integer.parseInt(tokens[0]);
-                int minute = Integer.parseInt(tokens[1]);
-                if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
-                    return hour * 100 + minute;
-                }
-            }
-        }
         if (time.contains("AM")) {
             String trimmedTime = time.replace("AM", "");
+            if (trimmedTime.contains(":")) {
+                String[] tokens = trimmedTime.split(":");
+                if (isIntegerArray(tokens) && tokens.length == 2) {
+                    int hour = Integer.parseInt(tokens[0]);
+                    int minute = Integer.parseInt(tokens[1]);
+                    if (hour == 12) {
+                        hour = 0;
+                    }
+                    if (hour >= 0 && hour <= 11 && minute >= 0 && minute <= 59) {
+                        return hour * 100 + minute;
+                    }
+                }
+            }
             if (isInteger(trimmedTime)) {
                 int hour = Integer.parseInt(trimmedTime);
                 if (hour >= 1 && hour <= 11) {
@@ -469,12 +472,25 @@ public class Parser {
                 } else if (hour == 12) {
                     return 0;
                 } else {
-                        return -1;
+                    return -1;
                 }
             }
         }
         if (time.contains("PM")) {
             String trimmedTime = time.replace("PM", "");
+            if (trimmedTime.contains(":")) {
+                String[] tokens = trimmedTime.split(":");
+                if (isIntegerArray(tokens) && tokens.length == 2) {
+                    int hour = Integer.parseInt(tokens[0]);
+                    int minute = Integer.parseInt(tokens[1]);
+                    if (hour != 12) {
+                        hour += 12;
+                    }
+                    if (hour >= 12 && hour <= 23 && minute >= 0 && minute <= 59) {
+                        return hour * 100 + minute;
+                    }
+                }
+            }
             if (isInteger(trimmedTime)) {
                 int hour = Integer.parseInt(trimmedTime);
                 if (hour >= 1 && hour <= 11) {
@@ -483,6 +499,16 @@ public class Parser {
                     return 1200;
                 } else {
                     return -1;
+                }
+            }
+        }
+        if (time.contains(":")) {
+            String[] tokens = time.split(":");
+            if (isIntegerArray(tokens) && tokens.length == 2) {
+                int hour = Integer.parseInt(tokens[0]);
+                int minute = Integer.parseInt(tokens[1]);
+                if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+                    return hour * 100 + minute;
                 }
             }
         }
