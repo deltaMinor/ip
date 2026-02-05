@@ -28,6 +28,9 @@ public class Herm35 {
     /** Opening introduction to the user. */
     private String openingLines = "Hey! I'm " + NAME + "!\nWhat can I do for you?";
 
+    /** Boolean for whether the HERM35 program should be exiting. */
+    private boolean isExit = false;
+
     /**
      * Constructs a HERM35 chatbot instance.
      *
@@ -55,6 +58,13 @@ public class Herm35 {
     }
 
     /**
+     * Construct a new Herm35 instance with the default parameters.
+     */
+    public Herm35() {
+        this("data/tasklist.csv");
+    }
+
+    /**
      * Runs the main interaction loop of the chatbot.
      *
      * Displays an introduction message, then repeatedly reads user input, parses it into a Command,
@@ -64,7 +74,7 @@ public class Herm35 {
      */
     public void run() {
         new MessageCommand(openingLines).execute(taskList, storage, ui);
-        boolean isExit = false;
+        isExit = false;
         while (!isExit) {
             try {
                 Command c = Parser.parse(ui.nextLine());
@@ -86,5 +96,23 @@ public class Herm35 {
      */
     public static void main(String[] args) {
         new Herm35("data/tasklist.csv").run();
+    }
+
+    /**
+     * Generates a response for the user's chat message.
+     */
+    public String getResponse(String input) {
+        try {
+            Command c = Parser.parse(input);
+            c.execute(taskList, storage, ui);
+            isExit = c.isExit();
+        } catch (Exception e) {
+            ui.printMessage(e.getMessage());
+        }
+        return ui.getResponse();
+    }
+
+    public boolean getIsExit() {
+        return isExit;
     }
 }

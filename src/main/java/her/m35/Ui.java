@@ -12,6 +12,9 @@ public class Ui {
     /** Scanner to receive user input. */
     private Scanner input;
 
+    /** Response for the user. */
+    private String response = "";
+
     /** Constructs a new Ui object. */
     public Ui() {
         input = new Scanner(System.in);
@@ -42,12 +45,17 @@ public class Ui {
      * @param message Message to be printed.
      */
     public void printMessage(String message) {
+        response = message;
         printLine(LINE_SEPARATOR);
         Scanner reader = new Scanner(message);
         while (reader.hasNextLine()) {
             printLine(reader.nextLine());
         }
         printLine(LINE_SEPARATOR);
+    }
+
+    public String getResponse() {
+        return response;
     }
 
     /**
