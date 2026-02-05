@@ -11,8 +11,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Controller for the main GUI.
  */
@@ -49,9 +47,13 @@ public class MainWindow extends AnchorPane {
     private void handleUserInput() {
         String input = userInput.getText();
         String response = herm35.getResponse(input);
+        DialogBox userDialog = DialogBox.getUserDialog(input, userImage);
+        userDialog.prefWidthProperty().bind(scrollPane.widthProperty().subtract(30));
+        DialogBox herm35Dialog = DialogBox.getHerm35Dialog(response, herm35Image);
+        herm35Dialog.prefWidthProperty().bind(scrollPane.widthProperty().subtract(30));
         dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, userImage),
-                DialogBox.getHerm35Dialog(response, herm35Image)
+                userDialog,
+                herm35Dialog
         );
         userInput.clear();
 
