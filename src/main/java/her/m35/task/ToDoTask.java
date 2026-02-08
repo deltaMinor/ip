@@ -2,7 +2,6 @@ package her.m35.task;
 
 /**
  * Represents a simple to-do task.
- *
  * A task.ToDoTask contains only a task name and a completion status.
  */
 public class ToDoTask extends Task {

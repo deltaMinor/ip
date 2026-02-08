@@ -2,20 +2,20 @@ package her.m35.command;
 
 import java.io.IOException;
 
-import her.m35.Parser;
 import her.m35.Storage;
 import her.m35.TaskList;
 import her.m35.Ui;
+import her.m35.parser.Parser;
 
 /**
  * Command that marks an existing task as done or undone, depending on input.
  */
 public class MarkCommand extends Command {
     /** Task to be marked. */
-    private String indexString;
+    private final String indexString;
 
     /** New isDone value of the task. */
-    private boolean newStatus;
+    private final boolean newStatus;
 
     /**
      * Constructs a MarkCommand with the specified task index and new isDone status.
