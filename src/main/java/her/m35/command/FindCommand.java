@@ -30,8 +30,8 @@ public class FindCommand extends Command {
      */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
-        ArrayList<TaskList.FilterCondition> filterConditions = new ArrayList<TaskList.FilterCondition>();
-        ArrayList<String> keywords = new ArrayList<String>();
+        ArrayList<TaskList.FilterCondition> filterConditions = new ArrayList<>();
+        ArrayList<String> keywords = new ArrayList<>();
         String remainingPrompt = findPrompt;
         while (!remainingPrompt.isEmpty()) {
             if (remainingPrompt.startsWith("/")) {
@@ -42,7 +42,6 @@ public class FindCommand extends Command {
                 } else {
                     remainingPrompt = "";
                 }
-                int endIndex;
                 switch (commandWord) {
                 case "done":
                     filterConditions.add(TaskList.FilterCondition.IS_MARKED);
@@ -54,63 +53,23 @@ public class FindCommand extends Command {
                     break;
                 case "on":
                     filterConditions.add(TaskList.FilterCondition.ON_DATE);
-                    endIndex = remainingPrompt.indexOf("/");
-                    if (endIndex != -1) {
-                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
-                        keywords.add(newKeyword);
-                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
-                    } else {
-                        keywords.add(remainingPrompt.trim());
-                        remainingPrompt = "";
-                    }
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
                     break;
                 case "before":
                     filterConditions.add(TaskList.FilterCondition.BEFORE);
-                    endIndex = remainingPrompt.indexOf("/");
-                    if (endIndex != -1) {
-                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
-                        keywords.add(newKeyword);
-                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
-                    } else {
-                        keywords.add(remainingPrompt.trim());
-                        remainingPrompt = "";
-                    }
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
                     break;
                 case "after":
                     filterConditions.add(TaskList.FilterCondition.AFTER);
-                    endIndex = remainingPrompt.indexOf("/");
-                    if (endIndex != -1) {
-                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
-                        keywords.add(newKeyword);
-                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
-                    } else {
-                        keywords.add(remainingPrompt.trim());
-                        remainingPrompt = "";
-                    }
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
                     break;
                 case "type":
                     filterConditions.add(TaskList.FilterCondition.OF_TYPE);
-                    endIndex = remainingPrompt.indexOf("/");
-                    if (endIndex != -1) {
-                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
-                        keywords.add(newKeyword);
-                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
-                    } else {
-                        keywords.add(remainingPrompt.trim());
-                        remainingPrompt = "";
-                    }
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
                     break;
                 case "contains":
                     filterConditions.add(TaskList.FilterCondition.KEYWORD);
-                    endIndex = remainingPrompt.indexOf("/");
-                    if (endIndex != -1) {
-                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
-                        keywords.add(newKeyword);
-                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
-                    } else {
-                        keywords.add(remainingPrompt.trim());
-                        remainingPrompt = "";
-                    }
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
                     break;
                 default:
                     filterConditions.add(TaskList.FilterCondition.ERROR_CONDITION);
@@ -119,19 +78,23 @@ public class FindCommand extends Command {
                 }
             } else {
                 filterConditions.add(TaskList.FilterCondition.KEYWORD);
-                int endIndex = remainingPrompt.indexOf("/");
-                if (endIndex != -1) {
-                    String newKeyword = remainingPrompt.substring(0, endIndex).trim();
-                    keywords.add(newKeyword);
-                    remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
-                } else {
-                    keywords.add(remainingPrompt.trim());
-                    remainingPrompt = "";
-                }
+                remainingPrompt = addNextKeyword(remainingPrompt, keywords);
             }
         }
         ui.printMessage(
                 taskList.outputFilteredList(
                         filterConditions.toArray(new TaskList.FilterCondition[0]), keywords.toArray(new String[0])));
+    }
+
+    private String addNextKeyword(String remainingPrompt, ArrayList<String> keywords) {
+        int endIndex = remainingPrompt.indexOf("/");
+        if (endIndex != -1) {
+            String newKeyword = remainingPrompt.substring(0, endIndex).trim();
+            keywords.add(newKeyword);
+            return remainingPrompt.replaceFirst(newKeyword, "").trim();
+        } else {
+            keywords.add(remainingPrompt.trim());
+            return "";
+        }
     }
 }

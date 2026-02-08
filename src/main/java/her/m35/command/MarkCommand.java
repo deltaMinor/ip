@@ -12,10 +12,10 @@ import her.m35.parser.Parser;
  */
 public class MarkCommand extends Command {
     /** Task to be marked. */
-    private String indexString;
+    private final String indexString;
 
     /** New isDone value of the task. */
-    private boolean newStatus;
+    private final boolean newStatus;
 
     /**
      * Constructs a MarkCommand with the specified task index and new isDone status.

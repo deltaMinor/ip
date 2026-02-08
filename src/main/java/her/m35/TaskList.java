@@ -49,13 +49,10 @@ public class TaskList {
      */
     public TaskList(String[] taskData) {
         taskList = new ArrayList<>();
-        if (taskData.length > 0) {
-            taskList.clear();
-            for (int i = 0; i < taskData.length; i++) {
-                Task newTask = Task.dataToTask(taskData[i].split(","));
-                if (newTask != null) {
-                    taskList.add(newTask);
-                }
+        for (String taskString : taskData) {
+            Task newTask = Task.dataToTask(taskString.split(","));
+            if (newTask != null) {
+                taskList.add(newTask);
             }
         }
     }

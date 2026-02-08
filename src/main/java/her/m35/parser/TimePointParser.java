@@ -14,16 +14,6 @@ import her.m35.TimePoint;
  */
 public class TimePointParser {
     /**
-     * Enumeration of parameters needed for creation of a TimePoint object.
-     */
-    private enum TimeParameters {
-        YEAR,
-        MONTH,
-        DAY,
-        TIME
-    }
-
-    /**
      * Converts a string into a TimePoint object.
      *
      * @param timeString String that represents time to be converted.
@@ -41,8 +31,8 @@ public class TimePointParser {
         timeStringCopy = timeStringCopy.replace("TOMORROW", tomorrowDateString);
         timeStringCopy = timeStringCopy.replace("TMRW", tomorrowDateString);
         timeStringCopy = timeStringCopy.replace("TMR", tomorrowDateString);
-        int year = -1;
-        int time = -1;
+        int year;
+        int time;
         String[] tokens = timeStringCopy.split("[/ \\-]");
         LocalDate date;
         LocalDateTime dateTime;
@@ -242,15 +232,15 @@ public class TimePointParser {
     /**
      * Converts a string to a time value, in 24-hour format.
      *
-     * @param time String to convert to a time value.
+     * @param timeString String to convert to a time value.
      * @return Converted integer value which represents the time, if valid, else -1.
      */
-    public static int toHourMinuteTime(String time) {
-        if (time == null) {
+    public static int toHourMinuteTime(String timeString) {
+        if (timeString == null) {
             return -1;
         }
-        if (Parser.isInteger(time)) {
-            int timeInt = Integer.parseInt(time);
+        if (Parser.isInteger(timeString)) {
+            int timeInt = Integer.parseInt(timeString);
             int hour = timeInt / 100;
             int minute = timeInt % 100;
             if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
@@ -259,20 +249,17 @@ public class TimePointParser {
                 return -1;
             }
         }
-        if (time.contains("AM")) {
-            String trimmedTime = time.replace("AM", "");
+        if (timeString.contains("AM")) {
+            String trimmedTime = timeString.replace("AM", "");
             if (trimmedTime.contains(":")) {
-                String[] tokens = trimmedTime.split(":");
-                if (Parser.isIntegerArray(tokens) && tokens.length == 2) {
-                    int hour = Integer.parseInt(tokens[0]);
-                    int minute = Integer.parseInt(tokens[1]);
-                    if (hour == 12) {
-                        hour = 0;
-                    }
-                    if (hour >= 0 && hour <= 11 && minute >= 0 && minute <= 59) {
-                        return hour * 100 + minute;
-                    }
+                int twelveHourTime = toHourMinuteTime(trimmedTime);
+                if (twelveHourTime < 100 || twelveHourTime >= 1300) {
+                    return -1;
                 }
+                if (twelveHourTime > 1200) {
+                    twelveHourTime -= 1200;
+                }
+                return twelveHourTime;
             }
             if (Parser.isInteger(trimmedTime)) {
                 int hour = Integer.parseInt(trimmedTime);
@@ -285,20 +272,17 @@ public class TimePointParser {
                 }
             }
         }
-        if (time.contains("PM")) {
-            String trimmedTime = time.replace("PM", "");
+        if (timeString.contains("PM")) {
+            String trimmedTime = timeString.replace("PM", "");
             if (trimmedTime.contains(":")) {
-                String[] tokens = trimmedTime.split(":");
-                if (Parser.isIntegerArray(tokens) && tokens.length == 2) {
-                    int hour = Integer.parseInt(tokens[0]);
-                    int minute = Integer.parseInt(tokens[1]);
-                    if (hour != 12) {
-                        hour += 12;
-                    }
-                    if (hour >= 12 && hour <= 23 && minute >= 0 && minute <= 59) {
-                        return hour * 100 + minute;
-                    }
+                int twelveHourTime = toHourMinuteTime(trimmedTime);
+                if (twelveHourTime < 100 || twelveHourTime >= 1300) {
+                    return -1;
                 }
+                if (twelveHourTime < 1200) {
+                    twelveHourTime += 1200;
+                }
+                return twelveHourTime;
             }
             if (Parser.isInteger(trimmedTime)) {
                 int hour = Integer.parseInt(trimmedTime);
@@ -311,8 +295,8 @@ public class TimePointParser {
                 }
             }
         }
-        if (time.contains(":")) {
-            String[] tokens = time.split(":");
+        if (timeString.contains(":")) {
+            String[] tokens = timeString.split(":");
             if (Parser.isIntegerArray(tokens) && tokens.length == 2) {
                 int hour = Integer.parseInt(tokens[0]);
                 int minute = Integer.parseInt(tokens[1]);
