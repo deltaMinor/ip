@@ -10,7 +10,7 @@ import her.m35.Ui;
 public class FindCommand extends Command {
 
     /** Prompt string used to filter the task list. */
-    private String findPrompt;
+    private final String findPrompt;
 
     /**
      * Constructs a FindCommand with the specified prompt.
@@ -18,7 +18,7 @@ public class FindCommand extends Command {
      * @param findPrompt Prompt string used to filter the task list.
      */
     public FindCommand(String findPrompt) {
-        this.findPrompt = findPrompt;
+        this.findPrompt = findPrompt.trim();
     }
 
     /**
@@ -32,103 +32,106 @@ public class FindCommand extends Command {
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         ArrayList<TaskList.FilterCondition> filterConditions = new ArrayList<TaskList.FilterCondition>();
         ArrayList<String> keywords = new ArrayList<String>();
-        while (!findPrompt.isEmpty()) {
-            if (findPrompt.startsWith("/done ") || findPrompt.equals("/done")) {
-                filterConditions.add(TaskList.FilterCondition.IS_MARKED);
-                findPrompt = findPrompt.replaceFirst("/done", "").trim();
-                keywords.add("");
-                continue;
-            }
-            if (findPrompt.startsWith("/todo ") || findPrompt.equals("/todo")) {
-                filterConditions.add(TaskList.FilterCondition.IS_UNMARKED);
-                findPrompt = findPrompt.replaceFirst("/todo", "").trim();
-                keywords.add("");
-                continue;
-            }
-            if (findPrompt.startsWith("/on ")) {
-                filterConditions.add(TaskList.FilterCondition.ON_DATE);
-                findPrompt = findPrompt.replaceFirst("/on ", "");
-                int endIndex = findPrompt.indexOf("/");
-                if (endIndex != -1) {
-                    String newKeyword = findPrompt.substring(0, endIndex).trim();
-                    keywords.add(newKeyword);
-                    findPrompt = findPrompt.replaceFirst(newKeyword, "").trim();
+        String remainingPrompt = findPrompt;
+        while (!remainingPrompt.isEmpty()) {
+            if (remainingPrompt.startsWith("/")) {
+                String[] promptTokens = remainingPrompt.split(" ", 2);
+                String commandWord = promptTokens[0].replaceFirst("/", "");
+                if (promptTokens.length > 1) {
+                    remainingPrompt = promptTokens[1];
                 } else {
-                    keywords.add(findPrompt.trim());
-                    findPrompt = "";
+                    remainingPrompt = "";
                 }
-                continue;
-            }
-            if (findPrompt.startsWith("/before ")) {
-                filterConditions.add(TaskList.FilterCondition.BEFORE);
-                findPrompt = findPrompt.replaceFirst("/before ", "");
-                int endIndex = findPrompt.indexOf("/");
-                if (endIndex != -1) {
-                    String newKeyword = findPrompt.substring(0, endIndex).trim();
-                    keywords.add(newKeyword);
-                    findPrompt = findPrompt.replaceFirst(newKeyword, "").trim();
-                } else {
-                    keywords.add(findPrompt.trim());
-                    findPrompt = "";
+                int endIndex;
+                switch (commandWord) {
+                case "done":
+                    filterConditions.add(TaskList.FilterCondition.IS_MARKED);
+                    keywords.add("");
+                    break;
+                case "todo":
+                    filterConditions.add(TaskList.FilterCondition.IS_UNMARKED);
+                    keywords.add("");
+                    break;
+                case "on":
+                    filterConditions.add(TaskList.FilterCondition.ON_DATE);
+                    endIndex = remainingPrompt.indexOf("/");
+                    if (endIndex != -1) {
+                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
+                        keywords.add(newKeyword);
+                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
+                    } else {
+                        keywords.add(remainingPrompt.trim());
+                        remainingPrompt = "";
+                    }
+                    break;
+                case "before":
+                    filterConditions.add(TaskList.FilterCondition.BEFORE);
+                    endIndex = remainingPrompt.indexOf("/");
+                    if (endIndex != -1) {
+                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
+                        keywords.add(newKeyword);
+                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
+                    } else {
+                        keywords.add(remainingPrompt.trim());
+                        remainingPrompt = "";
+                    }
+                    break;
+                case "after":
+                    filterConditions.add(TaskList.FilterCondition.AFTER);
+                    endIndex = remainingPrompt.indexOf("/");
+                    if (endIndex != -1) {
+                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
+                        keywords.add(newKeyword);
+                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
+                    } else {
+                        keywords.add(remainingPrompt.trim());
+                        remainingPrompt = "";
+                    }
+                    break;
+                case "type":
+                    filterConditions.add(TaskList.FilterCondition.OF_TYPE);
+                    endIndex = remainingPrompt.indexOf("/");
+                    if (endIndex != -1) {
+                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
+                        keywords.add(newKeyword);
+                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
+                    } else {
+                        keywords.add(remainingPrompt.trim());
+                        remainingPrompt = "";
+                    }
+                    break;
+                case "contains":
+                    filterConditions.add(TaskList.FilterCondition.KEYWORD);
+                    endIndex = remainingPrompt.indexOf("/");
+                    if (endIndex != -1) {
+                        String newKeyword = remainingPrompt.substring(0, endIndex).trim();
+                        keywords.add(newKeyword);
+                        remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
+                    } else {
+                        keywords.add(remainingPrompt.trim());
+                        remainingPrompt = "";
+                    }
+                    break;
+                default:
+                    filterConditions.add(TaskList.FilterCondition.ERROR_CONDITION);
+                    keywords.add("");
+                    break;
                 }
-                continue;
-            }
-            if (findPrompt.startsWith("/after ")) {
-                filterConditions.add(TaskList.FilterCondition.AFTER);
-                findPrompt = findPrompt.replaceFirst("/after ", "");
-                int endIndex = findPrompt.indexOf("/");
-                if (endIndex != -1) {
-                    String newKeyword = findPrompt.substring(0, endIndex).trim();
-                    keywords.add(newKeyword);
-                    findPrompt = findPrompt.replaceFirst(newKeyword, "").trim();
-                } else {
-                    keywords.add(findPrompt.trim());
-                    findPrompt = "";
-                }
-                continue;
-            }
-            if (findPrompt.startsWith("/type ")) {
-                filterConditions.add(TaskList.FilterCondition.OF_TYPE);
-                findPrompt = findPrompt.replaceFirst("/type ", "");
-                int endIndex = findPrompt.indexOf("/");
-                if (endIndex != -1) {
-                    String newKeyword = findPrompt.substring(0, endIndex).trim();
-                    keywords.add(newKeyword);
-                    findPrompt = findPrompt.replaceFirst(newKeyword, "").trim();
-                } else {
-                    keywords.add(findPrompt.trim());
-                    findPrompt = "";
-                }
-                continue;
-            }
-            if (findPrompt.startsWith("/contains ")) {
-                filterConditions.add(TaskList.FilterCondition.KEYWORD);
-                findPrompt = findPrompt.replaceFirst("/contains ", "");
-                int endIndex = findPrompt.indexOf("/");
-                if (endIndex != -1) {
-                    String newKeyword = findPrompt.substring(0, endIndex).trim();
-                    keywords.add(newKeyword);
-                    findPrompt = findPrompt.replaceFirst(newKeyword, "").trim();
-                } else {
-                    keywords.add(findPrompt.trim());
-                    findPrompt = "";
-                }
-                continue;
-            }
-            filterConditions.add(TaskList.FilterCondition.KEYWORD);
-            int endIndex = findPrompt.indexOf("/");
-            if (endIndex != -1) {
-                String newKeyword = findPrompt.substring(0, endIndex).trim();
-                keywords.add(newKeyword);
-                findPrompt = findPrompt.replaceFirst(newKeyword, "").trim();
             } else {
-                keywords.add(findPrompt.trim());
-                findPrompt = "";
+                filterConditions.add(TaskList.FilterCondition.KEYWORD);
+                int endIndex = remainingPrompt.indexOf("/");
+                if (endIndex != -1) {
+                    String newKeyword = remainingPrompt.substring(0, endIndex).trim();
+                    keywords.add(newKeyword);
+                    remainingPrompt = remainingPrompt.replaceFirst(newKeyword, "").trim();
+                } else {
+                    keywords.add(remainingPrompt.trim());
+                    remainingPrompt = "";
+                }
             }
         }
         ui.printMessage(
                 taskList.outputFilteredList(
-                        filterConditions.toArray(new TaskList.FilterCondition[filterConditions.size()]),
-                        keywords.toArray(new String[keywords.size()])));
+                        filterConditions.toArray(new TaskList.FilterCondition[0]), keywords.toArray(new String[0])));
     }
 }

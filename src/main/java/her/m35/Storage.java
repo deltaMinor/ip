@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * Handles storage and retrieval of data from mainly csv files.
- *
  * This class provides basic CRUD operations on a file stored in the ./data/ directory.
  * The default file format is .csv for storage files.
  */
@@ -27,8 +26,8 @@ public class Storage {
      */
     public Storage(String fileName) throws IOException {
         Files.createDirectories(Paths.get("data"));
-        this.fileName = fileName;
-        File file = new File(fileName);
+        this.fileName = "data/" + fileName;
+        File file = new File(this.fileName);
         file.createNewFile();
     }
     /**
@@ -94,6 +93,6 @@ public class Storage {
      */
     public String[] read() throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(fileName));
-        return lines.toArray(new String[lines.size()]);
+        return lines.toArray(new String[0]);
     }
 }

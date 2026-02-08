@@ -1,9 +1,9 @@
 package her.m35;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.function.Predicate;
 
+import her.m35.parser.TimePointParser;
 import her.m35.task.DeadlineTask;
 import her.m35.task.EventTask;
 import her.m35.task.Task;
@@ -19,6 +19,7 @@ public class TaskList {
      * Enumeration of supported filter conditions for the find command.
      */
     public enum FilterCondition {
+        ERROR_CONDITION,
         IS_MARKED,
         IS_UNMARKED,
         KEYWORD,
@@ -130,10 +131,9 @@ public class TaskList {
      * The tasks will be indexed with their position in the memory task list.
      *
      * @param filteredTaskList Task list to be converted into a message.
-     * @param noTasksMessage Output message if there are no tasks in the task list.
      * @return String sequence that can be printed as a message.
      */
-    public String filteredTaskListToMessage(ArrayList<Task> filteredTaskList, String noTasksMessage) {
+    public String filteredTaskListToMessage(ArrayList<Task> filteredTaskList) {
         String listOutput = "";
         if (!filteredTaskList.isEmpty()) {
             int filteredTaskListIndex = 0;
@@ -146,8 +146,6 @@ public class TaskList {
                     }
                 }
             }
-        } else {
-            return noTasksMessage;
         }
         return listOutput;
     }
@@ -164,31 +162,24 @@ public class TaskList {
         if (filterConditions.length == 0) {
             return "Your task list is empty!";
         }
-        String noTasksMessage = "";
         for (int i = 0; i < filterConditions.length; i++) {
+            String noTasksMessage;
             switch (filterConditions[i]) {
             case IS_MARKED:
-                filterTasksByPredicate(filteredTaskList, (Task task) -> task.getIsDone());
-                if (filterConditions.length == 0) {
-                    return "There are no completed tasks.";
-                }
+                noTasksMessage = "There are no completed tasks.";
+                filteredTaskList.removeIf(task -> !task.getIsDone());
                 break;
             case IS_UNMARKED:
-                filterTasksByPredicate(filteredTaskList, (Task task) -> !task.getIsDone());
-                if (filterConditions.length == 0) {
-                    return "There are no uncompleted tasks.";
-                }
+                noTasksMessage = "There are no uncompleted tasks.";
+                filteredTaskList.removeIf(Task::getIsDone);
                 break;
             case KEYWORD:
                 String keyword = keywords[i].toLowerCase();
-                filterTasksByPredicate(
-                        filteredTaskList, (Task task) -> task.toString().toLowerCase().contains(keyword));
-                if (filterConditions.length == 0) {
-                    return String.format("There are no tasks containing \"%s\".", keywords[i]);
-                }
+                noTasksMessage = String.format("There are no tasks containing \"%s\".", keywords[i]);
+                filteredTaskList.removeIf(task -> !task.toString().toLowerCase().contains(keyword));
                 break;
             case ON_DATE:
-                TimePoint onTimePoint = Parser.toDate(keywords[i]);
+                TimePoint onTimePoint = TimePointParser.toDate(keywords[i]);
                 noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
                 switch (onTimePoint.getFormat()) {
                 case LOCAL_DATE:
@@ -198,7 +189,7 @@ public class TaskList {
                             ? (onTimePoint.isAfter(((EventTask) task).getFromDate())
                             && onTimePoint.isBefore(((EventTask) task).getToDate()))
                             : false);
-                    filterTasksByPredicate(filteredTaskList, onDatePredicate);
+                    filteredTaskList.removeIf(onDatePredicate);
                     break;
                 case LOCAL_DATE_TIME:
                     Predicate<Task> onDateTimePredicate = task -> (task.getType() == Task.Type.DEADLINE)
@@ -207,17 +198,14 @@ public class TaskList {
                             ? (onTimePoint.isAfter(((EventTask) task).getFromDate())
                             && onTimePoint.isBefore(((EventTask) task).getToDate()))
                             : false);
-                    filterTasksByPredicate(filteredTaskList, onDateTimePredicate);
+                    filteredTaskList.removeIf(onDateTimePredicate);
                     break;
                 default:
                     return "Invalid on date. Recommended format: DD/MM/YYYY";
                 }
-                if (filterConditions.length == 0) {
-                    return noTasksMessage;
-                }
                 break;
             case BEFORE:
-                TimePoint beforeTimePoint = Parser.toDate(keywords[i]);
+                TimePoint beforeTimePoint = TimePointParser.toDate(keywords[i]);
                 noTasksMessage = String.format("There are no tasks occurring before %s.", beforeTimePoint);
                 if (beforeTimePoint.getFormat() == TimePoint.Format.STRING) {
                     return "Invalid before date. Recommended format: DD/MM/YYYY";
@@ -227,13 +215,10 @@ public class TaskList {
                         : task.getType() == Task.Type.EVENT
                         ? beforeTimePoint.isAfter(((EventTask) task).getToDate())
                         : false;
-                filterTasksByPredicate(filteredTaskList, beforeDatePredicate);
-                if (filterConditions.length == 0) {
-                    return noTasksMessage;
-                }
+                filteredTaskList.removeIf(beforeDatePredicate);
                 break;
             case AFTER:
-                TimePoint afterTimePoint = Parser.toDate(keywords[i]);
+                TimePoint afterTimePoint = TimePointParser.toDate(keywords[i]);
                 noTasksMessage = String.format("There are no tasks occurring after %s.", afterTimePoint);
                 if (afterTimePoint.getFormat() == TimePoint.Format.STRING) {
                     return "Invalid before date. Recommended format: DD/MM/YYYY";
@@ -243,10 +228,7 @@ public class TaskList {
                         : task.getType() == Task.Type.EVENT
                         ? afterTimePoint.isBefore(((EventTask) task).getFromDate())
                         : false;
-                filterTasksByPredicate(filteredTaskList, afterDatePredicate);
-                if (filterConditions.length == 0) {
-                    return noTasksMessage;
-                }
+                filteredTaskList.removeIf(afterDatePredicate);
                 break;
             case OF_TYPE:
                 String normalisedKeyword = keywords[i].toUpperCase();
@@ -259,7 +241,7 @@ public class TaskList {
                 for (String eventName : EventTask.NAMES) {
                     normalisedKeyword = normalisedKeyword.replace(eventName, "E");
                 }
-                String noTasksOfTypeMessage = "There are no tasks of type " + keywords[i];
+                noTasksMessage = "There are no tasks of type " + keywords[i];
                 Task.Type targetTaskType;
                 switch (normalisedKeyword) {
                 case "T":
@@ -272,35 +254,18 @@ public class TaskList {
                     targetTaskType = Task.Type.EVENT;
                     break;
                 default:
-                    return noTasksOfTypeMessage;
+                    return noTasksMessage;
                 }
-                filterTasksByPredicate(filteredTaskList, (Task task) -> task.getType() == targetTaskType);
-                if (filterConditions.length == 0) {
-                    return noTasksOfTypeMessage;
-                }
+                filteredTaskList.removeIf(task -> task.getType() != targetTaskType);
                 break;
             default:
                 return "Invalid filter command.";
             }
-        }
-        return filteredTaskListToMessage(filteredTaskList, "There are no tasks fitting your prompt.");
-    }
-
-    /**
-     * Given an ArrayList of Tasks, filters it by Predicate filterCondition such that only tasks that pass the
-     * predicate remain.
-     *
-     * @param taskArrayList ArrayList of tasks to be filtered.
-     * @param filterCondition Predicate which each task must pass to remain in the array list.
-     */
-    public void filterTasksByPredicate(ArrayList<Task> taskArrayList, Predicate<Task> filterCondition) {
-        Iterator<Task> taskListIterator = taskArrayList.iterator();
-        while (taskListIterator.hasNext()) {
-            Task task = taskListIterator.next();
-            if (!filterCondition.test(task)) {
-                taskListIterator.remove();
+            if (filteredTaskList.isEmpty()) {
+                return noTasksMessage;
             }
         }
+        return filteredTaskListToMessage(filteredTaskList);
     }
 
     @Override
