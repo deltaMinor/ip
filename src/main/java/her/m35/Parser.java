@@ -86,29 +86,29 @@ public class Parser {
             if (tokens.length < 2) {
                 return new MessageCommand("Task name not given.");
             }
-            String[] deadlineTask = tokens[1].split(" /by ", 2);
-            if (deadlineTask.length < 2) {
+            String[] deadlineTaskTokens = tokens[1].split(" /by ", 2);
+            if (deadlineTaskTokens.length < 2) {
                 return new MessageCommand("Please state the deadline, denoted with \" /by \".");
             }
-            return new AddTaskCommand(new DeadlineTask(deadlineTask[0], Parser.toDate(deadlineTask[1])));
+            return new AddTaskCommand(new DeadlineTask(deadlineTaskTokens[0], Parser.toDate(deadlineTaskTokens[1])));
         case "event":
             if (tokens.length < 2) {
                 return new MessageCommand("Task name not given.");
             }
-            String[] eventTask = tokens[1].split(" /from ", 2);
-            if (eventTask.length < 2) {
+            String[] eventTaskTokens = tokens[1].split(" /from ", 2);
+            if (eventTaskTokens.length < 2) {
                 return new MessageCommand(
                         "Please state when the event begins, denoted with \" /from \".");
             }
-            String[] eventPeriod = eventTask[1].split(" /to ", 2);
-            if (eventPeriod.length < 2) {
+            String[] eventPeriodTokens = eventTaskTokens[1].split(" /to ", 2);
+            if (eventPeriodTokens.length < 2) {
                 return new MessageCommand("Please state when the event ends, denoted with \" /to \".");
             }
             return new AddTaskCommand(
                     new EventTask(
-                            eventTask[0],
-                            Parser.toDate(eventPeriod[0]),
-                            Parser.toDate(eventPeriod[1])));
+                            eventTaskTokens[0],
+                            Parser.toDate(eventPeriodTokens[0]),
+                            Parser.toDate(eventPeriodTokens[1])));
         case "find":
             if (tokens.length < 2) {
                 return new MessageCommand("Search prompt not given.");

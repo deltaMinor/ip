@@ -2,6 +2,7 @@ package her.m35;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 import her.m35.task.DeadlineTask;
 import her.m35.task.EventTask;
@@ -165,37 +166,23 @@ public class TaskList {
         }
         String noTasksMessage = "";
         for (int i = 0; i < filterConditions.length; i++) {
-            Iterator<Task> taskListIterator = filteredTaskList.iterator();
             switch (filterConditions[i]) {
             case IS_MARKED:
-                while (taskListIterator.hasNext()) {
-                    Task task = taskListIterator.next();
-                    if (!task.getIsDone()) {
-                        taskListIterator.remove();
-                    }
-                }
+                filterTasksByPredicate(filteredTaskList, (Task task) -> task.getIsDone());
                 if (filterConditions.length == 0) {
                     return "There are no completed tasks.";
                 }
                 break;
             case IS_UNMARKED:
-                while (taskListIterator.hasNext()) {
-                    Task task = taskListIterator.next();
-                    if (task.getIsDone()) {
-                        taskListIterator.remove();
-                    }
-                }
+                filterTasksByPredicate(filteredTaskList, (Task task) -> !task.getIsDone());
                 if (filterConditions.length == 0) {
                     return "There are no uncompleted tasks.";
                 }
                 break;
             case KEYWORD:
-                while (taskListIterator.hasNext()) {
-                    Task task = taskListIterator.next();
-                    if (!task.toString().toLowerCase().contains(keywords[i].toLowerCase())) {
-                        taskListIterator.remove();
-                    }
-                }
+                String keyword = keywords[i].toLowerCase();
+                filterTasksByPredicate(
+                        filteredTaskList, (Task task) -> task.toString().toLowerCase().contains(keyword));
                 if (filterConditions.length == 0) {
                     return String.format("There are no tasks containing \"%s\".", keywords[i]);
                 }
@@ -205,50 +192,22 @@ public class TaskList {
                 noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
                 switch (onTimePoint.getFormat()) {
                 case LOCAL_DATE:
-                    while (taskListIterator.hasNext()) {
-                        Task task = taskListIterator.next();
-                        switch (task.getType()) {
-                        case DEADLINE:
-                            if (!onTimePoint.isSameDayAs(((DeadlineTask) task).getByDate())) {
-                                taskListIterator.remove();
-                            }
-                            break;
-                        case EVENT:
-                            TimePoint fromDate = ((EventTask) task).getFromDate();
-                            TimePoint toDate = ((EventTask) task).getToDate();
-                            if (!(onTimePoint.isAfter(fromDate)
-                                    && onTimePoint.isBefore(toDate))) {
-                                taskListIterator.remove();
-                            }
-                            break;
-                        default:
-                            taskListIterator.remove();
-                            break;
-                        }
-                    }
+                    Predicate<Task> onDatePredicate = task -> (task.getType() == Task.Type.DEADLINE)
+                            ? onTimePoint.isSameDayAs(((DeadlineTask) task).getByDate())
+                            : ((task.getType() == Task.Type.EVENT)
+                            ? (onTimePoint.isAfter(((EventTask) task).getFromDate())
+                            && onTimePoint.isBefore(((EventTask) task).getToDate()))
+                            : false);
+                    filterTasksByPredicate(filteredTaskList, onDatePredicate);
                     break;
                 case LOCAL_DATE_TIME:
-                    while (taskListIterator.hasNext()) {
-                        Task task = taskListIterator.next();
-                        switch (task.getType()) {
-                        case DEADLINE:
-                            if (!onTimePoint.equals(((DeadlineTask) task).getByDate())) {
-                                taskListIterator.remove();
-                            }
-                            break;
-                        case EVENT:
-                            TimePoint fromDate = ((EventTask) task).getFromDate();
-                            TimePoint toDate = ((EventTask) task).getToDate();
-                            if (!(onTimePoint.isAfter(fromDate)
-                                    && onTimePoint.isBefore(toDate))) {
-                                taskListIterator.remove();
-                            }
-                            break;
-                        default:
-                            taskListIterator.remove();
-                            break;
-                        }
-                    }
+                    Predicate<Task> onDateTimePredicate = task -> (task.getType() == Task.Type.DEADLINE)
+                            ? onTimePoint.equals(((DeadlineTask) task).getByDate())
+                            : ((task.getType() == Task.Type.EVENT)
+                            ? (onTimePoint.isAfter(((EventTask) task).getFromDate())
+                            && onTimePoint.isBefore(((EventTask) task).getToDate()))
+                            : false);
+                    filterTasksByPredicate(filteredTaskList, onDateTimePredicate);
                     break;
                 default:
                     return "Invalid on date. Recommended format: DD/MM/YYYY";
@@ -262,26 +221,13 @@ public class TaskList {
                 noTasksMessage = String.format("There are no tasks occurring before %s.", beforeTimePoint);
                 if (beforeTimePoint.getFormat() == TimePoint.Format.STRING) {
                     return "Invalid before date. Recommended format: DD/MM/YYYY";
-                } else {
-                    while (taskListIterator.hasNext()) {
-                        Task task = taskListIterator.next();
-                        switch (task.getType()) {
-                        case DEADLINE:
-                            if (!beforeTimePoint.isAfter(((DeadlineTask) task).getByDate())) {
-                                taskListIterator.remove();
-                            }
-                            break;
-                        case EVENT:
-                            if (!beforeTimePoint.isAfter(((EventTask) task).getFromDate())) {
-                                taskListIterator.remove();
-                            }
-                            break;
-                        default:
-                            taskListIterator.remove();
-                            break;
-                        }
-                    }
                 }
+                Predicate<Task> beforeDatePredicate = task -> task.getType() == Task.Type.DEADLINE
+                        ? beforeTimePoint.isAfter(((DeadlineTask) task).getByDate())
+                        : task.getType() == Task.Type.EVENT
+                        ? beforeTimePoint.isAfter(((EventTask) task).getToDate())
+                        : false;
+                filterTasksByPredicate(filteredTaskList, beforeDatePredicate);
                 if (filterConditions.length == 0) {
                     return noTasksMessage;
                 }
@@ -291,26 +237,13 @@ public class TaskList {
                 noTasksMessage = String.format("There are no tasks occurring after %s.", afterTimePoint);
                 if (afterTimePoint.getFormat() == TimePoint.Format.STRING) {
                     return "Invalid before date. Recommended format: DD/MM/YYYY";
-                } else {
-                    while (taskListIterator.hasNext()) {
-                        Task task = taskListIterator.next();
-                        switch (task.getType()) {
-                        case DEADLINE:
-                            if (!afterTimePoint.isBefore(((DeadlineTask) task).getByDate())) {
-                                taskListIterator.remove();
-                            }
-                            break;
-                        case EVENT:
-                            if (!afterTimePoint.isBefore(((EventTask) task).getFromDate())) {
-                                taskListIterator.remove();
-                            }
-                            break;
-                        default:
-                            taskListIterator.remove();
-                            break;
-                        }
-                    }
                 }
+                Predicate<Task> afterDatePredicate = task -> task.getType() == Task.Type.DEADLINE
+                        ? afterTimePoint.isBefore(((DeadlineTask) task).getByDate())
+                        : task.getType() == Task.Type.EVENT
+                        ? afterTimePoint.isBefore(((EventTask) task).getFromDate())
+                        : false;
+                filterTasksByPredicate(filteredTaskList, afterDatePredicate);
                 if (filterConditions.length == 0) {
                     return noTasksMessage;
                 }
@@ -327,34 +260,21 @@ public class TaskList {
                     normalisedKeyword = normalisedKeyword.replace(eventName, "E");
                 }
                 String noTasksOfTypeMessage = "There are no tasks of type " + keywords[i];
+                Task.Type targetTaskType;
                 switch (normalisedKeyword) {
                 case "T":
-                    while (taskListIterator.hasNext()) {
-                        Task task = taskListIterator.next();
-                        if (task.getType() != Task.Type.TODO) {
-                            taskListIterator.remove();
-                        }
-                    }
+                    targetTaskType = Task.Type.TODO;
                     break;
                 case "D":
-                    while (taskListIterator.hasNext()) {
-                        Task task = taskListIterator.next();
-                        if (task.getType() != Task.Type.DEADLINE) {
-                            taskListIterator.remove();
-                        }
-                    }
+                    targetTaskType = Task.Type.DEADLINE;
                     break;
                 case "E":
-                    while (taskListIterator.hasNext()) {
-                        Task task = taskListIterator.next();
-                        if (task.getType() != Task.Type.EVENT) {
-                            taskListIterator.remove();
-                        }
-                    }
+                    targetTaskType = Task.Type.EVENT;
                     break;
                 default:
                     return noTasksOfTypeMessage;
                 }
+                filterTasksByPredicate(filteredTaskList, (Task task) -> task.getType() == targetTaskType);
                 if (filterConditions.length == 0) {
                     return noTasksOfTypeMessage;
                 }
@@ -364,6 +284,23 @@ public class TaskList {
             }
         }
         return filteredTaskListToMessage(filteredTaskList, "There are no tasks fitting your prompt.");
+    }
+
+    /**
+     * Given an ArrayList of Tasks, filters it by Predicate filterCondition such that only tasks that pass the
+     * predicate remain.
+     *
+     * @param taskArrayList ArrayList of tasks to be filtered.
+     * @param filterCondition Predicate which each task must pass to remain in the array list.
+     */
+    public void filterTasksByPredicate(ArrayList<Task> taskArrayList, Predicate<Task> filterCondition) {
+        Iterator<Task> taskListIterator = taskArrayList.iterator();
+        while (taskListIterator.hasNext()) {
+            Task task = taskListIterator.next();
+            if (!filterCondition.test(task)) {
+                taskListIterator.remove();
+            }
+        }
     }
 
     @Override
