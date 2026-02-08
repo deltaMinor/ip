@@ -27,6 +27,7 @@ public class MessageCommand extends Command {
      */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
+        assert message != null;
         ui.printMessage(message);
     }
 }

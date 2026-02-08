@@ -45,6 +45,7 @@ public class Ui {
      * @param message Message to be printed.
      */
     public void printMessage(String message) {
+        assert message != null;
         response = message;
         printLine(LINE_SEPARATOR);
         Scanner reader = new Scanner(message);

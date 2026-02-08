@@ -132,18 +132,17 @@ public class TaskList {
      */
     public String filteredTaskListToMessage(ArrayList<Task> filteredTaskList) {
         String listOutput = "";
-        if (!filteredTaskList.isEmpty()) {
-            int filteredTaskListIndex = 0;
-            for (int i = 0; i < taskList.size(); i++) {
-                if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
-                    listOutput += i + 1 + "." + taskList.get(i).toString() + "\n";
-                    filteredTaskListIndex++;
-                    if (filteredTaskListIndex == filteredTaskList.size()) {
-                        return listOutput;
-                    }
+        int filteredTaskListIndex = 0;
+        for (int i = 0; i < taskList.size(); i++) {
+            if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
+                listOutput += i + 1 + "." + taskList.get(i).toString() + "\n";
+                filteredTaskListIndex++;
+                if (filteredTaskListIndex == filteredTaskList.size()) {
+                    return listOutput;
                 }
             }
         }
+        assert filteredTaskListIndex == filteredTaskList.size();
         return listOutput;
     }
 
@@ -155,7 +154,7 @@ public class TaskList {
      * @return Filtered task list formatted as a printable message.
      */
     public String outputFilteredList(FilterCondition[] filterConditions, String[] keywords) {
-        ArrayList<Task> filteredTaskList = new ArrayList<Task>(taskList);
+        ArrayList<Task> filteredTaskList = new ArrayList<>(taskList);
         if (filterConditions.length == 0) {
             return "Your task list is empty!";
         }
