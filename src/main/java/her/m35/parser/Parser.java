@@ -118,7 +118,7 @@ public class Parser {
             return false;
         }
         try {
-            int i = Integer.parseInt(str);
+            Integer.parseInt(str);
         } catch (NumberFormatException e) {
             return false;
         }

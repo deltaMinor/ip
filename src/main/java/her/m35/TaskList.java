@@ -228,16 +228,7 @@ public class TaskList {
                 filteredTaskList.removeIf(afterDatePredicate);
                 break;
             case OF_TYPE:
-                String normalisedKeyword = keywords[i].toUpperCase();
-                for (String toDoName : ToDoTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(toDoName, "T");
-                }
-                for (String deadlineName : DeadlineTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(deadlineName, "D");
-                }
-                for (String eventName : EventTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(eventName, "E");
-                }
+                String normalisedKeyword = normalizeByTaskName(keywords[i]);
                 noTasksMessage = "There are no tasks of type " + keywords[i];
                 Task.Type targetTaskType;
                 switch (normalisedKeyword) {
@@ -263,6 +254,25 @@ public class TaskList {
             }
         }
         return filteredTaskListToMessage(filteredTaskList);
+    }
+
+    /**
+     * Helper function to normalize the keyword for filter by task type command.
+     * @param keyword Word to be normalized.
+     * @return keyword with its internal words normalized.
+     */
+    private static String normalizeByTaskName(String keyword) {
+        String normalisedKeyword = keyword.toUpperCase();
+        for (String toDoName : ToDoTask.NAMES) {
+            normalisedKeyword = normalisedKeyword.replace(toDoName, "T");
+        }
+        for (String deadlineName : DeadlineTask.NAMES) {
+            normalisedKeyword = normalisedKeyword.replace(deadlineName, "D");
+        }
+        for (String eventName : EventTask.NAMES) {
+            normalisedKeyword = normalisedKeyword.replace(eventName, "E");
+        }
+        return normalisedKeyword;
     }
 
     @Override

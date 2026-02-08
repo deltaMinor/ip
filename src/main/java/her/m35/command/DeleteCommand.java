@@ -12,7 +12,7 @@ import her.m35.parser.Parser;
  */
 public class DeleteCommand extends Command {
     /** String representing the index of the task to be deleted from the task list. */
-    private String indexString;
+    private final String indexString;
 
     /** Constructs a DeleteCommand object. */
     public DeleteCommand(String indexString) {

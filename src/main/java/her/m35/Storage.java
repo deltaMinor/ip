@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,11 @@ import java.util.List;
  */
 public class Storage {
 
-    /** Full path to the file being managed by this Storage instance. */
+    /** Name of the file being managed by this Storage instance. */
     private final String fileName;
+
+    /** Full path of the file being managed by this Storage instance. */
+    private final Path filePath;
 
     /**
      * Creates a storage object using the default CSV file format.
@@ -29,6 +33,7 @@ public class Storage {
         this.fileName = "data/" + fileName;
         File file = new File(this.fileName);
         file.createNewFile();
+        this.filePath = Paths.get(this.fileName);
     }
     /**
      * Appends a new row to the end of the file.
@@ -51,12 +56,12 @@ public class Storage {
      * @throws IndexOutOfBoundsException If the index is invalid.
      */
     public void delete(int index) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(fileName));
+        List<String> lines = Files.readAllLines(filePath);
         if (index < 0 || index >= lines.size()) {
             throw new IndexOutOfBoundsException("Invalid row index");
         }
         lines.remove(index);
-        Files.write(Paths.get(fileName), lines);
+        Files.write(filePath, lines);
     }
 
     /**
@@ -65,7 +70,7 @@ public class Storage {
      * @throws IOException If an I/O error occurs while clearing the file.
      */
     public void clear() throws IOException {
-        Files.write(Paths.get(fileName), new ArrayList<>());
+        Files.write(filePath, new ArrayList<>());
     }
 
     /**
@@ -77,12 +82,12 @@ public class Storage {
      * @throws IndexOutOfBoundsException If the index is invalid.
      */
     public void edit(int index, String[] strings) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(fileName));
+        List<String> lines = Files.readAllLines(filePath);
         if (index < 0 || index >= lines.size()) {
             throw new IndexOutOfBoundsException("Invalid row index");
         }
         lines.set(index, String.join(",", strings));
-        Files.write(Paths.get(fileName), lines);
+        Files.write(filePath, lines);
     }
 
     /**
@@ -92,7 +97,7 @@ public class Storage {
      * @throws IOException If an I/O error occurs while reading.
      */
     public String[] read() throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(fileName));
+        List<String> lines = Files.readAllLines(filePath);
         return lines.toArray(new String[0]);
     }
 }

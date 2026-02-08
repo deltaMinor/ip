@@ -110,60 +110,6 @@ public class TimePoint {
     }
 
     /**
-     * Returns the day of the month this TimePoint contains, if it is available.
-     *
-     * @return Integer that represents the day of the month if it is available, else -1.
-     */
-    public int getDayOfMonth() {
-        switch (this.format) {
-        case LOCAL_DATE:
-            assert this.localDate != null;
-            return this.localDate.getDayOfMonth();
-        case LOCAL_DATE_TIME:
-            assert this.localDateTime != null;
-            return this.localDateTime.toLocalDate().getDayOfMonth();
-        default:
-            return -1;
-        }
-    }
-
-    /**
-     * Returns the month this TimePoint contains, if it is available.
-     *
-     * @return Integer that represents the month if it is available, else -1.
-     */
-    public int getMonth() {
-        switch (this.format) {
-        case LOCAL_DATE:
-            assert this.localDate != null;
-            return this.localDate.getMonthValue();
-        case LOCAL_DATE_TIME:
-            assert this.localDateTime != null;
-            return this.localDateTime.toLocalDate().getMonthValue();
-        default:
-            return -1;
-        }
-    }
-
-    /**
-     * Returns the year this TimePoint contains, if it is available.
-     *
-     * @return Integer that represents the year if it is available, else -1.
-     */
-    public int getYear() {
-        switch (this.format) {
-        case LOCAL_DATE:
-            assert this.localDate != null;
-            return this.localDate.getYear();
-        case LOCAL_DATE_TIME:
-            assert this.localDateTime != null;
-            return this.localDateTime.toLocalDate().getYear();
-        default:
-            return -1;
-        }
-    }
-
-    /**
      * Compares against another TimePoint if they are on the same day.
      * Both TimePoints being compared cannot contain their date as a string.
      *
