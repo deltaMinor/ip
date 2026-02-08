@@ -259,7 +259,7 @@ public class TaskList {
                 filteredTaskList.removeIf(task -> task.getType() != targetTaskType);
                 break;
             default:
-                return "Invalid filter command.";
+                return "Invalid filter command: " + keywords[i];
             }
             if (filteredTaskList.isEmpty()) {
                 return noTasksMessage;

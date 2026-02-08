@@ -114,7 +114,7 @@ public class FindCommand extends Command {
                     break;
                 default:
                     filterConditions.add(TaskList.FilterCondition.ERROR_CONDITION);
-                    keywords.add("");
+                    keywords.add(commandWord);
                     break;
                 }
             } else {
