@@ -8,7 +8,7 @@ import her.m35.Ui;
 public class HelpCommand extends Command {
 
     /** List of commands available to the user. */
-    private static final String helpOutput = "Here are the commands you can use:\n"
+    private static final String HELP_OUTPUT = "Here are the commands you can use:\n"
             + "list: Show your current tasklist\n"
             + "todo [task name]: Save a new task with name [task name]\n"
             + "deadline [task name] /by [date]: Save a new task with a deadline of [date]\n"
@@ -44,6 +44,6 @@ public class HelpCommand extends Command {
      */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
-        ui.printMessage(helpOutput);
+        ui.printMessage(HELP_OUTPUT);
     }
 }

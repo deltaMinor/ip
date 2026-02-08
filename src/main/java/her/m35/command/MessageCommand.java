@@ -9,7 +9,7 @@ import her.m35.Ui;
  */
 public class MessageCommand extends Command {
     /** String to be displayed to the user. */
-    private String message;
+    private final String message;
 
     /**
      * Constructs a MessageCommand with the given message.

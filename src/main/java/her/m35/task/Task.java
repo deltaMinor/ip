@@ -1,6 +1,6 @@
 package her.m35.task;
 
-import her.m35.Parser;
+import her.m35.parser.TimePointParser;
 
 /**
  * Represents a task with a description, completion and type.
@@ -97,17 +97,14 @@ public abstract class Task {
      *
      * @return "T" for TODO, "D" for DEADLINE, "E" for EVENT.
      */
+    @SuppressWarnings("checkstyle:Indentation")
     public String getTypeIcon() {
-        switch (type) {
-        case TODO:
-            return "T";
-        case DEADLINE:
-            return "D";
-        case EVENT:
-            return "E";
-        default:
-            return "";
-        }
+        return switch (type) {
+        case TODO -> "T";
+        case DEADLINE -> "D";
+        case EVENT -> "E";
+        default -> "";
+        };
     }
 
     /**
@@ -124,16 +121,13 @@ public abstract class Task {
      * @return Corresponding Task instance, or null if the data is invalid.
      */
     public static Task dataToTask(String[] data) {
-        switch (data[0]) {
-        case "T":
-            return new ToDoTask(data[2], data[1].equals("X"));
-        case "D":
-            return new DeadlineTask(data[2], Parser.toDate(data[3]), data[1].equals("X"));
-        case "E":
-            return new EventTask(data[2], Parser.toDate(data[3]), Parser.toDate(data[4]), data[1].equals("X"));
-        default:
-            return null;
-        }
+        return switch (data[0]) {
+        case "T" -> new ToDoTask(data[2], data[1].equals("X"));
+        case "D" -> new DeadlineTask(data[2], TimePointParser.toDate(data[3]), data[1].equals("X"));
+        case "E" -> new EventTask(
+                data[2], TimePointParser.toDate(data[3]), TimePointParser.toDate(data[4]), data[1].equals("X"));
+        default -> null;
+        };
     }
 
     @Override

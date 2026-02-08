@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import her.m35.command.Command;
 import her.m35.command.MessageCommand;
-
+import her.m35.parser.Parser;
 
 /**
  * Entry point and controller class for the HERM35 chatbot.
@@ -15,9 +15,6 @@ public class Herm35 {
 
     /** Storage object used to store task list. */
     private Storage storage;
-
-    /** Availability of storage for task list saving. */
-    private boolean isStorageAvailable;
 
     /** List of tasks currently managed by the chatbot. */
     private TaskList taskList;
@@ -33,7 +30,6 @@ public class Herm35 {
 
     /**
      * Constructs a HERM35 chatbot instance.
-     *
      * Initializes the UI, storage, and task list. If previously saved data
      * cannot be read from storage, an empty task list is created instead.
      * The command parser is also set up during construction.
@@ -44,9 +40,7 @@ public class Herm35 {
         ui = new Ui();
         try {
             storage = new Storage(fileName);
-            isStorageAvailable = true;
         } catch (IOException e) {
-            isStorageAvailable = false;
             openingLines += "\nError: " + e.getMessage() + "\n Unable to open file: " + fileName + "for storage.";
         }
         try {
@@ -61,12 +55,11 @@ public class Herm35 {
      * Construct a new Herm35 instance with the default parameters.
      */
     public Herm35() {
-        this("data/tasklist.csv");
+        this("tasklist.csv");
     }
 
     /**
      * Runs the main interaction loop of the chatbot.
-     *
      * Displays an introduction message, then repeatedly reads user input, parses it into a Command,
      * and executes it. The loop terminates when an executed command signals that the program should exit.
      * Any exceptions thrown during command parsing or execution are caught and their messages
@@ -88,14 +81,13 @@ public class Herm35 {
 
     /**
      * Main entry point of the application.
-     *
      * Creates a HERM35 chatbot instance using tasklist.csv as the storage file and starts the chatbot by
      * invoking run().
      *
      * @param args command-line arguments
      */
     public static void main(String[] args) {
-        new Herm35("data/tasklist.csv").run();
+        new Herm35("tasklist.csv").run();
     }
 
     /**

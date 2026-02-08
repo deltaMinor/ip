@@ -2,10 +2,10 @@ package her.m35.command;
 
 import java.io.IOException;
 
-import her.m35.Parser;
 import her.m35.Storage;
 import her.m35.TaskList;
 import her.m35.Ui;
+import her.m35.parser.Parser;
 
 /**
  * Deletes a task from the task list.
