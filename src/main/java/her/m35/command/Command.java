@@ -6,7 +6,6 @@ import her.m35.Ui;
 
 /**
  * Represents an executable command in the chatbot.
- *
  * Each Command encapsulates a specific user instruction and defines how it should be executed using the
  * task list, storage, and ui. Subclasses should implement execute(TaskList, Storage, Ui) and may
  * override isExit() to signal termination of the program.
@@ -15,7 +14,6 @@ public abstract class Command {
 
     /**
      * Executes the command.
-     *
      * Implementations define the behavior of the command and may modify the task list, interact with
      * storage, and communicate with the user through the UI.
      *
@@ -27,7 +25,6 @@ public abstract class Command {
 
     /**
      * Indicates whether this command should cause the application to exit.
-     *
      * By default, commands do not terminate the program. Exit-related commands should override this method
      * to return true.
      *

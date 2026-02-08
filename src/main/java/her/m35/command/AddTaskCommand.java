@@ -13,7 +13,7 @@ import her.m35.task.Task;
 public class AddTaskCommand extends Command {
 
     /** The task to be added to the task list. */
-    private Task task;
+    private final Task task;
 
     /**
      * Constructs an AddTaskCommand with the specified task.

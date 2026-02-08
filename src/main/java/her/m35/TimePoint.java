@@ -96,61 +96,16 @@ public class TimePoint {
     public Object getTime() {
         switch (this.format) {
         case STRING:
+            assert this.timeString != null;
             return this.timeString;
         case LOCAL_DATE:
+            assert this.localDate != null;
             return this.localDate;
         case LOCAL_DATE_TIME:
+            assert this.localDateTime != null;
             return this.localDateTime;
         default:
             return null;
-        }
-    }
-
-    /**
-     * Returns the day of the month this TimePoint contains, if it is available.
-     *
-     * @return Integer that represents the day of the month if it is available, else -1.
-     */
-    public int getDayOfMonth() {
-        switch (this.format) {
-        case LOCAL_DATE:
-            return this.localDate.getDayOfMonth();
-        case LOCAL_DATE_TIME:
-            return this.localDateTime.toLocalDate().getDayOfMonth();
-        default:
-            return -1;
-        }
-    }
-
-    /**
-     * Returns the month this TimePoint contains, if it is available.
-     *
-     * @return Integer that represents the month if it is available, else -1.
-     */
-    public int getMonth() {
-        switch (this.format) {
-        case LOCAL_DATE:
-            return this.localDate.getMonthValue();
-        case LOCAL_DATE_TIME:
-            return this.localDateTime.toLocalDate().getMonthValue();
-        default:
-            return -1;
-        }
-    }
-
-    /**
-     * Returns the year this TimePoint contains, if it is available.
-     *
-     * @return Integer that represents the year if it is available, else -1.
-     */
-    public int getYear() {
-        switch (this.format) {
-        case LOCAL_DATE:
-            return this.localDate.getYear();
-        case LOCAL_DATE_TIME:
-            return this.localDateTime.toLocalDate().getYear();
-        default:
-            return -1;
         }
     }
 
@@ -165,9 +120,11 @@ public class TimePoint {
         LocalDate thisLocalDate;
         switch (this.format) {
         case LOCAL_DATE:
+            assert this.localDate != null;
             thisLocalDate = this.localDate;
             break;
         case LOCAL_DATE_TIME:
+            assert this.localDateTime != null;
             thisLocalDate = this.localDateTime.toLocalDate();
             break;
         default:
@@ -176,9 +133,11 @@ public class TimePoint {
         LocalDate otherLocalDate;
         switch (other.format) {
         case LOCAL_DATE:
+            assert other.localDate != null;
             otherLocalDate = (LocalDate) other.getTime();
             break;
         case LOCAL_DATE_TIME:
+            assert other.localDateTime != null;
             otherLocalDate = ((LocalDateTime) other.getTime()).toLocalDate();
             break;
         default:
@@ -199,15 +158,21 @@ public class TimePoint {
             return false;
         }
         if (this.format == Format.LOCAL_DATE) {
+            assert this.localDate != null;
             if (other.getFormat() == Format.LOCAL_DATE) {
+                assert other.localDate != null;
                 return this.localDate.isAfter((LocalDate) other.getTime());
             } else {
+                assert other.localDateTime != null;
                 return this.localDate.isAfter(((LocalDateTime) other.getTime()).toLocalDate());
             }
         } else {
+            assert this.localDateTime != null;
             if (other.getFormat() == Format.LOCAL_DATE) {
+                assert other.localDate != null;
                 return this.localDateTime.toLocalDate().isAfter((LocalDate) other.getTime());
             } else {
+                assert other.localDateTime != null;
                 return this.localDateTime.isAfter((LocalDateTime) other.getTime());
             }
         }
@@ -225,15 +190,21 @@ public class TimePoint {
             return false;
         }
         if (this.format == Format.LOCAL_DATE) {
+            assert this.localDate != null;
             if (other.getFormat() == Format.LOCAL_DATE) {
+                assert other.localDate != null;
                 return this.localDate.isBefore((LocalDate) other.getTime());
             } else {
+                assert other.localDateTime != null;
                 return this.localDate.isBefore(((LocalDateTime) other.getTime()).toLocalDate());
             }
         } else {
+            assert this.localDateTime != null;
             if (other.getFormat() == Format.LOCAL_DATE) {
+                assert other.localDate != null;
                 return this.localDateTime.toLocalDate().isBefore((LocalDate) other.getTime());
             } else {
+                assert other.localDateTime != null;
                 return this.localDateTime.isBefore((LocalDateTime) other.getTime());
             }
         }
@@ -253,10 +224,13 @@ public class TimePoint {
         }
         switch (this.format) {
         case STRING:
+            assert this.timeString != null;
             return this.timeString.equals(otherTimePoint.timeString);
         case LOCAL_DATE:
+            assert this.localDate != null;
             return this.localDate.equals(otherTimePoint.localDate);
         case LOCAL_DATE_TIME:
+            assert this.localDateTime != null;
             return this.localDateTime.equals(otherTimePoint.localDateTime);
         default:
             return false;
@@ -269,10 +243,12 @@ public class TimePoint {
         case STRING:
             return timeString;
         case LOCAL_DATE:
+            assert this.localDate != null;
             return Mths[localDate.getMonthValue() - 1]
                     + " " + localDate.getDayOfMonth()
                     + " " + localDate.getYear();
         case LOCAL_DATE_TIME:
+            assert this.localDateTime != null;
             return localDateTime.getHour()
                     + ":" + (localDateTime.getMinute() < 10 ? "0" : "") + localDateTime.getMinute()
                     + " " + Mths[localDateTime.getMonthValue() - 1]

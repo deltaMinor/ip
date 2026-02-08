@@ -62,9 +62,7 @@ public class MainWindow extends AnchorPane {
             sendButton.setDisable(true);
             Stage stage = (Stage) userInput.getScene().getWindow();
             PauseTransition pause = new PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(event -> {
-                stage.close();
-            });
+            pause.setOnFinished(event -> stage.close());
             pause.play();
         }
     }

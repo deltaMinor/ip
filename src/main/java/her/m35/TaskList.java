@@ -132,18 +132,17 @@ public class TaskList {
      */
     public String filteredTaskListToMessage(ArrayList<Task> filteredTaskList) {
         String listOutput = "";
-        if (!filteredTaskList.isEmpty()) {
-            int filteredTaskListIndex = 0;
-            for (int i = 0; i < taskList.size(); i++) {
-                if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
-                    listOutput += i + 1 + "." + taskList.get(i).toString() + "\n";
-                    filteredTaskListIndex++;
-                    if (filteredTaskListIndex == filteredTaskList.size()) {
-                        return listOutput;
-                    }
+        int filteredTaskListIndex = 0;
+        for (int i = 0; i < taskList.size(); i++) {
+            if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
+                listOutput += i + 1 + "." + taskList.get(i).toString() + "\n";
+                filteredTaskListIndex++;
+                if (filteredTaskListIndex == filteredTaskList.size()) {
+                    return listOutput;
                 }
             }
         }
+        assert filteredTaskListIndex == filteredTaskList.size();
         return listOutput;
     }
 
@@ -155,7 +154,7 @@ public class TaskList {
      * @return Filtered task list formatted as a printable message.
      */
     public String outputFilteredList(FilterCondition[] filterConditions, String[] keywords) {
-        ArrayList<Task> filteredTaskList = new ArrayList<Task>(taskList);
+        ArrayList<Task> filteredTaskList = new ArrayList<>(taskList);
         if (filterConditions.length == 0) {
             return "Your task list is empty!";
         }
@@ -228,16 +227,7 @@ public class TaskList {
                 filteredTaskList.removeIf(afterDatePredicate);
                 break;
             case OF_TYPE:
-                String normalisedKeyword = keywords[i].toUpperCase();
-                for (String toDoName : ToDoTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(toDoName, "T");
-                }
-                for (String deadlineName : DeadlineTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(deadlineName, "D");
-                }
-                for (String eventName : EventTask.NAMES) {
-                    normalisedKeyword = normalisedKeyword.replace(eventName, "E");
-                }
+                String normalisedKeyword = normalizeByTaskName(keywords[i]);
                 noTasksMessage = "There are no tasks of type " + keywords[i];
                 Task.Type targetTaskType;
                 switch (normalisedKeyword) {
@@ -263,6 +253,25 @@ public class TaskList {
             }
         }
         return filteredTaskListToMessage(filteredTaskList);
+    }
+
+    /**
+     * Helper function to normalize the keyword for filter by task type command.
+     * @param keyword Word to be normalized.
+     * @return keyword with its internal words normalized.
+     */
+    private static String normalizeByTaskName(String keyword) {
+        String normalisedKeyword = keyword.toUpperCase();
+        for (String toDoName : ToDoTask.NAMES) {
+            normalisedKeyword = normalisedKeyword.replace(toDoName, "T");
+        }
+        for (String deadlineName : DeadlineTask.NAMES) {
+            normalisedKeyword = normalisedKeyword.replace(deadlineName, "D");
+        }
+        for (String eventName : EventTask.NAMES) {
+            normalisedKeyword = normalisedKeyword.replace(eventName, "E");
+        }
+        return normalisedKeyword;
     }
 
     @Override
