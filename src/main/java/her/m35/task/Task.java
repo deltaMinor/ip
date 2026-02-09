@@ -191,13 +191,16 @@ public abstract class Task {
      * @return Corresponding Task instance, or null if the data is invalid.
      */
     public static Task dataToTask(String[] data) {
-        String tagsString = data[5];
-        String[] tags = tagsString.split("/");
         return switch (data[0]) {
-        case "T" -> new ToDoTask(data[2], tags, data[1].equals("X"));
-        case "D" -> new DeadlineTask(data[2], TimePointParser.toDate(data[3]), tags, data[1].equals("X"));
+        case "T" -> new ToDoTask(data[2], data[3].split("/"), data[1].equals("X"));
+        case "D" -> new DeadlineTask(
+                data[2], TimePointParser.toDate(data[3]), data[4].split("/"), data[1].equals("X"));
         case "E" -> new EventTask(
-                data[2], TimePointParser.toDate(data[3]), TimePointParser.toDate(data[4]), tags, data[1].equals("X"));
+                data[2],
+                TimePointParser.toDate(data[3]),
+                TimePointParser.toDate(data[4]),
+                data[5].split("/"),
+                data[1].equals("X"));
         default -> null;
         };
     }

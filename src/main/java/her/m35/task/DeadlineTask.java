@@ -72,6 +72,6 @@ public class DeadlineTask extends Task {
 
     @Override
     public String[] getData() {
-        return new String[] {getTypeIcon(), getDoneIcon(), name, byDate.toString()};
+        return new String[] {getTypeIcon(), getDoneIcon(), name, byDate.toString(), getTags()};
     }
 }

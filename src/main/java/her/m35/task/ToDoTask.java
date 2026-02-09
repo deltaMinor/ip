@@ -58,7 +58,6 @@ public class ToDoTask extends Task {
 
     @Override
     public String[] getData() {
-        String blankPlaceholder = "";
-        return new String[] {getTypeIcon(), getDoneIcon(), name, blankPlaceholder, blankPlaceholder, getTags()};
+        return new String[] {getTypeIcon(), getDoneIcon(), name, getTags()};
     }
 }

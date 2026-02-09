@@ -1,5 +1,7 @@
 package her.m35.parser;
 
+import java.util.Arrays;
+
 import her.m35.command.AddTaskCommand;
 import her.m35.command.ClearCommand;
 import her.m35.command.Command;
@@ -13,8 +15,6 @@ import her.m35.command.MessageCommand;
 import her.m35.task.DeadlineTask;
 import her.m35.task.EventTask;
 import her.m35.task.ToDoTask;
-
-import java.util.Arrays;
 
 /**
  * Handles parsing of user input into information for the chatbot.
@@ -66,22 +66,21 @@ public class Parser {
         case "todo":
             if (tokens.length < 2) {
                 return new MessageCommand("Task name not given.");
-            } else {
-                String[] todoTaskTokens = tokens[1].split(" #");
-                if (todoTaskTokens.length == 1) {
-                    return new AddTaskCommand(new ToDoTask(tokens[1]));
-                }
-                for (int i = 1; i < todoTaskTokens.length; i++) {
-                    if (!todoTaskTokens[i].matches("[a-zA-Z0-9]+")) {
-                        return new MessageCommand(
-                                String.format("Tags need to be strictly alphanumeric. (%s)", todoTaskTokens[i]));
-                    }
-                }
-                return new AddTaskCommand(
-                        new ToDoTask(
-                                todoTaskTokens[0],
-                                Arrays.copyOfRange(todoTaskTokens, 1, todoTaskTokens.length)));
             }
+            String[] todoTaskTokens = tokens[1].split(" #");
+            if (todoTaskTokens.length == 1) {
+                return new AddTaskCommand(new ToDoTask(tokens[1]));
+            }
+            for (int i = 1; i < todoTaskTokens.length; i++) {
+                if (!todoTaskTokens[i].matches("[a-zA-Z0-9]+")) {
+                    return new MessageCommand(
+                            String.format("Tags need to be strictly alphanumeric. (%s)", todoTaskTokens[i]));
+                }
+            }
+            return new AddTaskCommand(
+                    new ToDoTask(
+                            todoTaskTokens[0],
+                            Arrays.copyOfRange(todoTaskTokens, 1, todoTaskTokens.length)));
         case "deadline":
             if (tokens.length < 2) {
                 return new MessageCommand("Task name not given.");
@@ -90,8 +89,22 @@ public class Parser {
             if (deadlineTaskTokens.length < 2) {
                 return new MessageCommand("Please state the deadline, denoted with \" /by \".");
             }
+            String[] deadlineTagTokens = deadlineTaskTokens[1].split(" #");
+            if (deadlineTagTokens.length == 1) {
+                return new AddTaskCommand(
+                        new DeadlineTask(deadlineTaskTokens[0], TimePointParser.toDate(deadlineTaskTokens[1])));
+            }
+            for (int i = 1; i < deadlineTagTokens.length; i++) {
+                if (!deadlineTagTokens[i].matches("[a-zA-Z0-9]+")) {
+                    return new MessageCommand(
+                            String.format("Tags need to be strictly alphanumeric. (%s)", deadlineTagTokens[i]));
+                }
+            }
             return new AddTaskCommand(
-                    new DeadlineTask(deadlineTaskTokens[0], TimePointParser.toDate(deadlineTaskTokens[1])));
+                    new DeadlineTask(
+                            deadlineTaskTokens[0],
+                            TimePointParser.toDate(deadlineTagTokens[0]),
+                            Arrays.copyOfRange(deadlineTagTokens, 1, deadlineTagTokens.length)));
         case "event":
             if (tokens.length < 2) {
                 return new MessageCommand("Task name not given.");
@@ -105,11 +118,26 @@ public class Parser {
             if (eventPeriodTokens.length < 2) {
                 return new MessageCommand("Please state when the event ends, denoted with \" /to \".");
             }
+            String[] eventTagTokens = eventPeriodTokens[1].split(" #");
+            if (eventTagTokens.length == 1) {
+                return new AddTaskCommand(
+                        new EventTask(
+                                eventTaskTokens[0],
+                                TimePointParser.toDate(eventPeriodTokens[0]),
+                                TimePointParser.toDate(eventPeriodTokens[1])));
+            }
+            for (int i = 1; i < eventTagTokens.length; i++) {
+                if (!eventTagTokens[i].matches("[a-zA-Z0-9]+")) {
+                    return new MessageCommand(
+                            String.format("Tags need to be strictly alphanumeric. (%s)", eventTagTokens[i]));
+                }
+            }
             return new AddTaskCommand(
                     new EventTask(
                             eventTaskTokens[0],
                             TimePointParser.toDate(eventPeriodTokens[0]),
-                            TimePointParser.toDate(eventPeriodTokens[1])));
+                            TimePointParser.toDate(eventTagTokens[0]),
+                            Arrays.copyOfRange(eventTagTokens, 1, eventTagTokens.length)));
         case "find":
             if (tokens.length < 2) {
                 return new MessageCommand("Search prompt not given.");

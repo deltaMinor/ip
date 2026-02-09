@@ -14,6 +14,7 @@ public class HelpCommand extends Command {
             todo [task name]: Save a new task with name [task name]
             deadline [task name] /by [date]: Save a new task with a deadline of [date]
             event [task name] /from [start date] /to [end date]: Save an event with the provided dates
+            *At the end of a task, you may write #tag to tag it. You may use multiple alphanumeric tags at once.
             mark [index]: Mark the task with index [index] as done
             unmark [index]: Unmark the task with index [index] as undone
             delete [index]: Delete the task at index [index]

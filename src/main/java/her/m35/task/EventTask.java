@@ -85,6 +85,6 @@ public class EventTask extends Task {
 
     @Override
     public String[] getData() {
-        return new String[] {getTypeIcon(), getDoneIcon(), name, fromDate.toString(), toDate.toString()};
+        return new String[] {getTypeIcon(), getDoneIcon(), name, fromDate.toString(), toDate.toString(), getTags()};
     }
 }
