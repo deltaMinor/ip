@@ -1,5 +1,8 @@
 package her.m35.task;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import her.m35.parser.TimePointParser;
 
 /**
@@ -21,11 +24,17 @@ public abstract class Task {
         EVENT
     }
 
+    /** Whether tags will be shown as part of task description. */
+    private static boolean showTags = true;
+
     /** Indicates whether the task has been completed. */
     private Boolean isDone;
 
     /** Description of the task. */
     private final String description;
+
+    /** Tags attached to this task. */
+    private final ArrayList<String> tags;
 
     /** Type of the task. */
     private final Type type;
@@ -40,6 +49,20 @@ public abstract class Task {
         isDone = false;
         this.description = description;
         this.type = type;
+        this.tags = new ArrayList<>();
+    }
+
+    /**
+     * Creates a new task with a list of tags.
+     * @param description Description of the task.
+     * @param type        Type of the task.
+     * @param tags        Tags that are to be attached to the task.
+     */
+    public Task(String description, Type type, String[] tags) {
+        isDone = false;
+        this.description = description;
+        this.type = type;
+        this.tags = new ArrayList<>(Arrays.asList(tags));
     }
 
     /**
@@ -49,9 +72,25 @@ public abstract class Task {
      * @param type        Type of the task.
      * @param isDone      Completion status of the task.
      */
-    public Task(String description, Type type, Boolean isDone) {
+    public Task(String description, Type type, boolean isDone) {
         this.description = description;
         this.type = type;
+        this.isDone = isDone;
+        this.tags = new ArrayList<>();
+    }
+
+    /**
+     * Creates a new task with an explicit completion status and a list of tags.
+     *
+     * @param description Description of the task.
+     * @param type        Type of the task.
+     * @param tags        Tags that are to be attached to the task.
+     * @param isDone      Completion status of the task.
+     */
+    public Task(String description, Type type, String[] tags, boolean isDone) {
+        this.description = description;
+        this.type = type;
+        this.tags = new ArrayList<>(Arrays.asList(tags));
         this.isDone = isDone;
     }
 
@@ -88,8 +127,75 @@ public abstract class Task {
         return description;
     }
 
+    /**
+     * Returns the tags for description purposes.
+     *
+     * @return Tags with # for every tag.
+     */
+    public String getTagsDescription() {
+        if (tags.isEmpty()) {
+            return "";
+        }
+        return "#" + String.join(", #", tags);
+    }
+
+    /**
+     * Returns the tags in data format.
+     *
+     * @return Tags formatted for storage.
+     */
+    public String getTagsData() {
+        return String.join("/", tags);
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    /**
+     * Adds a tag to the list of tags.
+     * @param tag Tag to be added.
+     */
+    public void addTag(String tag) {
+        tags.add(tag);
+    }
+
+    /**
+     * Removes a tag from the list of tags.
+     * @param tag Tag to be removed.
+     */
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+
+    /**
+     * Checks if this task has a certain tag.
+     * @param tag Tag to check for.
+     * @return True only if this tasks contains the given tag.
+     */
+    public boolean hasTag(String tag) {
+        for (String t : tags) {
+            if (t.equals(tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Clears all tags from the task.
+     */
+    public void clearTags() {
+        tags.clear();
+    }
+
     public Type getType() {
         return type;
+    }
+
+    /** If show is true, tasks will be displayed with their tags going forward. Else they will be hidden. */
+    public static void setShowTags(boolean show) {
+        showTags = show;
     }
 
     /**
@@ -121,17 +227,41 @@ public abstract class Task {
      * @return Corresponding Task instance, or null if the data is invalid.
      */
     public static Task dataToTask(String[] data) {
-        return switch (data[0]) {
-        case "T" -> new ToDoTask(data[2], data[1].equals("X"));
-        case "D" -> new DeadlineTask(data[2], TimePointParser.toDate(data[3]), data[1].equals("X"));
-        case "E" -> new EventTask(
-                data[2], TimePointParser.toDate(data[3]), TimePointParser.toDate(data[4]), data[1].equals("X"));
-        default -> null;
-        };
+        switch (data[0]) {
+        case "T":
+            if (data.length == 3) {
+                return new ToDoTask(data[2], data[1].equals("X"));
+            }
+            return new ToDoTask(data[2], data[3].split("/"), data[1].equals("X"));
+        case "D":
+            if (data.length == 4) {
+                return new DeadlineTask(
+                        data[2], TimePointParser.toDate(data[3]), data[1].equals("X"));
+            }
+            return new DeadlineTask(
+                    data[2], TimePointParser.toDate(data[3]), data[4].split("/"), data[1].equals("X"));
+        case "E":
+            if (data.length == 5) {
+                return new EventTask(
+                        data[2],
+                        TimePointParser.toDate(data[3]),
+                        TimePointParser.toDate(data[4]),
+                        data[1].equals("X"));
+            }
+            return new EventTask(
+                    data[2],
+                    TimePointParser.toDate(data[3]),
+                    TimePointParser.toDate(data[4]),
+                    data[5].split("/"),
+                    data[1].equals("X"));
+        default:
+            return null;
+        }
     }
 
     @Override
     public String toString() {
-        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription();
+        String tagDescription = showTags ? " " + getTagsDescription() : "";
+        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription() + tagDescription;
     }
 }

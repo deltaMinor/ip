@@ -23,18 +23,41 @@ public class ToDoTask extends Task {
     }
 
     /**
+     * Creates a new uncompleted to-do task with a list of tags.
+     *
+     * @param name Description of the to-do task.
+     * @param tags Tags to be attached to the task.
+     */
+    public ToDoTask(String name, String[] tags) {
+        super(name, Type.TODO, tags);
+        this.name = name;
+    }
+
+    /**
      * Creates a new to-do task with a specified completion status.
      *
      * @param name Name of the to-do task.
      * @param isDone Completion status of the task.
      */
-    public ToDoTask(String name, Boolean isDone) {
+    public ToDoTask(String name, boolean isDone) {
         super(name, Type.TODO, isDone);
+        this.name = name;
+    }
+
+    /**
+     * Creates a new to-do task with a specified completion status and a list of tags.
+     *
+     * @param name Name of the to-do task.
+     * @param tags Tags to be attached to the task.
+     * @param isDone Completion status of the task.
+     */
+    public ToDoTask(String name, String[] tags, boolean isDone) {
+        super(name, Type.TODO, tags, isDone);
         this.name = name;
     }
 
     @Override
     public String[] getData() {
-        return new String[] {getTypeIcon(), getDoneIcon(), name};
+        return new String[] {getTypeIcon(), getDoneIcon(), name, getTagsData()};
     }
 }

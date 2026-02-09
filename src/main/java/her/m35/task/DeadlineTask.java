@@ -27,6 +27,19 @@ public class DeadlineTask extends Task {
     }
 
     /**
+     * Creates a new uncompleted deadline task with a list of tags/
+     *
+     * @param name Description of the task.
+     * @param date Deadline of the task.
+     * @param tags Tags to be attached to the task.
+     */
+    public DeadlineTask(String name, TimePoint date, String[] tags) {
+        super(name + " (by: " + date + ")", Type.DEADLINE, tags);
+        this.name = name;
+        this.byDate = date;
+    }
+
+    /**
      * Creates a new deadline task with a specified completion status.
      *
      * @param name Description of the task.
@@ -39,12 +52,26 @@ public class DeadlineTask extends Task {
         this.byDate = date;
     }
 
+    /**
+     * Creates a new deadline task with a specified completion status and a list of tags.
+     *
+     * @param name Description of the task.
+     * @param date Deadline of the task.
+     * @param tags Tags to be attached to the task.
+     * @param isDone Completion status of the task.
+     */
+    public DeadlineTask(String name, TimePoint date, String[] tags, Boolean isDone) {
+        super(name + " (by: " + date + ")", Type.DEADLINE, tags, isDone);
+        this.name = name;
+        this.byDate = date;
+    }
+
     public TimePoint getByDate() {
         return byDate;
     }
 
     @Override
     public String[] getData() {
-        return new String[] {getTypeIcon(), getDoneIcon(), name, byDate.toString()};
+        return new String[] {getTypeIcon(), getDoneIcon(), name, byDate.toString(), getTagsData()};
     }
 }
