@@ -1,5 +1,8 @@
 package her.m35.task;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import her.m35.parser.TimePointParser;
 
 /**
@@ -27,6 +30,9 @@ public abstract class Task {
     /** Description of the task. */
     private final String description;
 
+    /** Tags attached to this task. */
+    private ArrayList<String> tags;
+
     /** Type of the task. */
     private final Type type;
 
@@ -40,6 +46,20 @@ public abstract class Task {
         isDone = false;
         this.description = description;
         this.type = type;
+        this.tags = new ArrayList<>();
+    }
+
+    /**
+     * Creates a new task with a list of tags.
+     * @param description Description of the task.
+     * @param type        Type of the task.
+     * @param tags        Tags that are to be attached to the task.
+     */
+    public Task(String description, Type type, String[] tags) {
+        isDone = false;
+        this.description = description;
+        this.type = type;
+        this.tags = new ArrayList<>(Arrays.asList(tags));
     }
 
     /**
@@ -49,9 +69,25 @@ public abstract class Task {
      * @param type        Type of the task.
      * @param isDone      Completion status of the task.
      */
-    public Task(String description, Type type, Boolean isDone) {
+    public Task(String description, Type type, boolean isDone) {
         this.description = description;
         this.type = type;
+        this.isDone = isDone;
+        this.tags = new ArrayList<>();
+    }
+
+    /**
+     * Creates a new task with an explicit completion status and a list of tags.
+     *
+     * @param description Description of the task.
+     * @param type        Type of the task.
+     * @param tags        Tags that are to be attached to the task.
+     * @param isDone      Completion status of the task.
+     */
+    public Task(String description, Type type, String[] tags, boolean isDone) {
+        this.description = description;
+        this.type = type;
+        this.tags = new ArrayList<>(Arrays.asList(tags));
         this.isDone = isDone;
     }
 
@@ -88,6 +124,40 @@ public abstract class Task {
         return description;
     }
 
+    public String getTagsDescription() {
+        return "#" + String.join(", #", tags);
+    }
+
+    public String getTags() {
+        return String.join("/", tags);
+    }
+
+    /**
+     * Adds a tag to the list of tags.
+     * @param tag Tag to be added.
+     * @return True if the tag was added successfully. If tag is already in the list of tags, return false.
+     */
+    public boolean addTag(String tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Removes a tag from the list of tags.
+     * @param tag Tag to be removed.
+     * @return True if the tag could be removed successfully. If the tag does not exist, return false.
+     */
+    public boolean removeTag(String tag) {
+        if (tags.contains(tag)) {
+            tags.remove(tag);
+            return true;
+        }
+        return false;
+    }
+
     public Type getType() {
         return type;
     }
@@ -121,17 +191,19 @@ public abstract class Task {
      * @return Corresponding Task instance, or null if the data is invalid.
      */
     public static Task dataToTask(String[] data) {
+        String tagsString = data[5];
+        String[] tags = tagsString.split("/");
         return switch (data[0]) {
-        case "T" -> new ToDoTask(data[2], data[1].equals("X"));
-        case "D" -> new DeadlineTask(data[2], TimePointParser.toDate(data[3]), data[1].equals("X"));
+        case "T" -> new ToDoTask(data[2], tags, data[1].equals("X"));
+        case "D" -> new DeadlineTask(data[2], TimePointParser.toDate(data[3]), tags, data[1].equals("X"));
         case "E" -> new EventTask(
-                data[2], TimePointParser.toDate(data[3]), TimePointParser.toDate(data[4]), data[1].equals("X"));
+                data[2], TimePointParser.toDate(data[3]), TimePointParser.toDate(data[4]), tags, data[1].equals("X"));
         default -> null;
         };
     }
 
     @Override
     public String toString() {
-        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription();
+        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription() + " " + getTagsDescription();
     }
 }

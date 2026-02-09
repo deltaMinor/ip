@@ -14,6 +14,8 @@ import her.m35.task.DeadlineTask;
 import her.m35.task.EventTask;
 import her.m35.task.ToDoTask;
 
+import java.util.Arrays;
+
 /**
  * Handles parsing of user input into information for the chatbot.
  * Contains methods to convert strings into other variable types such as integer.
@@ -65,7 +67,20 @@ public class Parser {
             if (tokens.length < 2) {
                 return new MessageCommand("Task name not given.");
             } else {
-                return new AddTaskCommand(new ToDoTask(tokens[1]));
+                String[] todoTaskTokens = tokens[1].split(" #");
+                if (todoTaskTokens.length == 1) {
+                    return new AddTaskCommand(new ToDoTask(tokens[1]));
+                }
+                for (int i = 1; i < todoTaskTokens.length; i++) {
+                    if (!todoTaskTokens[i].matches("[a-zA-Z0-9]+")) {
+                        return new MessageCommand(
+                                String.format("Tags need to be strictly alphanumeric. (%s)", todoTaskTokens[i]));
+                    }
+                }
+                return new AddTaskCommand(
+                        new ToDoTask(
+                                todoTaskTokens[0],
+                                Arrays.copyOfRange(todoTaskTokens, 1, todoTaskTokens.length)));
             }
         case "deadline":
             if (tokens.length < 2) {
