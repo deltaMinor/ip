@@ -71,6 +71,31 @@ public class FindCommand extends Command {
                     filterConditions.add(TaskList.FilterCondition.KEYWORD);
                     remainingPrompt = addNextKeyword(remainingPrompt, keywords);
                     break;
+                case "tag":
+                    int endIndex = remainingPrompt.indexOf("/");
+                    String tagsString;
+                    if (endIndex != -1) {
+                        tagsString = remainingPrompt.substring(0, endIndex).trim();
+                        remainingPrompt = remainingPrompt.replaceFirst(tagsString, "").trim();
+                    } else {
+                        tagsString = remainingPrompt.trim();
+                        remainingPrompt = "";
+                    }
+                    String[] tags = tagsString.split(" ");
+                    for (String tag : tags) {
+                        if (!tag.startsWith("#")) {
+                            ui.printMessage("Notate tags with a # sign.");
+                            return;
+                        }
+                        String keyword = tag.substring(1);
+                        if (!keyword.matches("[a-zA-Z0-9]+")) {
+                            ui.printMessage(String.format("Tags need to be strictly alphanumeric. (%s)", keyword));
+                            return;
+                        }
+                        filterConditions.add(TaskList.FilterCondition.TAG);
+                        keywords.add(keyword);
+                    }
+                    break;
                 default:
                     filterConditions.add(TaskList.FilterCondition.ERROR_CONDITION);
                     keywords.add(commandWord);

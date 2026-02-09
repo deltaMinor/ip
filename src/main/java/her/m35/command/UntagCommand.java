@@ -27,6 +27,16 @@ public class UntagCommand extends Command {
         this.indexString = indexString;
         this.tags = tags;
     }
+    /**
+     * {@inheritDoc}
+     *
+     * If indexString represents a valid task index, and the indicated task contains the given tags, removes the given
+     * tags from the specified task from the provided TaskList, saves the change to Storage, and displays a
+     * confirmation message via the Ui.
+     * If indexString is invalid, displays an error message to the user informing them of the valid task
+     * indexes.
+     * If the task already does not contain a tag, displays an error message to the user informing them of the tag.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         if (Parser.isInteger(indexString)) {

@@ -23,6 +23,14 @@ public class ClearTagsCommand extends Command {
         this.indexString = indexString;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * If indexString represents a valid task index, removes all tags from the specified task from the provided
+     * TaskList, saves the change to Storage, and displays a confirmation message via the Ui.
+     * If indexString is invalid, displays an error message to the user informing them of the valid task
+     * indexes.
+     */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         if (Parser.isInteger(indexString)) {

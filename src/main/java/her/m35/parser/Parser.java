@@ -13,6 +13,7 @@ import her.m35.command.HelpCommand;
 import her.m35.command.ListCommand;
 import her.m35.command.MarkCommand;
 import her.m35.command.MessageCommand;
+import her.m35.command.SetTaskVisibilityCommand;
 import her.m35.command.TagCommand;
 import her.m35.command.UntagCommand;
 import her.m35.task.DeadlineTask;
@@ -31,6 +32,12 @@ public class Parser {
      * @return Command which corresponds to the given user input.
      */
     public static Command parse(String input) {
+        if (input.equals("show tags")) {
+            return new SetTaskVisibilityCommand(true);
+        }
+        if (input.equals("hide tags")) {
+            return new SetTaskVisibilityCommand(false);
+        }
         String[] tokens = input.split(" ", 2);
         switch (tokens[0]) {
         case "mark":

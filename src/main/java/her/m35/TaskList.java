@@ -23,6 +23,7 @@ public class TaskList {
         IS_MARKED,
         IS_UNMARKED,
         KEYWORD,
+        TAG,
         ON_DATE,
         BEFORE,
         AFTER,
@@ -173,6 +174,11 @@ public class TaskList {
                 String keyword = keywords[i].toLowerCase();
                 noTasksMessage = String.format("There are no tasks containing \"%s\".", keywords[i]);
                 filteredTaskList.removeIf(task -> !task.toString().toLowerCase().contains(keyword));
+                break;
+            case TAG:
+                String tag = keywords[i];
+                noTasksMessage = String.format("There are no tasks containing tag #%s.", tag);
+                filteredTaskList.removeIf(task -> !task.hasTag(tag));
                 break;
             case ON_DATE:
                 TimePoint onTimePoint = TimePointParser.toDate(keywords[i]);

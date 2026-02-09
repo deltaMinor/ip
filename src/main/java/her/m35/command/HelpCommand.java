@@ -30,10 +30,13 @@ public class HelpCommand extends Command {
             find /done: Show all tasks that have been marked as done
             find /todo: Show all tasks that are not marked as done
             find /type [type]: Show all tasks that are of [type] (todo/deadline/event)
+            find /tag [tag name]: Show all tasks with tag [tag name]
             *Note: You can combine different find commands together:
             *Example: find [keyword] /on [date]: Show all tasks containing [keyword] and on [date]
             *Example: find /before [date1] /after [date2] /contains [keyword]: Show all tasks containing
             *           [keyword], before [date1] and after [date2]
+            show tags: display tasks with tags
+            hide tags: display tasks without tags
             bye: Exit this program
             help: See this list of commands again""";
 

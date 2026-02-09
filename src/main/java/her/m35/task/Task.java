@@ -24,6 +24,9 @@ public abstract class Task {
         EVENT
     }
 
+    /** Whether tags will be shown as part of task description. */
+    private static boolean showTags = true;
+
     /** Indicates whether the task has been completed. */
     private Boolean isDone;
 
@@ -176,6 +179,11 @@ public abstract class Task {
         return type;
     }
 
+    /** If show is true, tasks will be displayed with their tags going forward. Else they will be hidden. */
+    public static void setShowTags(boolean show) {
+        showTags = show;
+    }
+
     /**
      * Returns a single-character code representing the task type.
      *
@@ -239,6 +247,7 @@ public abstract class Task {
 
     @Override
     public String toString() {
-        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription() + " " + getTagsDescription();
+        String tagDescription = showTags ? " " + getTagsDescription() : "";
+        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription() + tagDescription;
     }
 }
