@@ -1,21 +1,21 @@
 package her.m35.command;
 
 import her.m35.Storage;
-import her.m35.task.Task;
 import her.m35.TaskList;
 import her.m35.Ui;
+import her.m35.task.Task;
 
 /**
  * Command that sets the global showTags variable to a given value.
  */
 public class SetTaskVisibilityCommand extends Command {
-    /** New value of showTags. */
-    private final boolean showTags;
-
     /** Messages to be shown depending on the showTags value. */
     private static final String SHOW_TAGS_MESSAGE = "Nice! Tags will be displayed alongside tasks from now on.";
     private static final String HIDE_TAGS_MESSAGE =
             "No problem, tags will no longer be shown alongside tasks going forward.";
+
+    /** New value of showTags. */
+    private final boolean showTags;
 
     /**
      * Constructs a SetTaskVisibilityCommand with the specified new showTags value.
