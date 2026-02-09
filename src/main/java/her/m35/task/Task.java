@@ -31,7 +31,7 @@ public abstract class Task {
     private final String description;
 
     /** Tags attached to this task. */
-    private ArrayList<String> tags;
+    private final ArrayList<String> tags;
 
     /** Type of the task. */
     private final Type type;
@@ -125,6 +125,9 @@ public abstract class Task {
     }
 
     public String getTagsDescription() {
+        if (tags.isEmpty()) {
+            return "";
+        }
         return "#" + String.join(", #", tags);
     }
 
@@ -135,27 +138,38 @@ public abstract class Task {
     /**
      * Adds a tag to the list of tags.
      * @param tag Tag to be added.
-     * @return True if the tag was added successfully. If tag is already in the list of tags, return false.
      */
-    public boolean addTag(String tag) {
-        if (!tags.contains(tag)) {
-            tags.add(tag);
-            return true;
-        }
-        return false;
+    public void addTag(String tag) {
+        tags.add(tag);
     }
 
     /**
      * Removes a tag from the list of tags.
      * @param tag Tag to be removed.
-     * @return True if the tag could be removed successfully. If the tag does not exist, return false.
      */
-    public boolean removeTag(String tag) {
-        if (tags.contains(tag)) {
-            tags.remove(tag);
-            return true;
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+
+    /**
+     * Checks if this task has a certain tag.
+     * @param tag Tag to check for.
+     * @return True only if this tasks contains the given tag.
+     */
+    public boolean hasTag(String tag) {
+        for (String t : tags) {
+            if (t.equals(tag)) {
+                return true;
+            }
         }
         return false;
+    }
+
+    /**
+     * Clears all tags from the task.
+     */
+    public void clearTags() {
+        tags.clear();
     }
 
     public Type getType() {
@@ -191,18 +205,36 @@ public abstract class Task {
      * @return Corresponding Task instance, or null if the data is invalid.
      */
     public static Task dataToTask(String[] data) {
-        return switch (data[0]) {
-        case "T" -> new ToDoTask(data[2], data[3].split("/"), data[1].equals("X"));
-        case "D" -> new DeadlineTask(
-                data[2], TimePointParser.toDate(data[3]), data[4].split("/"), data[1].equals("X"));
-        case "E" -> new EventTask(
-                data[2],
-                TimePointParser.toDate(data[3]),
-                TimePointParser.toDate(data[4]),
-                data[5].split("/"),
-                data[1].equals("X"));
-        default -> null;
-        };
+        switch (data[0]) {
+        case "T":
+            if (data.length == 3) {
+                return new ToDoTask(data[2], data[1].equals("X"));
+            }
+            return new ToDoTask(data[2], data[3].split("/"), data[1].equals("X"));
+        case "D":
+            if (data.length == 4) {
+                return new DeadlineTask(
+                        data[2], TimePointParser.toDate(data[3]), data[1].equals("X"));
+            }
+            return new DeadlineTask(
+                    data[2], TimePointParser.toDate(data[3]), data[4].split("/"), data[1].equals("X"));
+        case "E":
+            if (data.length == 5) {
+                return new EventTask(
+                        data[2],
+                        TimePointParser.toDate(data[3]),
+                        TimePointParser.toDate(data[4]),
+                        data[1].equals("X"));
+            }
+            return new EventTask(
+                    data[2],
+                    TimePointParser.toDate(data[3]),
+                    TimePointParser.toDate(data[4]),
+                    data[5].split("/"),
+                    data[1].equals("X"));
+        default:
+            return null;
+        }
     }
 
     @Override

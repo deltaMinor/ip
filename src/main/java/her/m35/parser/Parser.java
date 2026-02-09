@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import her.m35.command.AddTaskCommand;
 import her.m35.command.ClearCommand;
+import her.m35.command.ClearTagsCommand;
 import her.m35.command.Command;
 import her.m35.command.DeleteCommand;
 import her.m35.command.ExitCommand;
@@ -12,6 +13,8 @@ import her.m35.command.HelpCommand;
 import her.m35.command.ListCommand;
 import her.m35.command.MarkCommand;
 import her.m35.command.MessageCommand;
+import her.m35.command.TagCommand;
+import her.m35.command.UntagCommand;
 import her.m35.task.DeadlineTask;
 import her.m35.task.EventTask;
 import her.m35.task.ToDoTask;
@@ -138,6 +141,46 @@ public class Parser {
                             TimePointParser.toDate(eventPeriodTokens[0]),
                             TimePointParser.toDate(eventTagTokens[0]),
                             Arrays.copyOfRange(eventTagTokens, 1, eventTagTokens.length)));
+        case "tag":
+            if (tokens.length < 2) {
+                return new MessageCommand("Task index not given.");
+            }
+            String[] tagTokens = tokens[1].split(" ");
+            if (tagTokens.length == 1) {
+                return new MessageCommand("Tags not given.");
+            }
+            String[] tags = new String[tagTokens.length - 1];
+            for (int i = 1; i < tagTokens.length; i++) {
+                if (!tagTokens[i].startsWith("#")) {
+                    return new MessageCommand("Notate tags with # sign.");
+                }
+                String tag = tagTokens[i].substring(1);
+                if (!tag.matches("[a-zA-Z0-9]+")) {
+                    return new MessageCommand(String.format("Tags need to be strictly alphanumeric. (%s)", tag));
+                }
+                tags[i - 1] = tag;
+            }
+            return new TagCommand(tagTokens[0], tags);
+        case "untag":
+            if (tokens.length < 2) {
+                return new MessageCommand("Task index not given.");
+            }
+            String[] untagTokens = tokens[1].split(" ");
+            if (untagTokens.length == 1) {
+                return new ClearTagsCommand(untagTokens[0]);
+            }
+            String[] untags = new String[untagTokens.length - 1];
+            for (int i = 1; i < untagTokens.length; i++) {
+                if (!untagTokens[i].startsWith("#")) {
+                    return new MessageCommand("Notate tags with # sign.");
+                }
+                String tag = untagTokens[i].substring(1);
+                if (!tag.matches("[a-zA-Z0-9]+")) {
+                    return new MessageCommand(String.format("Tags need to be strictly alphanumeric. (%s)", tag));
+                }
+                untags[i - 1] = tag;
+            }
+            return new UntagCommand(untagTokens[0], untags);
         case "find":
             if (tokens.length < 2) {
                 return new MessageCommand("Search prompt not given.");

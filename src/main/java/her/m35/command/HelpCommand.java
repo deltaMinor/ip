@@ -19,6 +19,9 @@ public class HelpCommand extends Command {
             unmark [index]: Unmark the task with index [index] as undone
             delete [index]: Delete the task at index [index]
             clear: Empty your tasklist
+            tag [index] #[tag name]: Tag task with index [index] with tag [tag name]
+            untag [index]: Remove all tags from task with index [index]
+            untag [index] #[tag name]: Remove tag [tag name] from task with index [index]
             find [keyword]: Show all tasks containing [keyword]
             find /contains [keyword]: Show all tasks containing [keyword]
             find /on [date]: Show all tasks with dates on [date]
