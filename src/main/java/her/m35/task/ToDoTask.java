@@ -58,6 +58,6 @@ public class ToDoTask extends Task {
 
     @Override
     public String[] getData() {
-        return new String[] {getTypeIcon(), getDoneIcon(), name, getTags()};
+        return new String[] {getTypeIcon(), getDoneIcon(), name, getTagsData()};
     }
 }

@@ -22,6 +22,7 @@ public class HelpCommand extends Command {
             tag [index] #[tag name]: Tag task with index [index] with tag [tag name]
             untag [index]: Remove all tags from task with index [index]
             untag [index] #[tag name]: Remove tag [tag name] from task with index [index]
+            tags: View all tags
             find [keyword]: Show all tasks containing [keyword]
             find /contains [keyword]: Show all tasks containing [keyword]
             find /on [date]: Show all tasks with dates on [date]

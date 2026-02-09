@@ -11,6 +11,7 @@ import her.m35.command.ExitCommand;
 import her.m35.command.FindCommand;
 import her.m35.command.HelpCommand;
 import her.m35.command.ListCommand;
+import her.m35.command.ListTagsCommand;
 import her.m35.command.MarkCommand;
 import her.m35.command.MessageCommand;
 import her.m35.command.SetTaskVisibilityCommand;
@@ -188,6 +189,11 @@ public class Parser {
                 untags[i - 1] = tag;
             }
             return new UntagCommand(untagTokens[0], untags);
+        case "tags":
+            if (tokens.length > 1) {
+                return new MessageCommand("Unknown command, please try again. (Did you mean \"tags\"?)");
+            }
+            return new ListTagsCommand();
         case "find":
             if (tokens.length < 2) {
                 return new MessageCommand("Search prompt not given.");

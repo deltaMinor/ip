@@ -1,6 +1,7 @@
 package her.m35;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.function.Predicate;
 
 import her.m35.parser.TimePointParser;
@@ -278,6 +279,20 @@ public class TaskList {
             normalisedKeyword = normalisedKeyword.replace(eventName, "E");
         }
         return normalisedKeyword;
+    }
+
+    /**
+     * Returns a hashmap which contains every tag with a count of how many tasks have that tag.
+     * @return a hashmap which contains every tag with a count of how many tasks have that tag.
+     */
+    public HashMap<String, Integer> getTags() {
+        HashMap<String, Integer> tags = new HashMap<>();
+        for (Task task : taskList) {
+            for (String tag : task.getTags()) {
+                tags.put(tag, tags.getOrDefault(tag, 0) + 1);
+            }
+        }
+        return tags;
     }
 
     @Override

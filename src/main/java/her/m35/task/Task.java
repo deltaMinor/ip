@@ -127,6 +127,11 @@ public abstract class Task {
         return description;
     }
 
+    /**
+     * Returns the tags for description purposes.
+     *
+     * @return Tags with # for every tag.
+     */
     public String getTagsDescription() {
         if (tags.isEmpty()) {
             return "";
@@ -134,8 +139,17 @@ public abstract class Task {
         return "#" + String.join(", #", tags);
     }
 
-    public String getTags() {
+    /**
+     * Returns the tags in data format.
+     *
+     * @return Tags formatted for storage.
+     */
+    public String getTagsData() {
         return String.join("/", tags);
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
     }
 
     /**
