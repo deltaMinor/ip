@@ -42,11 +42,11 @@ public class ClearTagsCommand extends Command {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                ui.printMessage("The following task has its tags removed:\n" + taskList.get(taskIndex));
+                ui.printMessage("The following task has its tags removed:\n", taskList.get(taskIndex).toString());
                 return;
             }
         }
         ui.printMessage(String.format(
-                "Please enter a number between 1 and %d to remove that task's tags.", taskList.size()));
+                "Error: Please enter a number between 1 and %d to remove that task's tags.", taskList.size()));
     }
 }

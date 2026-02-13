@@ -93,7 +93,7 @@ public class Herm35 {
     /**
      * Generates a response for the user's chat message.
      */
-    public String getResponse(String input) {
+    public String[] getResponse(String input) {
         try {
             Command c = Parser.parse(input);
             c.execute(taskList, storage, ui);

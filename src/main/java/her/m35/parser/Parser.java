@@ -14,7 +14,7 @@ import her.m35.command.ListCommand;
 import her.m35.command.ListTagsCommand;
 import her.m35.command.MarkCommand;
 import her.m35.command.MessageCommand;
-import her.m35.command.SetTaskVisibilityCommand;
+import her.m35.command.SetTagVisibilityCommand;
 import her.m35.command.TagCommand;
 import her.m35.command.UntagCommand;
 import her.m35.task.DeadlineTask;
@@ -34,49 +34,49 @@ public class Parser {
      */
     public static Command parse(String input) {
         if (input.equals("show tags")) {
-            return new SetTaskVisibilityCommand(true);
+            return new SetTagVisibilityCommand(true);
         }
         if (input.equals("hide tags")) {
-            return new SetTaskVisibilityCommand(false);
+            return new SetTagVisibilityCommand(false);
         }
         String[] tokens = input.split(" ", 2);
         switch (tokens[0]) {
         case "mark":
             if (tokens.length < 2) {
-                return new MessageCommand("Task index not given.");
+                return new MessageCommand("Error: Task index not given.");
             }
             return new MarkCommand(tokens[1], true);
         case "unmark":
             if (tokens.length < 2) {
-                return new MessageCommand("Task index not given.");
+                return new MessageCommand("Error: Task index not given.");
             }
             return new MarkCommand(tokens[1], false);
         case "list":
             if (tokens.length > 1) {
-                return new MessageCommand("Unknown command, please try again. (Did you mean \"list\"?)");
+                return new MessageCommand("Error: Unknown command, please try again. (Did you mean \"list\"?)");
             } else {
                 return new ListCommand();
             }
         case "bye":
             if (tokens.length > 1) {
-                return new MessageCommand("Unknown command, please try again. (Did you mean \"bye\"?)");
+                return new MessageCommand("Error: Unknown command, please try again. (Did you mean \"bye\"?)");
             } else {
                 return new ExitCommand();
             }
         case "delete":
             if (tokens.length < 2) {
-                return new MessageCommand("Task name not given.");
+                return new MessageCommand("Error: Task name not given.");
             }
             return new DeleteCommand(tokens[1]);
         case "clear":
             if (tokens.length > 1) {
-                return new MessageCommand("Unknown command, please try again. (Did you mean \"clear\"?)");
+                return new MessageCommand("Error: Unknown command, please try again. (Did you mean \"clear\"?)");
             } else {
                 return new ClearCommand();
             }
         case "todo":
             if (tokens.length < 2) {
-                return new MessageCommand("Task name not given.");
+                return new MessageCommand("Error: Task name not given.");
             }
             String[] todoTaskTokens = tokens[1].split(" #");
             if (todoTaskTokens.length == 1) {
@@ -85,7 +85,7 @@ public class Parser {
             for (int i = 1; i < todoTaskTokens.length; i++) {
                 if (!todoTaskTokens[i].matches("[a-zA-Z0-9]+")) {
                     return new MessageCommand(
-                            String.format("Tags need to be strictly alphanumeric. (%s)", todoTaskTokens[i]));
+                            String.format("Error: Tags need to be strictly alphanumeric. (%s)", todoTaskTokens[i]));
                 }
             }
             return new AddTaskCommand(
@@ -94,84 +94,84 @@ public class Parser {
                             Arrays.copyOfRange(todoTaskTokens, 1, todoTaskTokens.length)));
         case "deadline":
             if (tokens.length < 2) {
-                return new MessageCommand("Task name not given.");
+                return new MessageCommand("Error: Task name not given.");
             }
             String[] deadlineTaskTokens = tokens[1].split(" /by ", 2);
             if (deadlineTaskTokens.length < 2) {
-                return new MessageCommand("Please state the deadline, denoted with \" /by \".");
+                return new MessageCommand("Error: Please state the deadline, denoted with \" /by \".");
             }
             String[] deadlineTagTokens = deadlineTaskTokens[1].split(" #");
             if (deadlineTagTokens.length == 1) {
                 return new AddTaskCommand(
-                        new DeadlineTask(deadlineTaskTokens[0], TimePointParser.toDate(deadlineTaskTokens[1])));
+                        new DeadlineTask(deadlineTaskTokens[0], TimePointParser.toTimePoint(deadlineTaskTokens[1])));
             }
             for (int i = 1; i < deadlineTagTokens.length; i++) {
                 if (!deadlineTagTokens[i].matches("[a-zA-Z0-9]+")) {
                     return new MessageCommand(
-                            String.format("Tags need to be strictly alphanumeric. (%s)", deadlineTagTokens[i]));
+                            String.format("Error: Tags need to be strictly alphanumeric. (%s)", deadlineTagTokens[i]));
                 }
             }
             return new AddTaskCommand(
                     new DeadlineTask(
                             deadlineTaskTokens[0],
-                            TimePointParser.toDate(deadlineTagTokens[0]),
+                            TimePointParser.toTimePoint(deadlineTagTokens[0]),
                             Arrays.copyOfRange(deadlineTagTokens, 1, deadlineTagTokens.length)));
         case "event":
             if (tokens.length < 2) {
-                return new MessageCommand("Task name not given.");
+                return new MessageCommand("Error: Task name not given.");
             }
             String[] eventTaskTokens = tokens[1].split(" /from ", 2);
             if (eventTaskTokens.length < 2) {
                 return new MessageCommand(
-                        "Please state when the event begins, denoted with \" /from \".");
+                        "Error: Please state when the event begins, denoted with \" /from \".");
             }
             String[] eventPeriodTokens = eventTaskTokens[1].split(" /to ", 2);
             if (eventPeriodTokens.length < 2) {
-                return new MessageCommand("Please state when the event ends, denoted with \" /to \".");
+                return new MessageCommand("Error: Please state when the event ends, denoted with \" /to \".");
             }
             String[] eventTagTokens = eventPeriodTokens[1].split(" #");
             if (eventTagTokens.length == 1) {
                 return new AddTaskCommand(
                         new EventTask(
                                 eventTaskTokens[0],
-                                TimePointParser.toDate(eventPeriodTokens[0]),
-                                TimePointParser.toDate(eventPeriodTokens[1])));
+                                TimePointParser.toTimePoint(eventPeriodTokens[0]),
+                                TimePointParser.toTimePoint(eventPeriodTokens[1])));
             }
             for (int i = 1; i < eventTagTokens.length; i++) {
                 if (!eventTagTokens[i].matches("[a-zA-Z0-9]+")) {
                     return new MessageCommand(
-                            String.format("Tags need to be strictly alphanumeric. (%s)", eventTagTokens[i]));
+                            String.format("Error: Tags need to be strictly alphanumeric. (%s)", eventTagTokens[i]));
                 }
             }
             return new AddTaskCommand(
                     new EventTask(
                             eventTaskTokens[0],
-                            TimePointParser.toDate(eventPeriodTokens[0]),
-                            TimePointParser.toDate(eventTagTokens[0]),
+                            TimePointParser.toTimePoint(eventPeriodTokens[0]),
+                            TimePointParser.toTimePoint(eventTagTokens[0]),
                             Arrays.copyOfRange(eventTagTokens, 1, eventTagTokens.length)));
         case "tag":
             if (tokens.length < 2) {
-                return new MessageCommand("Task index not given.");
+                return new MessageCommand("Error: Task index not given.");
             }
             String[] tagTokens = tokens[1].split(" ");
             if (tagTokens.length == 1) {
-                return new MessageCommand("Tags not given.");
+                return new MessageCommand("Error: Tags not given.");
             }
             String[] tags = new String[tagTokens.length - 1];
             for (int i = 1; i < tagTokens.length; i++) {
                 if (!tagTokens[i].startsWith("#")) {
-                    return new MessageCommand("Notate tags with # sign.");
+                    return new MessageCommand("Error: Notate tags with # sign.");
                 }
                 String tag = tagTokens[i].substring(1);
                 if (!tag.matches("[a-zA-Z0-9]+")) {
-                    return new MessageCommand(String.format("Tags need to be strictly alphanumeric. (%s)", tag));
+                    return new MessageCommand(String.format("Error: Tags need to be strictly alphanumeric. (%s)", tag));
                 }
                 tags[i - 1] = tag;
             }
             return new TagCommand(tagTokens[0], tags);
         case "untag":
             if (tokens.length < 2) {
-                return new MessageCommand("Task index not given.");
+                return new MessageCommand("Error: Task index not given.");
             }
             String[] untagTokens = tokens[1].split(" ");
             if (untagTokens.length == 1) {
@@ -180,29 +180,29 @@ public class Parser {
             String[] untags = new String[untagTokens.length - 1];
             for (int i = 1; i < untagTokens.length; i++) {
                 if (!untagTokens[i].startsWith("#")) {
-                    return new MessageCommand("Notate tags with # sign.");
+                    return new MessageCommand("Error: Notate tags with # sign.");
                 }
                 String tag = untagTokens[i].substring(1);
                 if (!tag.matches("[a-zA-Z0-9]+")) {
-                    return new MessageCommand(String.format("Tags need to be strictly alphanumeric. (%s)", tag));
+                    return new MessageCommand(String.format("Error: Tags need to be strictly alphanumeric. (%s)", tag));
                 }
                 untags[i - 1] = tag;
             }
             return new UntagCommand(untagTokens[0], untags);
         case "tags":
             if (tokens.length > 1) {
-                return new MessageCommand("Unknown command, please try again. (Did you mean \"tags\"?)");
+                return new MessageCommand("Error: Unknown command, please try again. (Did you mean \"tags\"?)");
             }
             return new ListTagsCommand();
         case "find":
             if (tokens.length < 2) {
-                return new MessageCommand("Search prompt not given.");
+                return new MessageCommand("Error: Search prompt not given.");
             }
             return new FindCommand(tokens[1]);
         case "help":
             return new HelpCommand();
         default:
-            return new MessageCommand("Unknown command, please try again.");
+            return new MessageCommand("Error: Unknown command, please try again.");
         }
     }
 

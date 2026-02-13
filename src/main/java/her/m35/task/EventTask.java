@@ -13,7 +13,7 @@ public class EventTask extends Task {
     /** Name, start time and end time of the event. */
     private final String name;
     private final TimePoint fromDate;
-    private final TimePoint toDate;
+    private final TimePoint toTimePoint;
 
     /**
      * Creates a new uncompleted event task.
@@ -26,7 +26,7 @@ public class EventTask extends Task {
         super(name + " (from: " + from + " to: " + to + ")", Type.EVENT);
         this.name = name;
         this.fromDate = from;
-        this.toDate = to;
+        this.toTimePoint = to;
     }
 
     /**
@@ -41,7 +41,7 @@ public class EventTask extends Task {
         super(name + " (from: " + from + " to: " + to + ")", Type.EVENT, tags);
         this.name = name;
         this.fromDate = from;
-        this.toDate = to;
+        this.toTimePoint = to;
     }
 
     /**
@@ -56,7 +56,7 @@ public class EventTask extends Task {
         super(name + " (from: " + from + " to: " + to + ")", Type.EVENT, isDone);
         this.name = name;
         this.fromDate = from;
-        this.toDate = to;
+        this.toTimePoint = to;
     }
 
     /**
@@ -72,7 +72,7 @@ public class EventTask extends Task {
         super(name + " (from: " + from + " to: " + to + ")", Type.EVENT, tags, isDone);
         this.name = name;
         this.fromDate = from;
-        this.toDate = to;
+        this.toTimePoint = to;
     }
 
     public TimePoint getFromDate() {
@@ -80,11 +80,12 @@ public class EventTask extends Task {
     }
 
     public TimePoint getToDate() {
-        return toDate;
+        return toTimePoint;
     }
 
     @Override
     public String[] getData() {
-        return new String[] {getTypeIcon(), getDoneIcon(), name, fromDate.toString(), toDate.toString(), getTagsData()};
+        return new String[] {
+                getTypeIcon(), getDoneIcon(), name, fromDate.toString(), toTimePoint.toString(), getTagsData()};
     }
 }

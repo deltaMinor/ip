@@ -1,22 +1,70 @@
 @font-face {
-    src: url("fonts/PixelifySans-VariableFont_wght.ttf");
+    -fx-font-family: "Pixel Code Regular";
+    src: url("../fonts/PixelCode.ttf");
 }
 
-.label {
+@font-face {
+    -fx-font-family: "Pixel Code Italic";
+    src: url("../fonts/PixelCode-Italic.ttf");
+}
+
+@font-face {
+    -fx-font-family: "Pixel Code DemiBold";
+    src: url("../fonts/PixelCode-DemiBold.ttf");
+}
+
+.dialog-box {
     -fx-background-color: linear-gradient(to bottom right, #00ffbf, #00ddff);
     -fx-border-color: black;
     -fx-border-width: 2px;
     -fx-background-radius: 1em 1em 0 1em;
     -fx-border-radius: 1em 1em 0 1em;
-    -fx-font-family: "Pixelify Sans";
-    -fx-font-size: 16;
+    -fx-font-size: 14;
+    -fx-font-family: "Pixel Code Regular";
+    fx-word-wrap: break-word;
+}
+
+.todo-text {
+    -fx-fill: orangered;
+}
+
+.deadline-text {
+    -fx-fill: darkred;
+}
+
+.event-text {
+    -fx-fill: firebrick;
+}
+
+.done-mark {
+    -fx-fill: goldenrod;
+}
+
+.todo-done-text {
+    -fx-fill: forestgreen;
+}
+
+.deadline-done-text {
+    -fx-fill: darkgreen;
+}
+
+.event-done-text {
+    -fx-fill: green;
+}
+
+.tag-text {
+    -fx-fill: linear-gradient(to bottom right, darkmagenta, deeppink);
+    -fx-font-family: "Pixel Code Italic";
+}
+
+.error-text {
+    -fx-fill: crimson;
+    -fx-font-family: "Pixel Code DemiBold";
 }
 
 .reply-label {
     -fx-background-radius: 1em 1em 1em 0;
     -fx-border-radius: 1em 1em 1em 0;
-    -fx-font-family: "Pixelify Sans";
-    -fx-font-size: 16;
     fx-word-wrap: break-word;
 }
 

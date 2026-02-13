@@ -44,7 +44,7 @@ public class UntagCommand extends Command {
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 for (String tag : tags) {
                     if (!taskList.get(taskIndex).hasTag(tag)) {
-                        ui.printMessage(String.format("This task does not have tag #%s!", tag));
+                        ui.printMessage("Error: This task already has tag ", "#" + tag, "!");
                         return;
                     }
                 }
@@ -56,11 +56,14 @@ public class UntagCommand extends Command {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                ui.printMessage("The following task has been updated:\n" + taskList.get(taskIndex));
+                ui.printMessage(
+                        "The following task has been updated:\n",
+                        taskList.get(taskIndex).toString() + " ",
+                        taskList.get(taskIndex).getTagsDescription());
                 return;
             }
         }
         ui.printMessage(String.format(
-                "Please enter a number between 1 and %d to untag that task.", taskList.size()));
+                "Error: Please enter a number between 1 and %d to untag that task.", taskList.size()));
     }
 }

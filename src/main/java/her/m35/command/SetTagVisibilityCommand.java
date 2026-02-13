@@ -8,7 +8,7 @@ import her.m35.task.Task;
 /**
  * Command that sets the global showTags variable to a given value.
  */
-public class SetTaskVisibilityCommand extends Command {
+public class SetTagVisibilityCommand extends Command {
     /** Messages to be shown depending on the showTags value. */
     private static final String SHOW_TAGS_MESSAGE = "Nice! Tags will be displayed alongside tasks from now on.";
     private static final String HIDE_TAGS_MESSAGE =
@@ -21,7 +21,7 @@ public class SetTaskVisibilityCommand extends Command {
      * Constructs a SetTaskVisibilityCommand with the specified new showTags value.
      * @param showTags New value for showTags.
      */
-    public SetTaskVisibilityCommand(boolean showTags) {
+    public SetTagVisibilityCommand(boolean showTags) {
         this.showTags = showTags;
     }
 

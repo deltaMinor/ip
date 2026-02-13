@@ -46,7 +46,7 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        String response = herm35.getResponse(input);
+        String[] response = herm35.getResponse(input);
         DialogBox userDialog = DialogBox.getUserDialog(input, userImage);
         userDialog.prefWidthProperty().bind(scrollPane.widthProperty().subtract(30));
         DialogBox herm35Dialog = DialogBox.getHerm35Dialog(response, herm35Image);

@@ -9,14 +9,14 @@ import her.m35.Ui;
  */
 public class MessageCommand extends Command {
     /** String to be displayed to the user. */
-    private final String message;
+    private final String[] message;
 
     /**
      * Constructs a MessageCommand with the given message.
      *
      * @param message Message to be displayed.
      */
-    public MessageCommand(String message) {
+    public MessageCommand(String... message) {
         this.message = message;
     }
 

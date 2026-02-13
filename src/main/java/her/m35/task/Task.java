@@ -24,6 +24,15 @@ public abstract class Task {
         EVENT
     }
 
+    /** Position of the character that indicates type of the Task when the task is in string format. */
+    public static final int TYPE_POSITION = 1;
+
+    /** Position of the character that indicates isDone of the Task when the task is in string format. */
+    public static final int MARK_POSITION = 4;
+
+    /** Character that indicates that the task is done. */
+    public static final String DONE_MARK = "X";
+
     /** Whether tags will be shown as part of task description. */
     private static boolean showTags = true;
 
@@ -115,7 +124,7 @@ public abstract class Task {
      */
     public String getDoneIcon() {
 
-        return isDone ? "X" : " ";
+        return isDone ? DONE_MARK : " ";
     }
 
     /**
@@ -133,7 +142,7 @@ public abstract class Task {
      * @return Tags with # for every tag.
      */
     public String getTagsDescription() {
-        if (tags.isEmpty()) {
+        if (tags.isEmpty() || !showTags) {
             return "";
         }
         return "#" + String.join(", #", tags);
@@ -203,7 +212,6 @@ public abstract class Task {
      *
      * @return "T" for TODO, "D" for DEADLINE, "E" for EVENT.
      */
-    @SuppressWarnings("checkstyle:Indentation")
     public String getTypeIcon() {
         return switch (type) {
         case TODO -> "T";
@@ -236,22 +244,22 @@ public abstract class Task {
         case "D":
             if (data.length == 4) {
                 return new DeadlineTask(
-                        data[2], TimePointParser.toDate(data[3]), data[1].equals("X"));
+                        data[2], TimePointParser.toTimePoint(data[3]), data[1].equals("X"));
             }
             return new DeadlineTask(
-                    data[2], TimePointParser.toDate(data[3]), data[4].split("/"), data[1].equals("X"));
+                    data[2], TimePointParser.toTimePoint(data[3]), data[4].split("/"), data[1].equals("X"));
         case "E":
             if (data.length == 5) {
                 return new EventTask(
                         data[2],
-                        TimePointParser.toDate(data[3]),
-                        TimePointParser.toDate(data[4]),
+                        TimePointParser.toTimePoint(data[3]),
+                        TimePointParser.toTimePoint(data[4]),
                         data[1].equals("X"));
             }
             return new EventTask(
                     data[2],
-                    TimePointParser.toDate(data[3]),
-                    TimePointParser.toDate(data[4]),
+                    TimePointParser.toTimePoint(data[3]),
+                    TimePointParser.toTimePoint(data[4]),
                     data[5].split("/"),
                     data[1].equals("X"));
         default:
@@ -261,7 +269,6 @@ public abstract class Task {
 
     @Override
     public String toString() {
-        String tagDescription = showTags ? " " + getTagsDescription() : "";
-        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription() + tagDescription;
+        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription();
     }
 }
