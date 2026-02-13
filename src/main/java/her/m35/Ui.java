@@ -10,7 +10,7 @@ public class Ui {
     private static final String LINE_SEPARATOR = "-----------------------";
 
     /** Scanner to receive user input. */
-    private Scanner input;
+    private final Scanner input;
 
     /** Response for the user. */
     private String[] response;
@@ -18,11 +18,6 @@ public class Ui {
     /** Constructs a new Ui object. */
     public Ui() {
         input = new Scanner(System.in);
-    }
-
-    /** Is true only if the Ui has a new line of input available. */
-    public boolean hasNextLine() {
-        return input.hasNextLine();
     }
 
     /** Outputs the next line of the Ui. */
@@ -67,7 +62,7 @@ public class Ui {
      * @param emptyListMessage Output message if there are no items in the task list.
      * @return String sequence that can be printed as a message.
      */
-    public static String listToMessage(ArrayList<? extends Object> list, String emptyListMessage) {
+    public static String listToMessage(ArrayList<?> list, String emptyListMessage) {
         String listOutput = "";
         if (!list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {

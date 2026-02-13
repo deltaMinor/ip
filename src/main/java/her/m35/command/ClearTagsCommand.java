@@ -1,7 +1,5 @@
 package her.m35.command;
 
-import java.io.IOException;
-
 import her.m35.Storage;
 import her.m35.TaskList;
 import her.m35.Ui;
@@ -37,12 +35,8 @@ public class ClearTagsCommand extends Command {
             int taskIndex = Integer.parseInt(indexString) - 1;
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 taskList.get(taskIndex).clearTags();
-                String storageError = "";
-                try {
-                    storage.edit(taskIndex, taskList.get(taskIndex).getData());
-                } catch (IOException e) {
-                    storageError = "Error: Unable to save changes to storage!\n";
-                }
+                String storageError = storage.edit(
+                        taskIndex, taskList.get(taskIndex).getData(), "Error: Unable to save changes to storage!\n");
                 ui.printMessage(
                         storageError,
                         "The following task has all its tags removed:\n",

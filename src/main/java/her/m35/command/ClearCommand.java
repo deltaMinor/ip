@@ -25,7 +25,7 @@ public class ClearCommand extends Command {
         try {
             storage.clear();
         } catch (IOException e) {
-            storageError = "Error: Unable to clear storage!\n";
+            storageError = "Error: Unable to clear storage!\nCause: " + e.getMessage() + "\n";
         }
         ui.printMessage(
                 storageError,

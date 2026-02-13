@@ -30,15 +30,20 @@ public class DeleteCommand extends Command {
      */
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
+        if (taskList.size() == 0) {
+            ui.printMessage("Error: You do not have any tasks to delete!");
+            return;
+        }
         if (Parser.isInteger(indexString)) {
             int taskIndex = Integer.parseInt(indexString) - 1;
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 Task deletedTask = taskList.get(taskIndex);
+                taskList.delete(taskIndex);
                 String storageError = "";
                 try {
-                    storage.edit(taskIndex, taskList.get(taskIndex).getData());
+                    storage.delete(taskIndex);
                 } catch (IOException e) {
-                    storageError = "Error: Unable to save changes to storage!\n";
+                    storageError = "Error: Unable to save task to storage!\nCause: " + e.getMessage() + "\n";
                 }
                 ui.printMessage(
                         storageError,

@@ -44,7 +44,6 @@ public class DialogBox extends HBox {
     }
 
     private DialogBox(String[] message, Image img) {
-        System.out.println(message);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
             fxmlLoader.setController(this);

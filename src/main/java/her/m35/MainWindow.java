@@ -26,8 +26,8 @@ public class MainWindow extends AnchorPane {
 
     private Herm35 herm35;
 
-    private Image userImage = new Image(this.getClass().getResourceAsStream("/images/UserIcon.png"));
-    private Image herm35Image = new Image(this.getClass().getResourceAsStream("/images/HERM35Icon.png"));
+    private final Image userImage = new Image(this.getClass().getResourceAsStream("/images/UserIcon.png"));
+    private final Image herm35Image = new Image(this.getClass().getResourceAsStream("/images/HERM35Icon.png"));
 
     @FXML
     public void initialize() {

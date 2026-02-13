@@ -37,7 +37,7 @@ public class AddTaskCommand extends Command {
         try {
             storage.insert(task.getData());
         } catch (IOException e) {
-            storageError = "Error: Unable to save task to storage!\n";
+            storageError = "Error: Unable to save task to storage!\nCause: " + e.getMessage() + "\n";
         }
         ui.printMessage(
                 storageError,

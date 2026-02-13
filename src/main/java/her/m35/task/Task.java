@@ -217,7 +217,6 @@ public abstract class Task {
         case TODO -> "T";
         case DEADLINE -> "D";
         case EVENT -> "E";
-        default -> "";
         };
     }
 
