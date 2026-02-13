@@ -1,7 +1,5 @@
 package her.m35.command;
 
-import java.io.IOException;
-
 import her.m35.Storage;
 import her.m35.TaskList;
 import her.m35.Ui;
@@ -43,12 +41,10 @@ public class MarkCommand extends Command {
             int taskIndex = Integer.parseInt(indexString) - 1;
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 taskList.markTask(taskIndex, newStatus);
-                try {
-                    storage.edit(taskIndex, taskList.get(taskIndex).getData());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                String storageError = storage.edit(
+                        taskIndex, taskList.get(taskIndex).getData(), "Error: Unable to save changes to storage!\n");
                 ui.printMessage(
+                        storageError,
                         "Sure, I've marked this task as done:\n",
                         taskList.get(taskIndex).toString() + " ",
                         taskList.get(taskIndex).getTagsDescription());

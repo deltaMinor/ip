@@ -1,7 +1,5 @@
 package her.m35.command;
 
-import java.io.IOException;
-
 import her.m35.Storage;
 import her.m35.TaskList;
 import her.m35.Ui;
@@ -51,12 +49,10 @@ public class UntagCommand extends Command {
                 for (String tag : tags) {
                     taskList.get(taskIndex).removeTag(tag);
                 }
-                try {
-                    storage.edit(taskIndex, taskList.get(taskIndex).getData());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                String storageError = storage.edit(
+                        taskIndex, taskList.get(taskIndex).getData(), "Error: Unable to save changes to storage!\n");
                 ui.printMessage(
+                        storageError,
                         "The following task has been updated:\n",
                         taskList.get(taskIndex).toString() + " ",
                         taskList.get(taskIndex).getTagsDescription());

@@ -14,9 +14,9 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    private Herm35 herm35 = new Herm35();
+    private final Herm35 herm35 = new Herm35();
 
-    private Image icon = new Image(this.getClass().getResourceAsStream("/images/HERM35Icon.png"));
+    private final Image icon = new Image(this.getClass().getResourceAsStream("/images/HERM35Icon.png"));
 
     @Override
     public void start(Stage stage) {

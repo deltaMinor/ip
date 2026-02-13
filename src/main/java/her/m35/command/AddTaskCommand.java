@@ -33,12 +33,14 @@ public class AddTaskCommand extends Command {
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         taskList.add(task);
+        String storageError = "";
         try {
             storage.insert(task.getData());
         } catch (IOException e) {
-            e.printStackTrace();
+            storageError = "Error: Unable to save task to storage!\nCause: " + e.getMessage() + "\n";
         }
         ui.printMessage(
+                storageError,
                 "The following task has been added:\n  ",
                 taskList.get(taskList.size() - 1).toString() + " ",
                 taskList.get(taskList.size() - 1).getTagsDescription(),

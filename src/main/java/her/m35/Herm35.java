@@ -20,7 +20,7 @@ public class Herm35 {
     private TaskList taskList;
 
     /** UI to deal with interactions with the user. */
-    private Ui ui;
+    private final Ui ui;
 
     /** Opening introduction to the user. */
     private String openingLines = "Hey! I'm " + NAME + "!\nWhat can I do for you?";

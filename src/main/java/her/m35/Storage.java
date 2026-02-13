@@ -91,6 +91,23 @@ public class Storage {
     }
 
     /**
+     * Executes an edit function and returns the provided error message if method throws an exception.
+     *
+     * @param index Index of the row to edit.
+     * @param strings New row data as an array of values.
+     * @param errorMessage Error message to return if exception thrown.
+     * @return Empty string only if no exception thrown, else the provided error message is returned.
+     */
+    public String edit(int index, String[] strings, String errorMessage) {
+        try {
+            edit(index, strings);
+            return "";
+        } catch (IOException e) {
+            return errorMessage + "\nCause: " + e.getMessage();
+        }
+    }
+
+    /**
      * Reads all rows from the file.
      *
      * @return Array of lines read from the file.
