@@ -49,6 +49,6 @@ public class DeleteCommand extends Command {
             }
         }
         ui.printMessage(String.format(
-                "Please enter a number between 1 and %d to delete that task.", taskList.size()));
+                "Error: Please enter a number between 1 and %d to delete that task.", taskList.size()));
     }
 }

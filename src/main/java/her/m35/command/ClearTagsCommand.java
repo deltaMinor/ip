@@ -47,6 +47,6 @@ public class ClearTagsCommand extends Command {
             }
         }
         ui.printMessage(String.format(
-                "Please enter a number between 1 and %d to remove that task's tags.", taskList.size()));
+                "Error: Please enter a number between 1 and %d to remove that task's tags.", taskList.size()));
     }
 }

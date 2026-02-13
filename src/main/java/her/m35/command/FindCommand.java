@@ -84,12 +84,12 @@ public class FindCommand extends Command {
                     String[] tags = tagsString.split(" ");
                     for (String tag : tags) {
                         if (!tag.startsWith("#")) {
-                            ui.printMessage("Notate tags with a # sign.");
+                            ui.printMessage("Error: Notate tags with a # sign.");
                             return;
                         }
                         String keyword = tag.substring(1);
                         if (!keyword.matches("[a-zA-Z0-9]+")) {
-                            ui.printMessage(String.format("Tags need to be strictly alphanumeric. (%s)", keyword));
+                            ui.printMessage(String.format("Error: Tags need to be strictly alphanumeric. (%s)", keyword));
                             return;
                         }
                         filterConditions.add(TaskList.FilterCondition.TAG);

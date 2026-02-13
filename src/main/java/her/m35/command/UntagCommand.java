@@ -44,7 +44,7 @@ public class UntagCommand extends Command {
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 for (String tag : tags) {
                     if (!taskList.get(taskIndex).hasTag(tag)) {
-                        ui.printMessage("This task already has tag ", "#" + tag, "!");
+                        ui.printMessage("Error: This task already has tag ", "#" + tag, "!");
                         return;
                     }
                 }
@@ -64,6 +64,6 @@ public class UntagCommand extends Command {
             }
         }
         ui.printMessage(String.format(
-                "Please enter a number between 1 and %d to untag that task.", taskList.size()));
+                "Error: Please enter a number between 1 and %d to untag that task.", taskList.size()));
     }
 }

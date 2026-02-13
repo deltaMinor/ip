@@ -108,6 +108,10 @@ public class DialogBox extends HBox {
                     }
                     dialog.getChildren().add(tagText);
                 }
+            } else if (segment.startsWith("Error: ")) {
+                Text errorText = new Text(segment);
+                errorText.getStyleClass().add("error-text");
+                dialog.getChildren().add(errorText);
             } else {
                 dialog.getChildren().add(new Text(segment));
             }
