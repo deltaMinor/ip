@@ -142,7 +142,7 @@ public abstract class Task {
      * @return Tags with # for every tag.
      */
     public String getTagsDescription() {
-        if (tags.isEmpty()) {
+        if (tags.isEmpty() || !showTags) {
             return "";
         }
         return "#" + String.join(", #", tags);
@@ -212,7 +212,6 @@ public abstract class Task {
      *
      * @return "T" for TODO, "D" for DEADLINE, "E" for EVENT.
      */
-    @SuppressWarnings("checkstyle:Indentation")
     public String getTypeIcon() {
         return switch (type) {
         case TODO -> "T";
@@ -270,7 +269,6 @@ public abstract class Task {
 
     @Override
     public String toString() {
-        String tagDescription = showTags ? " " + getTagsDescription() : "";
-        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription() + tagDescription;
+        return "[" + getTypeIcon() + "][" + getDoneIcon() + "] " + getDescription();
     }
 }

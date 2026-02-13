@@ -39,8 +39,9 @@ public class AddTaskCommand extends Command {
             e.printStackTrace();
         }
         ui.printMessage(
-                "The following task has been added:\n\t",
-                taskList.get(taskList.size() - 1).toString(),
+                "The following task has been added:\n  ",
+                taskList.get(taskList.size() - 1).toString() + " ",
+                taskList.get(taskList.size() - 1).getTagsDescription(),
                 "\n",
                 taskList.getCurrentTaskCountMessage());
     }

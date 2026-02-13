@@ -48,7 +48,10 @@ public class MarkCommand extends Command {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                ui.printMessage("Sure, I've marked this task as done:\n", taskList.get(taskIndex).toString());
+                ui.printMessage(
+                        "Sure, I've marked this task as done:\n",
+                        taskList.get(taskIndex).toString() + " ",
+                        taskList.get(taskIndex).getTagsDescription());
                 return;
             }
         }

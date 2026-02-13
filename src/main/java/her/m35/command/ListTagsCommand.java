@@ -1,5 +1,7 @@
 package her.m35.command;
 
+import java.util.ArrayList;
+
 import her.m35.Storage;
 import her.m35.TaskList;
 import her.m35.Ui;
@@ -24,10 +26,11 @@ public class ListTagsCommand extends Command {
             ui.printMessage("There are no tags! Add some now!");
             return;
         }
-        String output = "";
+        ArrayList<String> output = new ArrayList<>();
         for (String tag : taskList.getTags().keySet()) {
-            output += "#" + tag + ": " + taskList.getTags().get(tag) + "\n";
+            output.add("#" + tag);
+            output.add(": " + taskList.getTags().get(tag) + "\n");
         }
-        ui.printMessage(output);
+        ui.printMessage(output.toArray(new String[0]));
     }
 }

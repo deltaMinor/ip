@@ -138,16 +138,17 @@ public class TaskList {
         for (int i = 0; i < taskList.size(); i++) {
             if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
                 listOutput.add((i + 1) + ".");
-                listOutput.add(taskList.get(i).toString());
+                listOutput.add(taskList.get(i).toString() + " ");
+                listOutput.add(taskList.get(i).getTagsDescription());
                 listOutput.add("\n");
                 filteredTaskListIndex++;
                 if (filteredTaskListIndex == filteredTaskList.size()) {
+                    listOutput.remove(listOutput.size() - 1);
                     return listOutput.toArray(new String[0]);
                 }
             }
         }
-        assert filteredTaskListIndex == filteredTaskList.size();
-        return listOutput.toArray(new String[0]);
+        return null;
     }
 
     /**
@@ -176,7 +177,9 @@ public class TaskList {
             case KEYWORD:
                 String keyword = keywords[i].toLowerCase();
                 noTasksMessage = String.format("There are no tasks containing \"%s\".", keywords[i]);
-                filteredTaskList.removeIf(task -> !task.toString().toLowerCase().contains(keyword));
+                filteredTaskList.removeIf(
+                        task -> !task.toString().toLowerCase().contains(keyword)
+                                && !task.getTagsDescription().toLowerCase().contains(keyword));
                 break;
             case TAG:
                 String tag = keywords[i];
@@ -301,12 +304,14 @@ public class TaskList {
         if (taskList.isEmpty()) {
             return new String[] {"Your task list is empty!"};
         }
-        String[] formattedTaskList = new String[taskList.size() * 2];
-        formattedTaskList[0] = "1. ";
-        formattedTaskList[1] = taskList.get(0).toString();
+        String[] formattedTaskList = new String[taskList.size() * 3];
+        formattedTaskList[0] = "1.";
+        formattedTaskList[1] = taskList.get(0).toString() + " ";
+        formattedTaskList[2] = taskList.get(0).getTagsDescription();
         for (int i = 1; i < taskList.size(); i++) {
-            formattedTaskList[i * 2] = "\n" + (i + 1) + ". ";
-            formattedTaskList[i * 2 + 1] = taskList.get(i).toString();
+            formattedTaskList[i * 3] = "\n" + (i + 1) + ".";
+            formattedTaskList[i * 3 + 1] = taskList.get(i).toString() + " ";
+            formattedTaskList[i * 3 + 2] = taskList.get(i).getTagsDescription();
         }
         return formattedTaskList;
     }

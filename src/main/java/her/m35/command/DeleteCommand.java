@@ -42,7 +42,8 @@ public class DeleteCommand extends Command {
                 }
                 ui.printMessage(
                         "Got it, I'm deleting this task:\n",
-                        deletedTask.toString(),
+                        deletedTask.toString() + " ",
+                        deletedTask.getTagsDescription(),
                         "\n" + taskList.getCurrentTaskCountMessage());
                 return;
             }

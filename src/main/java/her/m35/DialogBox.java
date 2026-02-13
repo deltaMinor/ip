@@ -29,7 +29,22 @@ public class DialogBox extends HBox {
     @FXML
     private ImageView displayPicture;
 
+    private DialogBox(String message, Image img) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
+            fxmlLoader.setController(this);
+            fxmlLoader.setRoot(this);
+            fxmlLoader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        dialog.getChildren().add(new Text(message));
+        dialog.getStyleClass().add("dialog-box");
+        displayPicture.setImage(img);
+    }
+
     private DialogBox(String[] message, Image img) {
+        System.out.println(message);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
             fxmlLoader.setController(this);
@@ -84,6 +99,15 @@ public class DialogBox extends HBox {
                     }
                     dialog.getChildren().add(text);
                 }
+            } else if (segment.startsWith("#")) {
+                String[] tags = segment.split("(?=#)|(?=,)");
+                for (String tag : tags) {
+                    Text tagText = new Text(tag);
+                    if (tag.startsWith("#")) {
+                        tagText.getStyleClass().add("tag-text");
+                    }
+                    dialog.getChildren().add(tagText);
+                }
             } else {
                 dialog.getChildren().add(new Text(segment));
             }
@@ -104,7 +128,7 @@ public class DialogBox extends HBox {
     }
 
     public static DialogBox getUserDialog(String message, Image img) {
-        return new DialogBox(new String[] {message}, img);
+        return new DialogBox(message, img);
     }
 
     public static DialogBox getHerm35Dialog(String[] message, Image img) {
