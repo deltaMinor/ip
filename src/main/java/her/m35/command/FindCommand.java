@@ -89,7 +89,8 @@ public class FindCommand extends Command {
                         }
                         String keyword = tag.substring(1);
                         if (!keyword.matches("[a-zA-Z0-9]+")) {
-                            ui.printMessage(String.format("Error: Tags need to be strictly alphanumeric. (%s)", keyword));
+                            ui.printMessage(
+                                    String.format("Error: Tags need to be strictly alphanumeric. (%s)", keyword));
                             return;
                         }
                         filterConditions.add(TaskList.FilterCondition.TAG);
