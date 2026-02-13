@@ -56,7 +56,7 @@ public class UntagCommand extends Command {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                ui.printMessage("The following task has been updated:\n" + taskList.get(taskIndex));
+                ui.printMessage("The following task has been updated:\n", taskList.get(taskIndex).toString());
                 return;
             }
         }

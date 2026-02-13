@@ -6,6 +6,7 @@ import her.m35.Storage;
 import her.m35.TaskList;
 import her.m35.Ui;
 import her.m35.parser.Parser;
+import her.m35.task.Task;
 
 /**
  * Deletes a task from the task list.
@@ -32,16 +33,17 @@ public class DeleteCommand extends Command {
         if (Parser.isInteger(indexString)) {
             int taskIndex = Integer.parseInt(indexString) - 1;
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
-                String taskDeletedMessage = "Got it, I'm deleting this task:\n"
-                        + taskList.get(taskIndex) + "\n";
+                Task deletedTask = taskList.get(taskIndex);
                 taskList.delete(taskIndex);
                 try {
                     storage.delete(taskIndex);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                taskDeletedMessage += taskList.getCurrentTaskCountMessage();
-                ui.printMessage(taskDeletedMessage);
+                ui.printMessage(
+                        "Got it, I'm deleting this task:\n",
+                        deletedTask.toString(),
+                        "\n" + taskList.getCurrentTaskCountMessage());
                 return;
             }
         }

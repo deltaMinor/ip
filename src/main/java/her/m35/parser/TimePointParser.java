@@ -13,17 +13,26 @@ import her.m35.TimePoint;
  * Contains methods to convert strings into TimePoint objects and checking validity of conversion.
  */
 public class TimePointParser {
+    private enum TimeParameter { YEAR, MONTH, DAY, TIME }
+
+    private static final String[] VALID_TIME_FORMATS = {
+        "D/M", "M/D",
+        "D/M/Y", "M/D/Y", "Y/M/D", "Y/D/M", "T/D/M", "T/M/D", "D/M/T", "M/D/T",
+        "T/D/M/Y", "T/M/D/Y", "T/Y/M/D", "T/Y/D/M", "D/M/Y/T", "M/D/Y/T", "Y/M/D/T", "Y/D/M/T",
+    };
+
+    private static final char[] VALID_SEPARATOR_WILDCARDS = {'/', ' ', '-', '\\'};
+
     /**
      * Converts a string into a TimePoint object.
      *
      * @param timeString String that represents time to be converted.
      * @return Time as a TimePoint object.
      */
-    public static TimePoint toDate(String timeString) {
-        if (timeString == null) {
+    public static TimePoint toTimePoint(String timeString) {
+        if (timeString == null || timeString.isEmpty()) {
             return null;
         }
-
         String timeStringCopy = timeString.trim().toUpperCase();
         timeStringCopy = timeStringCopy.replace("TODAY", dateToString(LocalDate.now()));
         timeStringCopy = timeStringCopy.replace("TDY", dateToString(LocalDate.now()));
@@ -31,116 +40,153 @@ public class TimePointParser {
         timeStringCopy = timeStringCopy.replace("TOMORROW", tomorrowDateString);
         timeStringCopy = timeStringCopy.replace("TMRW", tomorrowDateString);
         timeStringCopy = timeStringCopy.replace("TMR", tomorrowDateString);
-        int year;
-        int time;
-        String[] tokens = timeStringCopy.split("[/ \\-]");
-        LocalDate date;
-        LocalDateTime dateTime;
-        switch (tokens.length) {
-        case 2:
-            year = LocalDate.now().getYear();
-            date = tryCreateDate(toDay(tokens[0]), toMonth(tokens[1]), year);
-            if (date != null) {
-                return new TimePoint(date);
+
+        TimePoint result;
+        for (String format : VALID_TIME_FORMATS) {
+            result = toTimePoint(timeStringCopy, format);
+            if (result != null) {
+                return result;
             }
-            date = tryCreateDate(toDay(tokens[1]), toMonth(tokens[0]), year);
-            if (date != null) {
-                return new TimePoint(date);
-            }
-            return new TimePoint(timeString);
-        case 3:
-            if (tokens[0].contains(":") || tokens[0].contains("AM") || tokens[0].contains("PM")) {
-                time = toHourMinuteTime(tokens[0]);
-                if (time == -1) {
-                    return new TimePoint(timeString);
-                }
-                year = LocalDate.now().getYear();
-                dateTime = tryCreateDateTime(time, toDay(tokens[1]), toMonth(tokens[2]), year);
-                if (dateTime != null) {
-                    return new TimePoint(dateTime);
-                }
-                dateTime = tryCreateDateTime(time, toDay(tokens[2]), toMonth(tokens[1]), year);
-                if (dateTime != null) {
-                    return new TimePoint(dateTime);
-                }
-                return new TimePoint(timeString);
-            }
-            if (tokens[2].contains(":") || tokens[2].contains("AM") || tokens[2].contains("PM")) {
-                time = toHourMinuteTime(tokens[2]);
-                if (time == -1) {
-                    return new TimePoint(timeString);
-                }
-                year = LocalDate.now().getYear();
-                dateTime = tryCreateDateTime(time, toDay(tokens[0]), toMonth(tokens[1]), year);
-                if (dateTime != null) {
-                    return new TimePoint(dateTime);
-                }
-                dateTime = tryCreateDateTime(time, toDay(tokens[1]), toMonth(tokens[0]), year);
-                if (dateTime != null) {
-                    return new TimePoint(dateTime);
-                }
-                return new TimePoint(timeString);
-            }
-            date = threeStringstoLocalDate(new String[]{tokens[0], tokens[1], tokens[2]});
-            if (date != null) {
-                return new TimePoint(date);
-            }
-            return new TimePoint(timeString);
-        case 4:
-            if (tokens[0].contains(":") || tokens[0].contains("AM") || tokens[0].contains("PM")
-                    || (tokens[0].length() == 4 && tokens[1].length() == 4)) {
-                time = toHourMinuteTime(tokens[0]);
-                if (time == -1) {
-                    return new TimePoint(timeString);
-                }
-                date = threeStringstoLocalDate(new String[]{tokens[1], tokens[2], tokens[3]});
-                if (date != null) {
-                    return new TimePoint(
-                            LocalDateTime.of(
-                                    date.getYear(), date.getMonth(), date.getDayOfMonth(), time / 100, time % 100));
-                }
-                return new TimePoint(timeString);
-            }
-            if (tokens[3].contains(":") || tokens[3].contains("AM") || tokens[3].contains("PM")
-                    || (tokens[2].length() == 4 && tokens[3].length() == 4)) {
-                time = toHourMinuteTime(tokens[3]);
-                if (time == -1) {
-                    return new TimePoint(timeString);
-                }
-                date = threeStringstoLocalDate(new String[]{tokens[0], tokens[1], tokens[2]});
-                if (date != null) {
-                    return new TimePoint(
-                            LocalDateTime.of(
-                                    date.getYear(), date.getMonth(), date.getDayOfMonth(), time / 100, time % 100));
-                }
-                return new TimePoint(timeString);
-            }
-            if (tokens[0].length() == 4 && tokens[3].length() == 4) {
-                time = toHourMinuteTime(tokens[0]);
-                int yearPos = 3;
-                if (time == -1) {
-                    time = toHourMinuteTime(tokens[3]);
-                    yearPos = 0;
-                    if (time == -1) {
-                        return new TimePoint(timeString);
-                    }
-                }
-                date = threeStringstoLocalDate(new String[]{tokens[1], tokens[2], tokens[yearPos]});
-                if (date != null) {
-                    return new TimePoint(
-                            LocalDateTime.of(
-                                    date.getYear(), date.getMonth(), date.getDayOfMonth(), time / 100, time % 100));
-                }
-                return new TimePoint(timeString);
-            }
-            return new TimePoint(timeString);
-        default:
-            return new TimePoint(timeString);
         }
+        return new TimePoint(timeString);
     }
 
     /**
-     * Helper function which converts a LocalDate to a string which can be parsed by the TimePointParser toDate method.
+     * Converts a string into a TimePoint object with a given format.
+     *
+     * @param timeString String that represents time to be converted.
+     * @param format Format for timeString to be parsed in.
+     * @return Time as a TimePoint object.
+     */
+    private static TimePoint toTimePoint(String timeString, String format) {
+        assert(timeString != null && !timeString.isEmpty());
+        assert(format != null && !format.isEmpty());
+        int day = -1;
+        int month = -1;
+        int year = -1;
+        int time = -1;
+        if (!format.contains("Y")) {
+            year = LocalDate.now().getYear();
+        }
+        TimeParameter[] parameters = splitTimePointFormatString(format);
+        assert(parameters != null);
+        int parameterCount = parameters.length;
+        String[] parameterStrings = new String[parameterCount];
+        String remainder = timeString;
+        for (int i = 0; i < parameterCount - 1; i++) {
+            int separatorIndex = indexOfWildcard(remainder);
+            if (separatorIndex == -1) {
+                return null;
+            }
+            parameterStrings[i] = remainder.substring(0, separatorIndex);
+            remainder = remainder.substring(separatorIndex + 1);
+        }
+        parameterStrings[parameterCount - 1] = remainder;
+        for (int i = 0; i < parameterCount; i++) {
+            switch (parameters[i]) {
+            case YEAR:
+                if (Parser.isInteger(parameterStrings[i]) && parameterStrings[i].length() == 4) {
+                    year = Integer.parseInt(parameterStrings[i]);
+                }
+                if (year == -1) {
+                    return null;
+                }
+                break;
+            case MONTH:
+                month = toMonth(parameterStrings[i]);
+                if (month == -1) {
+                    return null;
+                }
+                break;
+            case DAY:
+                if (Parser.isInteger(parameterStrings[i])) {
+                    day = Integer.parseInt(parameterStrings[i]);
+                }
+                if (day == -1) {
+                    return null;
+                }
+                break;
+            case TIME:
+                time = toHourMinuteTime(parameterStrings[i]);
+                if (time == -1) {
+                    return null;
+                }
+                break;
+            default:
+                return null;
+            }
+        }
+        if (time == -1) {
+            LocalDate date = tryCreateDate(day, month, year);
+            if (date != null) {
+                return new TimePoint(date);
+            }
+            return null;
+        }
+        LocalDateTime dateTime = tryCreateDateTime(time, day, month, year);
+        if (dateTime != null) {
+            return new TimePoint(dateTime);
+        }
+        return null;
+    }
+
+    /**
+     * Helper function to find the index of the first wildcard time separator in regex "[/ \\-]"
+     * @param string String to find wildcard separator symbol in.
+     * @return Index of wildcard separator symbol/
+     */
+    private static int indexOfWildcard(String string) {
+        int index = string.length() + 1;
+        for (char c : VALID_SEPARATOR_WILDCARDS) {
+            int indexOf = string.indexOf(c);
+            if (indexOf < index && indexOf != -1) {
+                index = indexOf;
+            }
+        }
+        if (index < string.length()) {
+            return index;
+        }
+        return -1;
+    }
+
+    /**
+     * Converts a string into a TimeParameter array.
+     *
+     * @param format Format to convert into TimeParameter array.
+     * @return format as a TimeParameter array.
+     */
+    private static TimeParameter[] splitTimePointFormatString(String format) {
+        int length = format.length();
+        assert(length % 2 == 1 && length >= 3 && length <= 7);
+        for (int i = 1; i < length; i += 2) {
+            assert(format.charAt(i) == '/');
+        }
+        int parameterCount = (format.length() + 1) / 2;
+        TimeParameter[] parameters = new TimeParameter[parameterCount];
+        for (int i = 0; i < parameterCount; i++) {
+            switch (format.charAt(i * 2)) {
+            case 'Y':
+                parameters[i] = TimeParameter.YEAR;
+                break;
+            case 'M':
+                parameters[i] = TimeParameter.MONTH;
+                break;
+            case 'D':
+                parameters[i] = TimeParameter.DAY;
+                break;
+            case 'T':
+                parameters[i] = TimeParameter.TIME;
+                break;
+            default:
+                return null;
+            }
+        }
+        return parameters;
+    }
+
+    /**
+     * Helper function which converts a LocalDate to a string which can be parsed by the TimePointParser toTimePoint
+     * method.
      *
      * @param date Date to be converted to a string.
      * @return String representation of the given date.
@@ -148,85 +194,6 @@ public class TimePointParser {
     private static String dateToString(LocalDate date) {
         return String.format(
                 "%d-%s-%d", date.getDayOfMonth(), TimePoint.MTHS[date.getMonthValue() - 1], date.getYear());
-    }
-
-    /**
-     * Helper function to reorder 3 numbers in way that makes sense as a date.
-     *
-     * @param a 1st number.
-     * @param b 2nd number.
-     * @param c 3rd number.
-     * @return The three numbers reordered dd/mm/yyyy format, if they were given in a valid order, otherwise null.
-     */
-    private static int[] reorderForDate(int a, int b, int c) {
-        if (tryCreateDate(a, b, c) != null) {
-            return new int[]{a, b, c};
-        }
-        if (tryCreateDate(b, c, a) != null) {
-            return new int[]{b, c, a};
-        }
-        if (tryCreateDate(b, a, c) != null) {
-            return new int[]{b, a, c};
-        }
-        if (tryCreateDate(c, b, a) != null) {
-            return new int[]{c, b, a};
-        }
-        return null;
-    }
-
-    /**
-     * Helper function to convert an array of 3 strings to a LocalDate.
-     *
-     * @param strings Array of 3 strings.
-     * @return A LocalDate corresponding to strings if they can form a valid date, else null.
-     */
-    private static LocalDate threeStringstoLocalDate(String[] strings) {
-        if (Parser.isIntegerArray(strings)) {
-            int[] dateOrder = reorderForDate(
-                    Integer.parseInt(strings[0]),
-                    Integer.parseInt(strings[1]),
-                    Integer.parseInt(strings[2]));
-            if (dateOrder != null) {
-                return LocalDate.of(dateOrder[2], dateOrder[1], dateOrder[0]);
-            }
-        } else {
-            int monthIndex;
-            for (monthIndex = 0; monthIndex < strings.length; monthIndex++) {
-                if (isMonthWord(strings[monthIndex])) {
-                    break;
-                }
-            }
-            switch (monthIndex) {
-            case 0:
-                if (Parser.isInteger(strings[1]) && Parser.isInteger(strings[2])) {
-                    return tryCreateDate(
-                            Integer.parseInt(strings[1]), toMonth(strings[0]), Integer.parseInt(strings[2]));
-                }
-                break;
-            case 1:
-                if (Parser.isInteger(strings[0]) && Parser.isInteger(strings[2])) {
-                    LocalDate date = tryCreateDate(Integer.parseInt(strings[0]),
-                            toMonth(strings[1]),
-                            Integer.parseInt(strings[2]));
-                    if (date != null) {
-                        return date;
-                    }
-                    return tryCreateDate(Integer.parseInt(strings[2]),
-                            toMonth(strings[1]),
-                            Integer.parseInt(strings[0]));
-                }
-                break;
-            case 2:
-                if (Parser.isInteger(strings[0]) && Parser.isInteger(strings[1])) {
-                    return tryCreateDate(
-                            Integer.parseInt(strings[1]), toMonth(strings[2]), Integer.parseInt(strings[0]));
-                }
-                break;
-            default:
-                return null;
-            }
-        }
-        return null;
     }
 
     /**
@@ -239,7 +206,7 @@ public class TimePointParser {
         if (timeString == null) {
             return -1;
         }
-        if (Parser.isInteger(timeString)) {
+        if (Parser.isInteger(timeString) && timeString.length() == 4) {
             int timeInt = Integer.parseInt(timeString);
             int hour = timeInt / 100;
             int minute = timeInt % 100;
@@ -309,21 +276,6 @@ public class TimePointParser {
     }
 
     /**
-     * Checks if a word represents a month.
-     *
-     * @param word Word that may represent a month.
-     * @return True if word represents a month, otherwise false.
-     */
-    private static boolean isMonthWord(String word) {
-        for (int i = 0; i < 12; i++) {
-            if (TimePoint.MONTHS[i].equals(word) || TimePoint.MTHS[i].equals(word)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Converts a string to its month value.
      *
      * @param month String which potentially represents a month.
@@ -344,27 +296,6 @@ public class TimePointParser {
         for (int i = 1; i <= 12; i++) {
             if (TimePoint.MONTHS[i - 1].equals(month) || TimePoint.MTHS[i - 1].equals(month)) {
                 return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Converts a string to a day of the month.
-     *
-     * @param day String which potentially represents a day of the month.
-     * @return The day represented in integer value if it is valid, else -1.
-     */
-    public static int toDay(String day) {
-        if (day == null) {
-            return -1;
-        }
-        if (Parser.isInteger(day)) {
-            int dayInt = Integer.parseInt(day);
-            if (dayInt >= 1 && dayInt <= 31) {
-                return dayInt;
-            } else {
-                return -1;
             }
         }
         return -1;

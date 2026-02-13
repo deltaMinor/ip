@@ -42,7 +42,7 @@ public class ClearTagsCommand extends Command {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                ui.printMessage("The following task has its tags removed:\n" + taskList.get(taskIndex));
+                ui.printMessage("The following task has its tags removed:\n", taskList.get(taskIndex).toString());
                 return;
             }
         }

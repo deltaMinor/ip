@@ -132,20 +132,22 @@ public class TaskList {
      * @param filteredTaskList Task list to be converted into a message.
      * @return String sequence that can be printed as a message.
      */
-    public String filteredTaskListToMessage(ArrayList<Task> filteredTaskList) {
-        String listOutput = "";
+    public String[] filteredTaskListToMessage(ArrayList<Task> filteredTaskList) {
+        ArrayList<String> listOutput = new ArrayList<>();
         int filteredTaskListIndex = 0;
         for (int i = 0; i < taskList.size(); i++) {
             if (filteredTaskList.get(filteredTaskListIndex) == taskList.get(i)) {
-                listOutput += i + 1 + "." + taskList.get(i).toString() + "\n";
+                listOutput.add((i + 1) + ".");
+                listOutput.add(taskList.get(i).toString());
+                listOutput.add("\n");
                 filteredTaskListIndex++;
                 if (filteredTaskListIndex == filteredTaskList.size()) {
-                    return listOutput;
+                    return listOutput.toArray(new String[0]);
                 }
             }
         }
         assert filteredTaskListIndex == filteredTaskList.size();
-        return listOutput;
+        return listOutput.toArray(new String[0]);
     }
 
     /**
@@ -155,10 +157,10 @@ public class TaskList {
      * @param keywords Keywords corresponding to each filter condition.
      * @return Filtered task list formatted as a printable message.
      */
-    public String outputFilteredList(FilterCondition[] filterConditions, String[] keywords) {
+    public String[] outputFilteredList(FilterCondition[] filterConditions, String[] keywords) {
         ArrayList<Task> filteredTaskList = new ArrayList<>(taskList);
         if (filterConditions.length == 0) {
-            return "Your task list is empty!";
+            return new String[] {"Your task list is empty!"};
         }
         for (int i = 0; i < filterConditions.length; i++) {
             String noTasksMessage;
@@ -182,7 +184,7 @@ public class TaskList {
                 filteredTaskList.removeIf(task -> !task.hasTag(tag));
                 break;
             case ON_DATE:
-                TimePoint onTimePoint = TimePointParser.toDate(keywords[i]);
+                TimePoint onTimePoint = TimePointParser.toTimePoint(keywords[i]);
                 noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
                 switch (onTimePoint.getFormat()) {
                 case LOCAL_DATE:
@@ -204,14 +206,14 @@ public class TaskList {
                     filteredTaskList.removeIf(onDateTimePredicate);
                     break;
                 default:
-                    return "Invalid on date. Recommended format: DD/MM/YYYY";
+                    return new String[]{"Invalid on date. Recommended format: DD/MM/YYYY"};
                 }
                 break;
             case BEFORE:
-                TimePoint beforeTimePoint = TimePointParser.toDate(keywords[i]);
+                TimePoint beforeTimePoint = TimePointParser.toTimePoint(keywords[i]);
                 noTasksMessage = String.format("There are no tasks occurring before %s.", beforeTimePoint);
                 if (beforeTimePoint.getFormat() == TimePoint.Format.STRING) {
-                    return "Invalid before date. Recommended format: DD/MM/YYYY";
+                    return new String[]{"Invalid before date. Recommended format: DD/MM/YYYY"};
                 }
                 Predicate<Task> beforeDatePredicate = task -> task.getType() == Task.Type.DEADLINE
                         ? beforeTimePoint.isAfter(((DeadlineTask) task).getByDate())
@@ -221,10 +223,10 @@ public class TaskList {
                 filteredTaskList.removeIf(beforeDatePredicate);
                 break;
             case AFTER:
-                TimePoint afterTimePoint = TimePointParser.toDate(keywords[i]);
+                TimePoint afterTimePoint = TimePointParser.toTimePoint(keywords[i]);
                 noTasksMessage = String.format("There are no tasks occurring after %s.", afterTimePoint);
                 if (afterTimePoint.getFormat() == TimePoint.Format.STRING) {
-                    return "Invalid before date. Recommended format: DD/MM/YYYY";
+                    return new String[]{"Invalid before date. Recommended format: DD/MM/YYYY"};
                 }
                 Predicate<Task> afterDatePredicate = task -> task.getType() == Task.Type.DEADLINE
                         ? afterTimePoint.isBefore(((DeadlineTask) task).getByDate())
@@ -248,15 +250,15 @@ public class TaskList {
                     targetTaskType = Task.Type.EVENT;
                     break;
                 default:
-                    return noTasksMessage;
+                    return new String[]{noTasksMessage};
                 }
                 filteredTaskList.removeIf(task -> task.getType() != targetTaskType);
                 break;
             default:
-                return "Invalid filter command: " + keywords[i];
+                return new String[]{"Invalid filter command: " + keywords[i]};
             }
             if (filteredTaskList.isEmpty()) {
-                return noTasksMessage;
+                return new String[]{noTasksMessage};
             }
         }
         return filteredTaskListToMessage(filteredTaskList);
@@ -293,6 +295,20 @@ public class TaskList {
             }
         }
         return tags;
+    }
+
+    public String[] getFormattedTaskList() {
+        if (taskList.isEmpty()) {
+            return new String[] {"Your task list is empty!"};
+        }
+        String[] formattedTaskList = new String[taskList.size() * 2];
+        formattedTaskList[0] = "1. ";
+        formattedTaskList[1] = taskList.get(0).toString();
+        for (int i = 1; i < taskList.size(); i++) {
+            formattedTaskList[i * 2] = "\n" + (i + 1) + ". ";
+            formattedTaskList[i * 2 + 1] = taskList.get(i).toString();
+        }
+        return formattedTaskList;
     }
 
     @Override

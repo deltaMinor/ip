@@ -103,7 +103,7 @@ public class Parser {
             String[] deadlineTagTokens = deadlineTaskTokens[1].split(" #");
             if (deadlineTagTokens.length == 1) {
                 return new AddTaskCommand(
-                        new DeadlineTask(deadlineTaskTokens[0], TimePointParser.toDate(deadlineTaskTokens[1])));
+                        new DeadlineTask(deadlineTaskTokens[0], TimePointParser.toTimePoint(deadlineTaskTokens[1])));
             }
             for (int i = 1; i < deadlineTagTokens.length; i++) {
                 if (!deadlineTagTokens[i].matches("[a-zA-Z0-9]+")) {
@@ -114,7 +114,7 @@ public class Parser {
             return new AddTaskCommand(
                     new DeadlineTask(
                             deadlineTaskTokens[0],
-                            TimePointParser.toDate(deadlineTagTokens[0]),
+                            TimePointParser.toTimePoint(deadlineTagTokens[0]),
                             Arrays.copyOfRange(deadlineTagTokens, 1, deadlineTagTokens.length)));
         case "event":
             if (tokens.length < 2) {
@@ -134,8 +134,8 @@ public class Parser {
                 return new AddTaskCommand(
                         new EventTask(
                                 eventTaskTokens[0],
-                                TimePointParser.toDate(eventPeriodTokens[0]),
-                                TimePointParser.toDate(eventPeriodTokens[1])));
+                                TimePointParser.toTimePoint(eventPeriodTokens[0]),
+                                TimePointParser.toTimePoint(eventPeriodTokens[1])));
             }
             for (int i = 1; i < eventTagTokens.length; i++) {
                 if (!eventTagTokens[i].matches("[a-zA-Z0-9]+")) {
@@ -146,8 +146,8 @@ public class Parser {
             return new AddTaskCommand(
                     new EventTask(
                             eventTaskTokens[0],
-                            TimePointParser.toDate(eventPeriodTokens[0]),
-                            TimePointParser.toDate(eventTagTokens[0]),
+                            TimePointParser.toTimePoint(eventPeriodTokens[0]),
+                            TimePointParser.toTimePoint(eventTagTokens[0]),
                             Arrays.copyOfRange(eventTagTokens, 1, eventTagTokens.length)));
         case "tag":
             if (tokens.length < 2) {

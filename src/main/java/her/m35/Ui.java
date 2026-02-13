@@ -13,7 +13,7 @@ public class Ui {
     private Scanner input;
 
     /** Response for the user. */
-    private String response = "";
+    private String[] response;
 
     /** Constructs a new Ui object. */
     public Ui() {
@@ -44,18 +44,19 @@ public class Ui {
      *
      * @param message Message to be printed.
      */
-    public void printMessage(String message) {
+    public void printMessage(String... message) {
         assert message != null;
         response = message;
         printLine(LINE_SEPARATOR);
-        Scanner reader = new Scanner(message);
+        String joinedMessage = String.join("", message);
+        Scanner reader = new Scanner(joinedMessage);
         while (reader.hasNextLine()) {
             printLine(reader.nextLine());
         }
         printLine(LINE_SEPARATOR);
     }
 
-    public String getResponse() {
+    public String[] getResponse() {
         return response;
     }
 

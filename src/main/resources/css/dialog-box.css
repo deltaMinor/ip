@@ -2,7 +2,7 @@
     src: url("fonts/PixelifySans-VariableFont_wght.ttf");
 }
 
-.label {
+.dialog-box {
     -fx-background-color: linear-gradient(to bottom right, #00ffbf, #00ddff);
     -fx-border-color: black;
     -fx-border-width: 2px;
@@ -10,6 +10,46 @@
     -fx-border-radius: 1em 1em 0 1em;
     -fx-font-family: "Pixelify Sans";
     -fx-font-size: 16;
+    fx-word-wrap: break-word;
+}
+
+.todo-text {
+    -fx-fill: orangered;
+}
+
+.deadline-text {
+    -fx-fill: darkred;
+}
+
+.event-text {
+    -fx-fill: firebrick;
+}
+
+.done-mark {
+    -fx-fill: goldenrod;
+}
+
+.todo-done-text {
+    -fx-fill: forestgreen;
+}
+
+.deadline-done-text {
+    -fx-fill: darkgreen;
+}
+
+.event-done-text {
+    -fx-fill: green;
+}
+
+.tag-text {
+    -fx-fill: darkmagenta;
+    -fx-font-style: italic;
+}
+
+.error-text {
+    -fx-fill: crimson;
+    -fx-font-weight: bold;
+    -fx-underline: true;
 }
 
 .reply-label {
