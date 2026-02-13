@@ -51,12 +51,14 @@ public class TagCommand extends Command {
                 for (String tag : tags) {
                     taskList.get(taskIndex).addTag(tag);
                 }
+                String storageError = "";
                 try {
                     storage.edit(taskIndex, taskList.get(taskIndex).getData());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    storageError = "Error: Unable to save changes to storage!\n";
                 }
                 ui.printMessage(
+                        storageError,
                         "The following task has been updated:\n",
                         taskList.get(taskIndex).toString() + " ",
                         taskList.get(taskIndex).getTagsDescription());

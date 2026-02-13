@@ -37,12 +37,16 @@ public class ClearTagsCommand extends Command {
             int taskIndex = Integer.parseInt(indexString) - 1;
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 taskList.get(taskIndex).clearTags();
+                String storageError = "";
                 try {
                     storage.edit(taskIndex, taskList.get(taskIndex).getData());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    storageError = "Error: Unable to save changes to storage!\n";
                 }
-                ui.printMessage("The following task has its tags removed:\n", taskList.get(taskIndex).toString());
+                ui.printMessage(
+                        storageError,
+                        "The following task has all its tags removed:\n",
+                        taskList.get(taskIndex).toString());
                 return;
             }
         }

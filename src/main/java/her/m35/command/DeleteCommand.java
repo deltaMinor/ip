@@ -34,13 +34,14 @@ public class DeleteCommand extends Command {
             int taskIndex = Integer.parseInt(indexString) - 1;
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 Task deletedTask = taskList.get(taskIndex);
-                taskList.delete(taskIndex);
+                String storageError = "";
                 try {
-                    storage.delete(taskIndex);
+                    storage.edit(taskIndex, taskList.get(taskIndex).getData());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    storageError = "Error: Unable to save changes to storage!\n";
                 }
                 ui.printMessage(
+                        storageError,
                         "Got it, I'm deleting this task:\n",
                         deletedTask.toString() + " ",
                         deletedTask.getTagsDescription(),

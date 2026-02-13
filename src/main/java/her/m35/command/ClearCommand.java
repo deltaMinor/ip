@@ -21,11 +21,14 @@ public class ClearCommand extends Command {
     @Override
     public void execute(TaskList taskList, Storage storage, Ui ui) {
         taskList.clear();
+        String storageError = "";
         try {
             storage.clear();
         } catch (IOException e) {
-            e.printStackTrace();
+            storageError = "Error: Unable to clear storage!\n";
         }
-        ui.printMessage("Alright, I have emptied the task list.\n" + taskList.getCurrentTaskCountMessage());
+        ui.printMessage(
+                storageError,
+                "Alright, I have emptied the task list.\n" + taskList.getCurrentTaskCountMessage());
     }
 }

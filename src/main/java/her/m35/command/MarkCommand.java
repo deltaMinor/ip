@@ -43,12 +43,14 @@ public class MarkCommand extends Command {
             int taskIndex = Integer.parseInt(indexString) - 1;
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 taskList.markTask(taskIndex, newStatus);
+                String storageError = "";
                 try {
                     storage.edit(taskIndex, taskList.get(taskIndex).getData());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    storageError = "Error: Unable to save changes to storage!\n";
                 }
                 ui.printMessage(
+                        storageError,
                         "Sure, I've marked this task as done:\n",
                         taskList.get(taskIndex).toString() + " ",
                         taskList.get(taskIndex).getTagsDescription());
