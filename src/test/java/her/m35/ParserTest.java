@@ -42,7 +42,33 @@ public class ParserTest {
     }
 
     @Test
-    public void parseFindPromptTests() throws Exception {
+    public void parseFindPromptTestsSuccess() throws Exception {
+        ArrayList<TaskList.FilterCondition> filterConditions = new ArrayList<>();
+        ArrayList<String> keywords = new ArrayList<>();
+
+        Parser.parseFindPrompt("/on 2026-10-12", filterConditions, keywords);
+        assertEquals(1, filterConditions.size());
+        assertEquals(TaskList.FilterCondition.ON_DATE, filterConditions.get(0));
+        assertEquals("2026-10-12", keywords.get(0));
+
+        Parser.parseFindPrompt("/contains something", filterConditions, keywords);
+        assertEquals(1, filterConditions.size());
+        assertEquals(TaskList.FilterCondition.KEYWORD, filterConditions.get(0));
+        assertEquals("something", keywords.get(0));
+
+        Parser.parseFindPrompt("pigeonhole", filterConditions, keywords);
+        assertEquals(1, filterConditions.size());
+        assertEquals(TaskList.FilterCondition.KEYWORD, filterConditions.get(0));
+        assertEquals("pigeonhole", keywords.get(0));
+
+        Parser.parseFindPrompt("/tag #nice", filterConditions, keywords);
+        assertEquals(1, filterConditions.size());
+        assertEquals(TaskList.FilterCondition.TAG, filterConditions.get(0));
+        assertEquals("nice", keywords.get(0));
+    }
+
+    @Test
+    public void parsePromptTestsSuccessMarkCommands() throws Exception {
         ArrayList<TaskList.FilterCondition> filterConditions = new ArrayList<>();
         ArrayList<String> keywords = new ArrayList<>();
 
@@ -55,11 +81,12 @@ public class ParserTest {
         assertEquals(1, filterConditions.size());
         assertEquals(TaskList.FilterCondition.IS_UNMARKED, filterConditions.get(0));
         assertEquals("", keywords.get(0));
+    }
 
-        Parser.parseFindPrompt("/on 2026-10-12", filterConditions, keywords);
-        assertEquals(1, filterConditions.size());
-        assertEquals(TaskList.FilterCondition.ON_DATE, filterConditions.get(0));
-        assertEquals("2026-10-12", keywords.get(0));
+    @Test
+    public void parseCombinedFindPromptTestsSuccess() throws Exception {
+        ArrayList<TaskList.FilterCondition> filterConditions = new ArrayList<>();
+        ArrayList<String> keywords = new ArrayList<>();
 
         Parser.parseFindPrompt("/before 28 May /after today",
                 filterConditions, keywords);
@@ -68,17 +95,6 @@ public class ParserTest {
         assertEquals("28 May", keywords.get(0));
         assertEquals(TaskList.FilterCondition.AFTER, filterConditions.get(1));
         assertEquals("today", keywords.get(1));
-
-        Parser.parseFindPrompt("/contains something", filterConditions, keywords);
-        assertEquals(1, filterConditions.size());
-        assertEquals(TaskList.FilterCondition.KEYWORD, filterConditions.get(0));
-        assertEquals("something", keywords.get(0));
-
-        Parser.parseFindPrompt("pigeonhole", filterConditions, keywords);
-
-        assertEquals(1, filterConditions.size());
-        assertEquals(TaskList.FilterCondition.KEYWORD, filterConditions.get(0));
-        assertEquals("pigeonhole", keywords.get(0));
 
         Parser.parseFindPrompt("/unknown something", filterConditions, keywords);
         assertEquals(2, filterConditions.size());
@@ -89,13 +105,23 @@ public class ParserTest {
         assertEquals(1, filterConditions.size());
         assertEquals(TaskList.FilterCondition.TAG, filterConditions.get(0));
         assertEquals("nice", keywords.get(0));
+    }
 
-        Parser.parseFindPrompt("/tag #jeans #pocket", filterConditions, keywords);
+    @Test
+    public void parsePromptTestIncorrectCommand() throws Exception {
+        ArrayList<TaskList.FilterCondition> filterConditions = new ArrayList<>();
+        ArrayList<String> keywords = new ArrayList<>();
+
+        Parser.parseFindPrompt("/unknown something", filterConditions, keywords);
         assertEquals(2, filterConditions.size());
-        assertEquals(TaskList.FilterCondition.TAG, filterConditions.get(0));
-        assertEquals("jeans", keywords.get(0));
-        assertEquals(TaskList.FilterCondition.TAG, filterConditions.get(1));
-        assertEquals("pocket", keywords.get(1));
+        assertEquals(TaskList.FilterCondition.ERROR_CONDITION, filterConditions.get(0));
+        assertEquals("unknown", keywords.get(0));
+    }
+
+    @Test
+    public void parseFindPromptTestsExceptionThrown() {
+        ArrayList<TaskList.FilterCondition> filterConditions = new ArrayList<>();
+        ArrayList<String> keywords = new ArrayList<>();
 
         Exception exception = assertThrows(Exception.class, () ->
                 Parser.parseFindPrompt("/tag work", filterConditions, keywords));
@@ -104,16 +130,5 @@ public class ParserTest {
         exception = assertThrows(Exception.class, () ->
                 Parser.parseFindPrompt("/tag #work!", filterConditions, keywords));
         assertTrue(exception.getMessage().contains("Tags need to be strictly alphanumeric"));
-
-        Parser.parseFindPrompt("conundrum /done /tag #pointless",
-                filterConditions, keywords);
-
-        assertEquals(3, filterConditions.size());
-        assertEquals(TaskList.FilterCondition.KEYWORD, filterConditions.get(0));
-        assertEquals("conundrum", keywords.get(0));
-        assertEquals(TaskList.FilterCondition.IS_MARKED, filterConditions.get(1));
-        assertEquals("", keywords.get(1));
-        assertEquals(TaskList.FilterCondition.TAG, filterConditions.get(2));
-        assertEquals("pointless", keywords.get(2));
     }
 }

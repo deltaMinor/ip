@@ -1,18 +1,18 @@
 package her.m35.task;
 
+import static her.m35.parser.TimePointParser.toTimePoint;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import her.m35.parser.TimePointParser;
+import her.m35.TimePoint;
 
 /**
  * Represents a task with a description, completion and type.
  */
 public abstract class Task {
 
-    /**
-     * Enumeration of supported task types.
-     */
+    /** Enumeration of supported task types. */
     public enum Type {
         /** A simple task with only a name. */
         TODO,
@@ -34,7 +34,7 @@ public abstract class Task {
     public static final String DONE_MARK = "X";
 
     /** Whether tags will be shown as part of task description. */
-    private static boolean showTags = true;
+    private static boolean tagsIsVisible = true;
 
     /** Indicates whether the task has been completed. */
     private Boolean isDone;
@@ -50,7 +50,6 @@ public abstract class Task {
 
     /**
      * Creates a new task.
-     *
      * @param description Description of the task.
      * @param type        Type of the task.
      */
@@ -76,7 +75,6 @@ public abstract class Task {
 
     /**
      * Creates a new task with an explicit completion status.
-     *
      * @param description Description of the task.
      * @param type        Type of the task.
      * @param isDone      Completion status of the task.
@@ -90,7 +88,6 @@ public abstract class Task {
 
     /**
      * Creates a new task with an explicit completion status and a list of tags.
-     *
      * @param description Description of the task.
      * @param type        Type of the task.
      * @param tags        Tags that are to be attached to the task.
@@ -105,7 +102,6 @@ public abstract class Task {
 
     /**
      * Marks the task as done or not done.
-     *
      * @param isDone The completion status of the task.
      */
     public void mark(Boolean isDone) {
@@ -119,7 +115,6 @@ public abstract class Task {
 
     /**
      * Returns a character representing the value of isDone.
-     *
      * @return "X" if isDone is true, " " otherwise.
      */
     public String getDoneIcon() {
@@ -129,7 +124,6 @@ public abstract class Task {
 
     /**
      * Returns the task description.
-     *
      * @return Description of the task.
      */
     public String getDescription() {
@@ -138,11 +132,10 @@ public abstract class Task {
 
     /**
      * Returns the tags for description purposes.
-     *
      * @return Tags with # for every tag.
      */
     public String getTagsDescription() {
-        if (tags.isEmpty() || !showTags) {
+        if (tags.isEmpty() || !tagsIsVisible) {
             return "";
         }
         return "#" + String.join(", #", tags);
@@ -150,7 +143,6 @@ public abstract class Task {
 
     /**
      * Returns the tags in data format.
-     *
      * @return Tags formatted for storage.
      */
     public String getTagsData() {
@@ -191,9 +183,7 @@ public abstract class Task {
         return false;
     }
 
-    /**
-     * Clears all tags from the task.
-     */
+    /** Clears all tags from the task. */
     public void clearTags() {
         tags.clear();
     }
@@ -203,13 +193,12 @@ public abstract class Task {
     }
 
     /** If show is true, tasks will be displayed with their tags going forward. Else they will be hidden. */
-    public static void setShowTags(boolean show) {
-        showTags = show;
+    public static void setTagsIsVisible(boolean show) {
+        tagsIsVisible = show;
     }
 
     /**
      * Returns a single-character code representing the task type.
-     *
      * @return "T" for TODO, "D" for DEADLINE, "E" for EVENT.
      */
     public String getTypeIcon() {
@@ -222,14 +211,12 @@ public abstract class Task {
 
     /**
      * Converts this task into an array of strings.
-     *
      * @return Array of strings representing the task's fields.
      */
     public abstract String[] getData();
 
     /**
      * Reconstructs a Task object from stored data.
-     *
      * @param data Array of stored task fields in string format.
      * @return Corresponding Task instance, or null if the data is invalid.
      */
@@ -242,27 +229,94 @@ public abstract class Task {
             return new ToDoTask(data[2], data[3].split("/"), data[1].equals("X"));
         case "D":
             if (data.length == 4) {
-                return new DeadlineTask(
-                        data[2], TimePointParser.toTimePoint(data[3]), data[1].equals("X"));
+                return new DeadlineTask(data[2], toTimePoint(data[3]), data[1].equals("X"));
             }
-            return new DeadlineTask(
-                    data[2], TimePointParser.toTimePoint(data[3]), data[4].split("/"), data[1].equals("X"));
+            return new DeadlineTask(data[2], toTimePoint(data[3]), data[4].split("/"), data[1].equals("X"));
         case "E":
             if (data.length == 5) {
                 return new EventTask(
                         data[2],
-                        TimePointParser.toTimePoint(data[3]),
-                        TimePointParser.toTimePoint(data[4]),
+                        toTimePoint(data[3]),
+                        toTimePoint(data[4]),
                         data[1].equals("X"));
             }
             return new EventTask(
                     data[2],
-                    TimePointParser.toTimePoint(data[3]),
-                    TimePointParser.toTimePoint(data[4]),
+                    toTimePoint(data[3]),
+                    toTimePoint(data[4]),
                     data[5].split("/"),
                     data[1].equals("X"));
         default:
             return null;
+        }
+    }
+
+    /**
+     * Indicates whether this task contains a word in its description or tags.
+     * @param word Word to check for in this task.
+     * @return True only if this task's description or tags contain the given word.
+     */
+    public boolean containsWord(String word) {
+        String lowerCaseWord = word.toLowerCase();
+        return toString().toLowerCase().contains(lowerCaseWord)
+                || getTagsDescription().toLowerCase().contains(lowerCaseWord);
+    }
+
+    /**
+     * Indicates whether this task occurs on a given date.
+     * @param date Date to check against this task.
+     * @return True only if this task occurs on the given date.
+     */
+    public boolean isOnDate(TimePoint date) {
+        switch (date.getFormat()) {
+        case LOCAL_DATE:
+            return switch (type) {
+            case DEADLINE -> date.isSameDayAs(((DeadlineTask) this).getByDate());
+            case EVENT ->
+                date.isAfter(((EventTask) this).getFromDate()) && date.isBefore(((EventTask) this).getToDate());
+            default -> false;
+            };
+        case LOCAL_DATE_TIME:
+            return switch (type) {
+            case DEADLINE -> date.equals(((DeadlineTask) this).getByDate());
+            case EVENT ->
+                date.isAfter(((EventTask) this).getFromDate()) && date.isBefore(((EventTask) this).getToDate());
+            default -> false;
+            };
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Indicates whether this task should be completed before the given date.
+     * @param date Date to check this task against.
+     * @return True only if this task should be completed before the given date.
+     */
+    public boolean isBeforeDate(TimePoint date) {
+        switch (type) {
+        case DEADLINE:
+            return date.isAfter(((DeadlineTask) this).getByDate());
+        case EVENT:
+            return date.isAfter(((EventTask) this).getToDate());
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Indicates whether this task only needs attention after the given date.
+     * @param date Date to check this task against.
+     * @return True only if this task is completely after the given date.
+     */
+    public boolean isAfterDate(TimePoint date) {
+        switch (type) {
+        case DEADLINE:
+            return date.isBefore(((DeadlineTask) this).getByDate());
+        case EVENT:
+            return date.isBefore(((EventTask) this).getFromDate());
+        default:
+            return false;
         }
     }
 

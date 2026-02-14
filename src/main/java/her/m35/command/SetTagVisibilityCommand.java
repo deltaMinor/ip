@@ -6,23 +6,23 @@ import her.m35.Ui;
 import her.m35.task.Task;
 
 /**
- * Command that sets the global showTags variable to a given value.
+ * Command that sets the global tagsIsVisible variable to a given value.
  */
 public class SetTagVisibilityCommand extends Command {
-    /** Messages to be shown depending on the showTags value. */
+    /** Messages to be shown depending on the tagsIsVisible value. */
     private static final String SHOW_TAGS_MESSAGE = "Nice! Tags will be displayed alongside tasks from now on.";
     private static final String HIDE_TAGS_MESSAGE =
             "No problem, tags will no longer be shown alongside tasks going forward.";
 
-    /** New value of showTags. */
-    private final boolean showTags;
+    /** New value of tagsIsVisible. */
+    private final boolean tagsIsVisible;
 
     /**
-     * Constructs a SetTaskVisibilityCommand with the specified new showTags value.
-     * @param showTags New value for showTags.
+     * Constructs a SetTaskVisibilityCommand with the specified new tagsIsVisible value.
+     * @param tagsIsVisible New value for tagsIsVisible.
      */
-    public SetTagVisibilityCommand(boolean showTags) {
-        this.showTags = showTags;
+    public SetTagVisibilityCommand(boolean tagsIsVisible) {
+        this.tagsIsVisible = tagsIsVisible;
     }
 
     /**
@@ -36,8 +36,8 @@ public class SetTagVisibilityCommand extends Command {
      * If the task already does not contain a tag, displays an error message to the user informing them of the tag.
      */
     public void execute(TaskList taskList, Storage storage, Ui ui) {
-        Task.setShowTags(showTags);
-        if (showTags) {
+        Task.setTagsIsVisible(tagsIsVisible);
+        if (tagsIsVisible) {
             ui.printMessage(SHOW_TAGS_MESSAGE);
         } else {
             ui.printMessage(HIDE_TAGS_MESSAGE);

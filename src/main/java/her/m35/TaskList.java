@@ -2,7 +2,6 @@ package her.m35;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.Predicate;
 
 import her.m35.parser.TimePointParser;
 import her.m35.task.DeadlineTask;
@@ -69,8 +68,7 @@ public class TaskList {
     }
 
     /**
-     * Get the task at a given index.
-     *
+     * Returns the task at a given index.
      * @param taskIndex Index of specified task to get.
      * @return Task corresponding to given task, if available, else null.
      */
@@ -82,8 +80,7 @@ public class TaskList {
     }
 
     /**
-     * Get the size of the task list.
-     *
+     * Returns the size of the task list.
      * @return Size of the task list.
      */
     public int size() {
@@ -126,7 +123,7 @@ public class TaskList {
     }
 
     /**
-     * Convert a given filtered task list to a string sequence that can be printed as a message.
+     * Converts a given filtered task list to a string sequence that can be printed as a message.
      * The tasks will be indexed with their position in the memory task list.
      *
      * @param filteredTaskList Task list to be converted into a message.
@@ -177,9 +174,7 @@ public class TaskList {
             case KEYWORD:
                 String keyword = keywords[i].toLowerCase();
                 noTasksMessage = String.format("There are no tasks containing \"%s\".", keywords[i]);
-                filteredTaskList.removeIf(
-                        task -> !task.toString().toLowerCase().contains(keyword)
-                                && !task.getTagsDescription().toLowerCase().contains(keyword));
+                filteredTaskList.removeIf(task -> !task.containsWord(keyword));
                 break;
             case TAG:
                 String tag = keywords[i];
@@ -189,28 +184,10 @@ public class TaskList {
             case ON_DATE:
                 TimePoint onTimePoint = TimePointParser.toTimePoint(keywords[i]);
                 noTasksMessage = String.format("There are no tasks occurring on %s.", onTimePoint);
-                switch (onTimePoint.getFormat()) {
-                case LOCAL_DATE:
-                    Predicate<Task> onDatePredicate = task -> (task.getType() == Task.Type.DEADLINE)
-                            ? onTimePoint.isSameDayAs(((DeadlineTask) task).getByDate())
-                            : ((task.getType() == Task.Type.EVENT)
-                            ? (onTimePoint.isAfter(((EventTask) task).getFromDate())
-                            && onTimePoint.isBefore(((EventTask) task).getToDate()))
-                            : false);
-                    filteredTaskList.removeIf(onDatePredicate);
-                    break;
-                case LOCAL_DATE_TIME:
-                    Predicate<Task> onDateTimePredicate = task -> (task.getType() == Task.Type.DEADLINE)
-                            ? onTimePoint.equals(((DeadlineTask) task).getByDate())
-                            : ((task.getType() == Task.Type.EVENT)
-                            ? (onTimePoint.isAfter(((EventTask) task).getFromDate())
-                            && onTimePoint.isBefore(((EventTask) task).getToDate()))
-                            : false);
-                    filteredTaskList.removeIf(onDateTimePredicate);
-                    break;
-                default:
+                if (onTimePoint.getFormat() == TimePoint.Format.STRING) {
                     return new String[]{"Invalid on date. Recommended format: DD/MM/YYYY"};
                 }
+                filteredTaskList.removeIf(task -> !task.isOnDate(onTimePoint));
                 break;
             case BEFORE:
                 TimePoint beforeTimePoint = TimePointParser.toTimePoint(keywords[i]);
@@ -218,47 +195,26 @@ public class TaskList {
                 if (beforeTimePoint.getFormat() == TimePoint.Format.STRING) {
                     return new String[]{"Invalid before date. Recommended format: DD/MM/YYYY"};
                 }
-                Predicate<Task> beforeDatePredicate = task -> task.getType() == Task.Type.DEADLINE
-                        ? beforeTimePoint.isAfter(((DeadlineTask) task).getByDate())
-                        : task.getType() == Task.Type.EVENT
-                        ? beforeTimePoint.isAfter(((EventTask) task).getToDate())
-                        : false;
-                filteredTaskList.removeIf(beforeDatePredicate);
+                filteredTaskList.removeIf(task -> !task.isBeforeDate(beforeTimePoint));
                 break;
             case AFTER:
                 TimePoint afterTimePoint = TimePointParser.toTimePoint(keywords[i]);
                 noTasksMessage = String.format("There are no tasks occurring after %s.", afterTimePoint);
                 if (afterTimePoint.getFormat() == TimePoint.Format.STRING) {
-                    return new String[]{"Invalid before date. Recommended format: DD/MM/YYYY"};
+                    return new String[]{"Invalid after date. Recommended format: DD/MM/YYYY"};
                 }
-                Predicate<Task> afterDatePredicate = task -> task.getType() == Task.Type.DEADLINE
-                        ? afterTimePoint.isBefore(((DeadlineTask) task).getByDate())
-                        : task.getType() == Task.Type.EVENT
-                        ? afterTimePoint.isBefore(((EventTask) task).getFromDate())
-                        : false;
-                filteredTaskList.removeIf(afterDatePredicate);
+                filteredTaskList.removeIf(task -> !task.isAfterDate(afterTimePoint));
                 break;
             case OF_TYPE:
-                String normalisedKeyword = normalizeByTaskName(keywords[i]);
+                Task.Type targetTaskType = normalizeByTaskName(keywords[i]);
                 noTasksMessage = "There are no tasks of type " + keywords[i];
-                Task.Type targetTaskType;
-                switch (normalisedKeyword) {
-                case "T":
-                    targetTaskType = Task.Type.TODO;
-                    break;
-                case "D":
-                    targetTaskType = Task.Type.DEADLINE;
-                    break;
-                case "E":
-                    targetTaskType = Task.Type.EVENT;
-                    break;
-                default:
+                if (targetTaskType == null) {
                     return new String[]{noTasksMessage};
                 }
                 filteredTaskList.removeIf(task -> task.getType() != targetTaskType);
                 break;
             default:
-                return new String[]{"Invalid filter command: " + keywords[i]};
+                return new String[]{"Error: Invalid filter command: " + keywords[i]};
             }
             if (filteredTaskList.isEmpty()) {
                 return new String[]{noTasksMessage};
@@ -272,7 +228,7 @@ public class TaskList {
      * @param keyword Word to be normalized.
      * @return keyword with its internal words normalized.
      */
-    private static String normalizeByTaskName(String keyword) {
+    private Task.Type normalizeByTaskName(String keyword) {
         String normalisedKeyword = keyword.toUpperCase();
         for (String toDoName : ToDoTask.NAMES) {
             normalisedKeyword = normalisedKeyword.replace(toDoName, "T");
@@ -283,7 +239,12 @@ public class TaskList {
         for (String eventName : EventTask.NAMES) {
             normalisedKeyword = normalisedKeyword.replace(eventName, "E");
         }
-        return normalisedKeyword;
+        return switch (normalisedKeyword) {
+        case "T" -> Task.Type.TODO;
+        case "D" -> Task.Type.DEADLINE;
+        case "E" -> Task.Type.EVENT;
+        default -> null;
+        };
     }
 
     /**
