@@ -1,73 +1,92 @@
 # HERM35 User Guide
+***
 
-// Product screenshot goes here
+![GUI Image](Ui.png)
 
-// Product intro goes here
+Welcome to HERM35, the task management chatbot named after the great god Hermes! HERM35 helps you keep track of all your tasks, with an in-depth search function to assist you and a fun personality to boot!
 
-## Adding deadlines
+## How to start
 
-// Describe the action and its outcome.
+1. Launch HERM35 by running the provided application.
+2. Start typing away! HERM35 is very intuitive to learn, and it comes with built-in instructions to guide you.
 
-## List of valid commands
-- list: Show your current tasklist
-- todo [task name]: Save a new task with name [task name]
-- deadline [task name] /by [date]: Save a new task with a deadline of [date]
-- event [task name] /from [start date] /to [end date]: Save an event with the provided dates
-- mark [index]: Mark the task with index [index] as done
-- unmark [index]: Unmark the task with index [index] as undone
-- delete [index]: Delete the task at index [index]
-- clear: Empty your tasklist
-- find [keyword]: Show all tasks containing [keyword]
-- find /contains [keyword]: Show all tasks containing [keyword]
-- find /on [date]: Show all tasks with dates on [date]
-- find /after [date]: Show all tasks with dates after  [date]
-- find /before [date]: Show all tasks with dates before [date]
-- find /done: Show all tasks that have been marked as done
-- find /todo: Show all tasks that are not marked as done
-- find /type [type]: Show all tasks that are of [type] (todo/deadline/event)
-- Note: You can combine different find commands together:
-  - Example: find [keyword] /on [date]: Show all tasks containing [keyword] and on [date]
-  - Example: find /before [date1] /after [date2] /contains [keyword]: Show all tasks containing [keyword], before [date1] and after [date2]
-- bye: Exit this program
-- help: See this list of commands
+If you want to jump straight in however, below are the available commands to use:
+<details>
+<summary> List of basic commands </summary>
 
-Example: `keyword (optional arguments)`
+### Getting help
+- `help`: Display a list of basic commands to begin with.
+- `help edit`: Display the commands related to editing task data.
+- `help find`: Display the command words related to finding tasks.
+- `help customisation`: Display the commands that help customise your experience.
+### Adding a task
+- `todo TASK_NAME`: Save a task called TASK_NAME.
+- `deadline TASK_NAME /by TIME`: Save a task that has to be done by TIME.
+- `event TASK_NAME /from BEGIN_TIME /to END_TIME`: Save a task that starts from BEGIN_TIME and ends at END_TIME.  
 
-// A description of the expected outcome goes here
+You can add tags to a task using the # symbol.  
+Example:  
+`todo revise homework #math #important`  
+saves a Task named "revise homework" tagged as "math" and "important".
+### Viewing your information
+- `list`: Displays all your saved tasks.
+- `tags`: Displays all your saved tags that have a task attached.
+- `find KEYWORD`: Displays all your tasks that contains KEYWORD, numbered by their position in your list.
 
-```
-expected output
-```
+Note: The `find` command is a very powerful tool that can search with many parameters at once, do use the `help find` command to learn all of its subcommands to best utilise it.
+### Editing your information
+- `mark INDEX`: Mark the task numbered INDEX as done.
+- `unmark INDEX`: Mark the task numbered INDEX as not done.
+- `delete INDEX`: Delete the task numbered INDEX.
+- `clear`: Delete all your tasks.
+- `tag INDEX #TAG`: Add the tag #TAG to the task numbered INDEX.
+- `untag INDEX`: Remove all tags from the task numbered INDEX.
+- `untag INDEX #TAG`: Remove the tag #TAG from the task numbered INDEX.
 
-## Feature Command-Based Task Management
-
-// HERM35 allows users to manage tasks using simple, keyword-based commands. Each user input is parsed by 
-// the Parser and mapped to a corresponding Command object, such as adding tasks, listing tasks, marking 
-// tasks as complete, deleting tasks, or exiting the chatbot. This command abstraction makes the chatbot
-// extensible and easy to maintain.
+### Exiting the program
+- `bye`: Exits the program with a nice goodbye message. (You may just click the x button on the top right however)
 
 
-## Feature Task Storage to Hard Disk
+***There are still many more commands and features to HERM35, so do take the time to learn about them!***
+</details>
 
-// The chatbot automatically loads previously saved tasks from storage when it starts and saves updates as
-// commands are executed. If stored data cannot be read, HERM35 falls back to an empty task list, ensuring
-// the chatbot remains usable.
+<details>
+<summary>List of advanced commands</summary>
+
+### Searching for tasks by category
+- `find /contains KEYWORD`: Show all tasks containing KEYWORD.
+- `find /on DATE`: Show all tasks happening on DATE.
+- `find /after DATE`: Show all tasks happening after DATE.
+- `find /before DATE`: Show all tasks happening before DATE.
+- `find /done`: Show all tasks that have been marked as done.
+- `find /todo`: Show all tasks that are not marked as done.
+- `find /type TASK_TYPE`: Show all tasks that are of TASK_TYPE (todo/deadline/event).
+- `find /tag #TAG`: Show all tasks with tag #TAG.
+
+You can combine different find commands together, for example:  
+`find /before May 12 /after March 10 /contains sport`  
+shows all tasks containing "sport" in its description, occurring before May 12 of the current year and after March 10 of the current year.
+
+### Customising your personal experience with HERM35
+- `show tags`: Show the tags behind your saved tasks.
+- `hide tags`: Do not show the tags behind your saved tasks.
+</details>
+
+# Main Features
+
+## Task Management
+
+HERM35 allows users to manage tasks using simple, keyword-based commands. The tasks are the saved to disk.
 
 ## Feature Flexible Date and Time Parsing
 
-// The chatbot supports flexible date and time input formats when creating deadlines and events. Users may
-// enter dates using numeric formats (e.g. 12/3/2026), month names (e.g. 31 Dec 2026), or partial dates 
-// that default to the current year. Optional time information is also supported, including 24-hour time,
-// HH:MM format, and AM/PM notation.'
-
-## Feature Event and Deadline Scheduling
-
-// HERM35 supports multiple task types: to-do tasks, deadline tasks, and event tasks. Deadline tasks accept
-// a /by specifier, while event tasks accept /from and /to specifiers, allowing users to clearly define 
-// time-bounded tasks with start and end points.
+ The chatbot supports flexible date and time input formats when creating deadlines and events. Users may
+ enter dates using numeric formats (e.g. 12/3/2026), month names (e.g. 31 Dec 2026), or partial dates 
+ that default to the current year. Optional time information is also supported, including 24-hour time,
+ HH:MM format, and AM/PM notation.  
+If a given date is truly invalid, it will be saved as a simple string label.
 
 ## Feature Built-In Help and User Guidance
 
-// The chatbot includes a help command that provides users with guidance on available commands and their
-// usage. If users enter malformed or incomplete commands, HERM35 responds with specific and helpful error
-// messages instead of generic failures.
+ The chatbot includes a help command that provides users with extensive guidance on available commands and their usage. If users enter malformed or incomplete commands, HERM35 responds with specific and helpful error
+ messages instead of generic failures. The chatbot also utilises highlighting to improve user experience.
