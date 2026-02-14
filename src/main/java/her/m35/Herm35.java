@@ -1,6 +1,8 @@
 package her.m35;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import her.m35.command.Command;
 import her.m35.command.MessageCommand;
@@ -11,7 +13,7 @@ import her.m35.parser.Parser;
  */
 public class Herm35 {
     /** Name of the chatbot. */
-    private static final String NAME = "HERM35";
+    public static final String NAME = "HERM35";
 
     /** Storage object used to store task list. */
     private Storage storage;
@@ -23,7 +25,11 @@ public class Herm35 {
     private final Ui ui;
 
     /** Opening introduction to the user. */
-    private String openingLines = "Hey! I'm " + NAME + "!\nWhat can I do for you?";
+    private List<String> openingLines = Arrays.asList(
+            "Hey! I'm ",
+            NAME,
+            ", a task management chatbot named after Hermes!\nWhat can I do for you?\n\n",
+            "$If this is your first time, I recommend typing 'help' to learn what commands you can use!");
 
     /** Boolean for whether the HERM35 program should be exiting. */
     private boolean isExit = false;
@@ -41,12 +47,12 @@ public class Herm35 {
         try {
             storage = new Storage(fileName);
         } catch (IOException e) {
-            openingLines += "\nError: " + e.getMessage() + "\n Unable to open file: " + fileName + "for storage.";
+            openingLines.add("\nError: " + e.getMessage() + "\n Unable to open file: " + fileName + "for storage.");
         }
         try {
             taskList = new TaskList(storage.read());
         } catch (IOException e) {
-            openingLines += "\nError: " + e.getMessage() + "\n Unable to read task list, creating blank task list.";
+            openingLines.add("\nError: " + e.getMessage() + "\n Unable to read task list, creating blank task list.");
             taskList = new TaskList();
         }
     }
@@ -59,6 +65,14 @@ public class Herm35 {
     }
 
     /**
+     * Returns the opening lines in array format.
+     * @return Opening lines as a String array.
+     */
+    public String[] getIntroduction() {
+        return openingLines.toArray(new String[0]);
+    }
+
+    /**
      * Runs the main interaction loop of the chatbot.
      * Displays an introduction message, then repeatedly reads user input, parses it into a Command,
      * and executes it. The loop terminates when an executed command signals that the program should exit.
@@ -66,7 +80,7 @@ public class Herm35 {
      * displayed to the user.
      */
     public void run() {
-        new MessageCommand(openingLines).execute(taskList, storage, ui);
+        new MessageCommand(openingLines.toArray(new String[0])).execute(taskList, storage, ui);
         isExit = false;
         while (!isExit) {
             try {

@@ -24,6 +24,16 @@
     fx-word-wrap: break-word;
 }
 
+.name-text {
+    -fx-fill: linear-gradient(to bottom right, mediumblue, cyan);
+    -fx-font-family: "Pixel Code DemiBold";
+    -fx-effect: dropshadow(one-pass-box , black , 1, 1, 1, 1);
+}
+
+.italics {
+    -fx-font-family: "Pixel Code Italic";
+}
+
 .todo-text {
     -fx-fill: orangered;
 }

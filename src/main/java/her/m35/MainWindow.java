@@ -29,6 +29,9 @@ public class MainWindow extends AnchorPane {
     private final Image userImage = new Image(this.getClass().getResourceAsStream("/images/UserIcon.png"));
     private final Image herm35Image = new Image(this.getClass().getResourceAsStream("/images/HERM35Icon.png"));
 
+    /**
+     * Initializes the HERM35 GUI.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
@@ -37,6 +40,18 @@ public class MainWindow extends AnchorPane {
     /** Injects the HERM35 instance */
     public void setHerm35(Herm35 herm35) {
         this.herm35 = herm35;
+    }
+
+    /**
+     * Displays the introduction of HERM35.
+     */
+    public void showHerm35Introduction() {
+        String[] response = herm35.getIntroduction();
+        DialogBox herm35Dialog = DialogBox.getHerm35Dialog(response, herm35Image);
+        herm35Dialog.prefWidthProperty().bind(scrollPane.widthProperty().subtract(30));
+        dialogContainer.getChildren().addAll(
+                herm35Dialog
+        );
     }
 
     /**
