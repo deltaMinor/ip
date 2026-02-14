@@ -16,6 +16,7 @@ import her.m35.command.ListCommand;
 import her.m35.command.ListTagsCommand;
 import her.m35.command.MarkCommand;
 import her.m35.command.MessageCommand;
+import her.m35.command.QuoteCommand;
 import her.m35.command.SetTagVisibilityCommand;
 import her.m35.command.TagCommand;
 import her.m35.command.UntagCommand;
@@ -40,6 +41,9 @@ public class Parser {
         }
         if (input.equals("hide tags")) {
             return new SetTagVisibilityCommand(false);
+        }
+        if (input.equals("quote")) {
+            return new QuoteCommand();
         }
         String[] tokens = input.split(" ", 2);
         switch (tokens[0]) {
@@ -202,9 +206,18 @@ public class Parser {
             }
             return new FindCommand(tokens[1]);
         case "help":
-            return new HelpCommand();
+            if (tokens.length < 2) {
+                return new HelpCommand(HelpCommand.Section.BASIC_HELP);
+            }
+            return switch (tokens[1]) {
+            case "edit" -> new HelpCommand(HelpCommand.Section.EDITING_TASK);
+            case "find" -> new HelpCommand(HelpCommand.Section.FINDING_TASKS);
+            case "customisation" -> new HelpCommand(HelpCommand.Section.CUSTOMISATION);
+            default -> new HelpCommand(HelpCommand.Section.ERROR_COMMAND);
+            };
         default:
-            return new MessageCommand("Error: Unknown command, please try again.");
+            return new MessageCommand(
+                    "Error: Unknown command, please try again.\nType \"help\" to see the available commands.");
         }
     }
 
