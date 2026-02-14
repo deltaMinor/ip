@@ -1,7 +1,9 @@
 package her.m35.parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import her.m35.TaskList;
 import her.m35.command.AddTaskCommand;
 import her.m35.command.ClearCommand;
 import her.m35.command.ClearTagsCommand;
@@ -203,6 +205,115 @@ public class Parser {
             return new HelpCommand();
         default:
             return new MessageCommand("Error: Unknown command, please try again.");
+        }
+    }
+
+    /**
+     * Parses a prompt into ArrayLists of filter conditions and keywords for the FindCommand.
+     *
+     * @param findPrompt Prompt to be parsed.
+     * @param filterConditions ArrayList to store filter conditions.
+     * @param keywords ArrayList to store keywords.
+     * @throws Exception Indicates error in the given prompt.
+     */
+    public static void parseFindPrompt(
+            String findPrompt,
+            ArrayList<TaskList.FilterCondition> filterConditions,
+            ArrayList<String> keywords) throws Exception {
+        filterConditions.clear();
+        keywords.clear();
+        String remainingPrompt = findPrompt;
+        while (!remainingPrompt.isEmpty()) {
+            if (remainingPrompt.startsWith("/")) {
+                String[] promptTokens = remainingPrompt.split(" ", 2);
+                String commandWord = promptTokens[0].replaceFirst("/", "");
+                if (promptTokens.length > 1) {
+                    remainingPrompt = promptTokens[1];
+                } else {
+                    remainingPrompt = "";
+                }
+                switch (commandWord) {
+                case "done":
+                    filterConditions.add(TaskList.FilterCondition.IS_MARKED);
+                    keywords.add("");
+                    break;
+                case "todo":
+                    filterConditions.add(TaskList.FilterCondition.IS_UNMARKED);
+                    keywords.add("");
+                    break;
+                case "on":
+                    filterConditions.add(TaskList.FilterCondition.ON_DATE);
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
+                    break;
+                case "before":
+                    filterConditions.add(TaskList.FilterCondition.BEFORE);
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
+                    break;
+                case "after":
+                    filterConditions.add(TaskList.FilterCondition.AFTER);
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
+                    break;
+                case "type":
+                    filterConditions.add(TaskList.FilterCondition.OF_TYPE);
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
+                    break;
+                case "contains":
+                    filterConditions.add(TaskList.FilterCondition.KEYWORD);
+                    remainingPrompt = addNextKeyword(remainingPrompt, keywords);
+                    break;
+                case "tag":
+                    int endIndex = remainingPrompt.indexOf("/");
+                    String tagsString;
+                    if (endIndex != -1) {
+                        tagsString = remainingPrompt.substring(0, endIndex).trim();
+                        remainingPrompt = remainingPrompt.replaceFirst(tagsString, "").trim();
+                    } else {
+                        tagsString = remainingPrompt.trim();
+                        remainingPrompt = "";
+                    }
+                    String[] tags = tagsString.split(" ");
+                    for (String tag : tags) {
+                        if (!tag.startsWith("#")) {
+                            throw new Exception("Error: Notate tags with a # sign.");
+                        }
+                        String keyword = tag.substring(1);
+                        if (!keyword.matches("[a-zA-Z0-9]+")) {
+                            throw new Exception(
+                                    String.format("Error: Tags need to be strictly alphanumeric. (%s)", keyword));
+                        }
+                        filterConditions.add(TaskList.FilterCondition.TAG);
+                        keywords.add(keyword);
+                    }
+                    break;
+                default:
+                    filterConditions.add(TaskList.FilterCondition.ERROR_CONDITION);
+                    keywords.add(commandWord);
+                    break;
+                }
+            } else {
+                filterConditions.add(TaskList.FilterCondition.KEYWORD);
+                remainingPrompt = addNextKeyword(remainingPrompt, keywords);
+            }
+        }
+    }
+
+    /**
+     * Helper function to add split a prompt string into the next keyword and the following command, then add the
+     * keyword to the list of keywords.
+     *
+     * @param remainingPrompt Prompt string to be processed
+     * @param keywords List of keywords to add the next keyword to.
+     * @return Remainder prompt, containing the next segment of commands, if any.
+     */
+    private static String addNextKeyword(String remainingPrompt, ArrayList<String> keywords) {
+        int endIndex = remainingPrompt.indexOf("/");
+        if (endIndex != -1) {
+            String newKeyword = remainingPrompt.substring(0, endIndex).trim();
+            keywords.add(newKeyword);
+            return remainingPrompt.replaceFirst(newKeyword, "").trim();
+        } else {
+            keywords.add(remainingPrompt.trim());
+            return "";
         }
     }
 
