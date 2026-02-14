@@ -6,8 +6,6 @@ import java.time.LocalDateTime;
 
 import her.m35.TimePoint;
 
-
-
 /**
  * Handles parsing of user input into TimePoint objects specifically.
  * Contains methods to convert strings into TimePoint objects and checking validity of conversion.
@@ -25,7 +23,6 @@ public class TimePointParser {
 
     /**
      * Converts a string into a TimePoint object.
-     *
      * @param timeString String that represents time to be converted.
      * @return Time as a TimePoint object.
      */
@@ -53,7 +50,6 @@ public class TimePointParser {
 
     /**
      * Converts a string into a TimePoint object with a given format.
-     *
      * @param timeString String that represents time to be converted.
      * @param format Format for timeString to be parsed in.
      * @return Time as a TimePoint object.
@@ -61,54 +57,65 @@ public class TimePointParser {
     private static TimePoint toTimePoint(String timeString, String format) {
         assert(timeString != null && !timeString.isEmpty());
         assert(format != null && !format.isEmpty());
-        int day = -1;
-        int month = -1;
-        int year = -1;
-        int time = -1;
-        if (!format.contains("Y")) {
-            year = LocalDate.now().getYear();
-        }
         TimeParameter[] parameters = splitTimePointFormatString(format);
         assert(parameters != null);
         int parameterCount = parameters.length;
-        String[] parameterStrings = new String[parameterCount];
-        String remainder = timeString;
-        for (int i = 0; i < parameterCount - 1; i++) {
-            int separatorIndex = indexOfWildcard(remainder);
-            if (separatorIndex == -1) {
-                return null;
-            }
-            parameterStrings[i] = remainder.substring(0, separatorIndex);
-            remainder = remainder.substring(separatorIndex + 1);
+        String[] parameterStrings = separateTimeString(timeString, parameterCount);
+        if (parameterStrings == null) {
+            return null;
         }
-        parameterStrings[parameterCount - 1] = remainder;
+        TimeParametersBundle parsedParameters = parseParameters(parameterStrings, parameters);
+        if (parsedParameters == null) {
+            return null;
+        }
+        if (!format.contains("Y")) {
+            parsedParameters.setYear(LocalDate.now().getYear());
+        }
+        if (parsedParameters.getTime() == -1) {
+            LocalDate date = tryCreateDate(parsedParameters);
+            if (date != null) {
+                return new TimePoint(date);
+            }
+            return null;
+        }
+        LocalDateTime dateTime = tryCreateDateTime(parsedParameters);
+        if (dateTime != null) {
+            return new TimePoint(dateTime);
+        }
+        return null;
+    }
+
+    private static TimeParametersBundle parseParameters(String[] parameterStrings, TimeParameter[] parameters) {
+        assert(parameterStrings.length == parameters.length);
+        int parameterCount = parameters.length;
+        TimeParametersBundle parsedParameters = new TimeParametersBundle(-1, -1, -1, -1);
         for (int i = 0; i < parameterCount; i++) {
             switch (parameters[i]) {
             case YEAR:
                 if (Parser.isInteger(parameterStrings[i]) && parameterStrings[i].length() == 4) {
-                    year = Integer.parseInt(parameterStrings[i]);
+                    parsedParameters.setYear(Integer.parseInt(parameterStrings[i]));
                 }
-                if (year == -1) {
+                if (parsedParameters.getYear() == -1) {
                     return null;
                 }
                 break;
             case MONTH:
-                month = toMonth(parameterStrings[i]);
-                if (month == -1) {
+                parsedParameters.setMonth(toMonth(parameterStrings[i]));
+                if (parsedParameters.getMonth() == -1) {
                     return null;
                 }
                 break;
             case DAY:
                 if (Parser.isInteger(parameterStrings[i])) {
-                    day = Integer.parseInt(parameterStrings[i]);
+                    parsedParameters.setDay(Integer.parseInt(parameterStrings[i]));
                 }
-                if (day == -1) {
+                if (parsedParameters.getDay() == -1) {
                     return null;
                 }
                 break;
             case TIME:
-                time = toHourMinuteTime(parameterStrings[i]);
-                if (time == -1) {
+                parsedParameters.setTime(toHourMinuteTime(parameterStrings[i]));
+                if (parsedParameters.getTime() == -1) {
                     return null;
                 }
                 break;
@@ -116,18 +123,61 @@ public class TimePointParser {
                 return null;
             }
         }
-        if (time == -1) {
-            LocalDate date = tryCreateDate(day, month, year);
-            if (date != null) {
-                return new TimePoint(date);
+        return parsedParameters;
+    }
+
+    private static class TimeParametersBundle {
+        private int day;
+        private int month;
+        private int year;
+        private int time;
+
+        public TimeParametersBundle(int day, int month, int year, int time) {
+            this.day = day;
+            this.month = month;
+            this.year = year;
+            this.time = time;
+        }
+
+        public int getDay() {
+            return day;
+        }
+        public int getMonth() {
+            return month;
+        }
+        public int getYear() {
+            return year;
+        }
+        public int getTime() {
+            return time;
+        }
+        public void setDay(int day) {
+            this.day = day;
+        }
+        public void setMonth(int month) {
+            this.month = month;
+        }
+        public void setYear(int year) {
+            this.year = year;
+        }
+        public void setTime(int time) {
+            this.time = time;
+        }
+    }
+
+    private static String[] separateTimeString(String timeString, int count) {
+        String[] parameterStrings = new String[count];
+        String remainder = timeString;
+        for (int i = 0; i < count - 1; i++) {
+            int separatorIndex = indexOfWildcard(remainder);
+            if (separatorIndex == -1) {
+                return null;
             }
-            return null;
+            parameterStrings[i] = remainder.substring(0, separatorIndex);
+            remainder = remainder.substring(separatorIndex + 1);
         }
-        LocalDateTime dateTime = tryCreateDateTime(time, day, month, year);
-        if (dateTime != null) {
-            return new TimePoint(dateTime);
-        }
-        return null;
+        parameterStrings[count - 1] = remainder;
+        return parameterStrings;
     }
 
     /**
@@ -151,7 +201,6 @@ public class TimePointParser {
 
     /**
      * Converts a string into a TimeParameter array.
-     *
      * @param format Format to convert into TimeParameter array.
      * @return format as a TimeParameter array.
      */
@@ -187,7 +236,6 @@ public class TimePointParser {
     /**
      * Helper function which converts a LocalDate to a string which can be parsed by the TimePointParser toTimePoint
      * method.
-     *
      * @param date Date to be converted to a string.
      * @return String representation of the given date.
      */
@@ -198,7 +246,6 @@ public class TimePointParser {
 
     /**
      * Converts a string to a time value, in 24-hour format.
-     *
      * @param timeString String to convert to a time value.
      * @return Converted integer value which represents the time, if valid, else -1.
      */
@@ -207,69 +254,88 @@ public class TimePointParser {
             return -1;
         }
         if (Parser.isInteger(timeString) && timeString.length() == 4) {
-            int timeInt = Integer.parseInt(timeString);
-            int hour = timeInt / 100;
-            int minute = timeInt % 100;
-            if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
-                return hour * 100 + minute;
+            return digitsToHourMinute(timeString);
+        }
+        if (timeString.contains("AM")) {
+            return amToHourMinute(timeString);
+        }
+        if (timeString.contains("PM")) {
+            return pmToHourMinute(timeString);
+        }
+        if (timeString.contains(":")) {
+            return colonToHourMinute(timeString);
+        }
+        return -1;
+    }
+
+    private static int digitsToHourMinute(String timeString) {
+        int timeInt = Integer.parseInt(timeString);
+        int hour = timeInt / 100;
+        int minute = timeInt % 100;
+        if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+            return hour * 100 + minute;
+        } else {
+            return -1;
+        }
+    }
+
+    private static int amToHourMinute(String timeString) {
+        String trimmedTime = timeString.replace("AM", "");
+        if (trimmedTime.contains(":")) {
+            int twelveHourTime = toHourMinuteTime(trimmedTime);
+            if (twelveHourTime < 100 || twelveHourTime >= 1300) {
+                return -1;
+            }
+            if (twelveHourTime > 1200) {
+                twelveHourTime -= 1200;
+            }
+            return twelveHourTime;
+        }
+        if (Parser.isInteger(trimmedTime)) {
+            int hour = Integer.parseInt(trimmedTime);
+            if (hour >= 1 && hour <= 11) {
+                return hour * 100;
+            } else if (hour == 12) {
+                return 0;
             } else {
                 return -1;
             }
         }
-        if (timeString.contains("AM")) {
-            String trimmedTime = timeString.replace("AM", "");
-            if (trimmedTime.contains(":")) {
-                int twelveHourTime = toHourMinuteTime(trimmedTime);
-                if (twelveHourTime < 100 || twelveHourTime >= 1300) {
-                    return -1;
-                }
-                if (twelveHourTime > 1200) {
-                    twelveHourTime -= 1200;
-                }
-                return twelveHourTime;
+        return -1;
+    }
+
+    private static int pmToHourMinute(String timeString) {
+        String trimmedTime = timeString.replace("PM", "");
+        if (trimmedTime.contains(":")) {
+            int twelveHourTime = toHourMinuteTime(trimmedTime);
+            if (twelveHourTime < 100 || twelveHourTime >= 1300) {
+                return -1;
             }
-            if (Parser.isInteger(trimmedTime)) {
-                int hour = Integer.parseInt(trimmedTime);
-                if (hour >= 1 && hour <= 11) {
-                    return hour * 100;
-                } else if (hour == 12) {
-                    return 0;
-                } else {
-                    return -1;
-                }
+            if (twelveHourTime < 1200) {
+                twelveHourTime += 1200;
+            }
+            return twelveHourTime;
+        }
+        if (Parser.isInteger(trimmedTime)) {
+            int hour = Integer.parseInt(trimmedTime);
+            if (hour >= 1 && hour <= 11) {
+                return (hour + 12) * 100;
+            } else if (hour == 12) {
+                return 1200;
+            } else {
+                return -1;
             }
         }
-        if (timeString.contains("PM")) {
-            String trimmedTime = timeString.replace("PM", "");
-            if (trimmedTime.contains(":")) {
-                int twelveHourTime = toHourMinuteTime(trimmedTime);
-                if (twelveHourTime < 100 || twelveHourTime >= 1300) {
-                    return -1;
-                }
-                if (twelveHourTime < 1200) {
-                    twelveHourTime += 1200;
-                }
-                return twelveHourTime;
-            }
-            if (Parser.isInteger(trimmedTime)) {
-                int hour = Integer.parseInt(trimmedTime);
-                if (hour >= 1 && hour <= 11) {
-                    return (hour + 12) * 100;
-                } else if (hour == 12) {
-                    return 1200;
-                } else {
-                    return -1;
-                }
-            }
-        }
-        if (timeString.contains(":")) {
-            String[] tokens = timeString.split(":");
-            if (Parser.isIntegerArray(tokens) && tokens.length == 2) {
-                int hour = Integer.parseInt(tokens[0]);
-                int minute = Integer.parseInt(tokens[1]);
-                if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
-                    return hour * 100 + minute;
-                }
+        return -1;
+    }
+
+    private static int colonToHourMinute(String timeString) {
+        String[] tokens = timeString.split(":");
+        if (Parser.isIntegerArray(tokens) && tokens.length == 2) {
+            int hour = Integer.parseInt(tokens[0]);
+            int minute = Integer.parseInt(tokens[1]);
+            if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+                return hour * 100 + minute;
             }
         }
         return -1;
@@ -277,7 +343,6 @@ public class TimePointParser {
 
     /**
      * Converts a string to its month value.
-     *
      * @param month String which potentially represents a month.
      * @return The month represented in integer value if it is valid, else -1.
      */
@@ -317,6 +382,10 @@ public class TimePointParser {
         }
     }
 
+    private static LocalDate tryCreateDate(TimeParametersBundle bundle) {
+        return tryCreateDate(bundle.getDay(), bundle.getMonth(), bundle.getYear());
+    }
+
     /**
      * Attempts creating a LocalDateTime with the given time, day, month and year values.
      * Returns null if the given value is invalid.
@@ -332,5 +401,9 @@ public class TimePointParser {
         } catch (DateTimeException e) {
             return null;
         }
+    }
+
+    private static LocalDateTime tryCreateDateTime(TimeParametersBundle bundle) {
+        return tryCreateDateTime(bundle.getTime(), bundle.getDay(), bundle.getMonth(), bundle.getYear());
     }
 }

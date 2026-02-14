@@ -13,24 +13,24 @@ public class MarkCommand extends Command {
     private final String indexString;
 
     /** New isDone value of the task. */
-    private final boolean newStatus;
+    private final boolean newIsDone;
 
     /**
      * Constructs a MarkCommand with the specified task index and new isDone status.
      *
      * @param indexString Index of task to be changed.
-     * @param newStatus New isDone status for the task.
+     * @param newIsDone New isDone status for the task.
      */
-    public MarkCommand(String indexString, boolean newStatus) {
+    public MarkCommand(String indexString, boolean newIsDone) {
         this.indexString = indexString;
-        this.newStatus = newStatus;
+        this.newIsDone = newIsDone;
     }
 
     /**
      * {@inheritDoc}
      *
      * If indexString represents a valid task index, changes the isDone value of the specified task from the
-     * provided TaskList to newStatus, saves the change to Storage, and displays a confirmation message via
+     * provided TaskList to newIsDone, saves the change to Storage, and displays a confirmation message via
      * the Ui.
      * If indexString is invalid, displays an error message to the user informing them of the valid task
      * indexes.
@@ -40,7 +40,7 @@ public class MarkCommand extends Command {
         if (Parser.isInteger(indexString)) {
             int taskIndex = Integer.parseInt(indexString) - 1;
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
-                taskList.markTask(taskIndex, newStatus);
+                taskList.markTask(taskIndex, newIsDone);
                 String storageError = storage.edit(
                         taskIndex, taskList.get(taskIndex).getData(), "Error: Unable to save changes to storage!\n");
                 ui.printMessage(

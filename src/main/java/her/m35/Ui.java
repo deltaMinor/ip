@@ -56,7 +56,7 @@ public class Ui {
     }
 
     /**
-     * Convert a given list to a string sequence that can be printed as a message.
+     * Converts a given list to a string sequence that can be printed as a message.
      *
      * @param list List to be converted into a message.
      * @param emptyListMessage Output message if there are no items in the task list.
