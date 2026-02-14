@@ -42,7 +42,7 @@ public class UntagCommand extends Command {
             if (taskIndex >= 0 && taskIndex < taskList.size()) {
                 for (String tag : tags) {
                     if (!taskList.get(taskIndex).hasTag(tag)) {
-                        ui.printMessage("Error: This task already has tag ", "#" + tag, "!");
+                        ui.printMessage("Error: This task does not have tag ", "#" + tag, "!");
                         return;
                     }
                 }
