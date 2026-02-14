@@ -32,6 +32,7 @@ public class Main extends Application {
             stage.setMinWidth(417);
 
             fxmlLoader.<MainWindow>getController().setHerm35(herm35);
+            fxmlLoader.<MainWindow>getController().showHerm35Introduction();
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

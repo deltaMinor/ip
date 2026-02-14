@@ -55,7 +55,17 @@ public class DialogBox extends HBox {
 
         //Form dialog text with coloured highlighting based on content of text
         for (String segment : message) {
-            if (segment.startsWith("[")) {
+            if (segment.equals(Herm35.NAME)) {
+                Text nameText = new Text(segment);
+                nameText.getStyleClass().add("name-text");
+                dialog.getChildren().add(nameText);
+                continue;
+            }
+            if (segment.startsWith("$")) {
+                Text italicText = new Text(segment.substring(1));
+                italicText.getStyleClass().add("italics");
+                dialog.getChildren().add(italicText);
+            } else if (segment.startsWith("[")) {
                 boolean taskDone = String.valueOf(segment.charAt(Task.MARK_POSITION)).equals(Task.DONE_MARK);
                 if (taskDone) {
                     Text text1 = new Text(segment.substring(0, Task.MARK_POSITION));
