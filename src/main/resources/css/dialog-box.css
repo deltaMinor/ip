@@ -35,7 +35,7 @@
 }
 
 .todo-text {
-    -fx-fill: orangered;
+    -fx-fill: brown;
 }
 
 .deadline-text {
@@ -69,6 +69,11 @@
 
 .error-text {
     -fx-fill: crimson;
+    -fx-font-family: "Pixel Code DemiBold";
+}
+
+.warning-text {
+    -fx-fill: orange;
     -fx-font-family: "Pixel Code DemiBold";
 }
 

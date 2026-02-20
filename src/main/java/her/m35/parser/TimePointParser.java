@@ -1,8 +1,10 @@
 package her.m35.parser;
 
 import java.time.DateTimeException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 
 import her.m35.TimePoint;
 
@@ -30,13 +32,7 @@ public class TimePointParser {
         if (timeString == null || timeString.isEmpty()) {
             return null;
         }
-        String timeStringCopy = timeString.trim().toUpperCase();
-        timeStringCopy = timeStringCopy.replace("TODAY", dateToString(LocalDate.now()));
-        timeStringCopy = timeStringCopy.replace("TDY", dateToString(LocalDate.now()));
-        String tomorrowDateString = dateToString(LocalDate.now().plusDays(1));
-        timeStringCopy = timeStringCopy.replace("TOMORROW", tomorrowDateString);
-        timeStringCopy = timeStringCopy.replace("TMRW", tomorrowDateString);
-        timeStringCopy = timeStringCopy.replace("TMR", tomorrowDateString);
+        String timeStringCopy = parseFlexibleTime(timeString);
 
         TimePoint result;
         for (String format : VALID_TIME_FORMATS) {
@@ -83,6 +79,41 @@ public class TimePointParser {
             return new TimePoint(dateTime);
         }
         return null;
+    }
+
+    private static String parseFlexibleTime(String timeString) {
+        String timeStringCopy = timeString.trim().toUpperCase();
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"TODAY", "TDY"}, dateToString(LocalDate.now()));
+        String tomorrowDateString = dateToString(LocalDate.now().plusDays(1));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"TOMORROW", "TMRW", "TMR"}, tomorrowDateString);
+        String nextWeekDateString = dateToString(LocalDate.now().plusDays(7));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"NEXT WEEK"}, nextWeekDateString);
+
+        String mondayString = dateToString(LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY)));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"MONDAY", "MON"}, mondayString);
+        String tuesdayString = dateToString(LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.TUESDAY)));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"TUESDAY", "TUES", "TUE"}, tuesdayString);
+        String wednesdayString = dateToString(LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.WEDNESDAY)));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"WEDNESDAY", "WED"}, wednesdayString);
+        String thursdayString = dateToString(LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.THURSDAY)));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"THURSDAY", "THURS", "THUR", "THU"}, thursdayString);
+        String fridayString = dateToString(LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.FRIDAY)));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"FRIDAY", "FRI"}, fridayString);
+        String saturdayString = dateToString(LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.SATURDAY)));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"SATURDAY", "SAT"}, saturdayString);
+        String sundayString = dateToString(LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.SUNDAY)));
+        timeStringCopy = Parser.replaceStringWithArraySelection(
+                timeStringCopy, new String[] {"SUNDAY", "SUN"}, sundayString);
+        return timeStringCopy;
     }
 
     private static TimeParametersBundle parseParameters(String[] parameterStrings, TimeParameter[] parameters) {

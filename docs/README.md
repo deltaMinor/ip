@@ -70,6 +70,9 @@ shows all tasks containing "sport" in its description, occurring before May 12 o
 ### 🛠️ Customising your personal experience with HERM35
 - `show tags`: Show the tags behind your saved tasks.
 - `hide tags`: Do not show the tags behind your saved tasks.
+
+### ✨ Additonal features
+- `quote`: Learn a new quote or fun fact relating to the great god Hermes!
 </details>
 
 # Main Features

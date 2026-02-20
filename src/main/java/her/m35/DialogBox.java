@@ -65,6 +65,8 @@ public class DialogBox extends HBox {
                 for (Text tag : tags) {
                     dialog.getChildren().add(tag);
                 }
+            } else if (segment.startsWith("Warning: ")) {
+                dialog.getChildren().add(styleError(segment));
             } else if (segment.startsWith("Error: ")) {
                 dialog.getChildren().add(styleError(segment));
             } else {
@@ -91,6 +93,12 @@ public class DialogBox extends HBox {
         Text errorText = new Text(error);
         errorText.getStyleClass().add("error-text");
         return errorText;
+    }
+
+    private Text styleWarning(String warning) {
+        Text warningText = new Text(warning);
+        warningText.getStyleClass().add("warning-text");
+        return warningText;
     }
 
     private Text[] styleTags(String tagsString) {
