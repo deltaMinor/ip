@@ -30,9 +30,6 @@ public class TaskList {
         OF_TYPE
     }
 
-    /** Maximum number of tasks allowed. */
-    public static final int TASK_LIMIT = 100;
-
     /** List of tasks being stored. */
     private final ArrayList<Task> taskList;
 
@@ -64,7 +61,7 @@ public class TaskList {
      * @return Formatted task count message string.
      */
     public String getCurrentTaskCountMessage() {
-        return "You now have " + taskList.size() + "/" + TASK_LIMIT + " tasks.";
+        return "You now have " + taskList.size() + " tasks.";
     }
 
     /**

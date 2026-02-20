@@ -141,6 +141,12 @@ public class Parser {
         if (tokens.length < 2) {
             return new MessageCommand("Error: Task name not given.");
         }
+        if (!tokens[1].contains("/by")) {
+            return new MessageCommand("Error: Please state the deadline, denoted with \" /by \".");
+        }
+        if (tokens[1].startsWith("/by")) {
+            return new MessageCommand("Error: Task name not given.");
+        }
         String[] deadlineTaskTokens = tokens[1].split(" /by ", 2);
         if (deadlineTaskTokens.length < 2) {
             return new MessageCommand("Error: Please state the deadline, denoted with \" /by \".");
@@ -167,9 +173,21 @@ public class Parser {
         if (tokens.length < 2) {
             return new MessageCommand("Error: Task name not given.");
         }
+        if (!tokens[1].contains("/from")) {
+            return new MessageCommand("Error: Please state when the event begins, denoted with \" /from \".");
+        }
+        if (tokens[1].startsWith("/from")) {
+            return new MessageCommand("Error: Task name not given.");
+        }
         String[] eventTaskTokens = tokens[1].split(" /from ", 2);
         if (eventTaskTokens.length < 2) {
             return new MessageCommand("Error: Please state when the event begins, denoted with \" /from \".");
+        }
+        if (!eventTaskTokens[1].contains("/to")) {
+            return new MessageCommand("Error: Please state when the event ends, denoted with \" /to \".");
+        }
+        if (eventTaskTokens[1].startsWith("/to")) {
+            return new MessageCommand("Error: Please state when the event begins, denoted with \" /from \".\"");
         }
         String[] eventPeriodTokens = eventTaskTokens[1].split(" /to ", 2);
         if (eventPeriodTokens.length < 2) {
@@ -410,5 +428,22 @@ public class Parser {
             }
         }
         return true;
+    }
+
+    /**
+     * Replaces segments in inputString that matches a string in targetStrings with replacementString, in order of
+     * how it was ordered in targetStrings.
+     * @param inputString String to have its segments replaced.
+     * @param targetStrings Segments to replace with replacementString.
+     * @param replacementString String to replace segments in inputString with.
+     * @return Processed string with its internal segments replaced.
+     */
+    public static String replaceStringWithArraySelection(
+            String inputString, String[] targetStrings, String replacementString) {
+        String outputString = inputString;
+        for (int i = 0; i < targetStrings.length; i++) {
+            outputString = outputString.replace(targetStrings[i], replacementString);
+        }
+        return outputString;
     }
 }
