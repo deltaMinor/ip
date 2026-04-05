@@ -7,8 +7,9 @@ Welcome to HERM35, the task management chatbot named after the great god Hermes!
 
 ## How to start
 
-1. Launch HERM35 by running the provided application.
-2. Start typing away! HERM35 is very intuitive to learn, and it comes with built-in instructions to guide you.
+1. Download [the latest release of HERM35.jar](https://github.com/deltaMinor/ip/releases/tag/A-Release). 
+2. Launch HERM35 by running the provided application.
+3. Start typing away! HERM35 is very intuitive to learn, and it comes with built-in instructions to guide you.
 
 If you want to jump straight in however, below are the available commands to use:
 <details markdown="1">
